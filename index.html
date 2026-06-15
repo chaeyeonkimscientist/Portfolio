@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaeyeon Kim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ---- Display face: Dreamer TM (self-hosted) ----
+   Drop DreamerTM.woff2 (and .woff) next to this file.
+   Falls back to a pixel face, then mono, if the file isn't found. */
+@font-face{
+  font-family:"Dreamer TM";
+  src:url("DreamerTM.woff2") format("woff2"),
+      url("DreamerTM.woff") format("woff");
+  font-weight:400;font-display:swap;
+}
+:root{
+  --iris:#17151F;        /* Black Iris  — the stage */
+  --iris-soft:#211e2b;
+  --oxblood:#5A1018;     /* Oxblood     — stress / beta */
+  --oxblood-lit:#a83242;
+  --teal:#2F5E5A;        /* Faded Teal  — calm / alpha */
+  --teal-lit:#5f9b94;
+  --lav:#B7A7D8;         /* Moonlit Lavender — text highlights only */
+  --bone:#ece8f2; --bone-dim:#8d869e;
+  --hair:rgba(183,167,216,0.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--iris);color:var(--bone);font-family:"Inter",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
+
+/* ---- fixed wave layer: pinned behind the hero, fades out on scroll ---- */
+#wave{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .5s ease}
+.grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---- nav ---- */
+nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
+  padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
+  transition:background-color .3s,backdrop-filter .3s}
+nav.scrolled{background:rgba(23,21,31,0.72);backdrop-filter:blur(8px);border-bottom:0.5px solid var(--hair)}
+nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
+nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
+
+/* ---- hero ---- */
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
+.eyebrow{font-family:"Inter",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
+.name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
+.statement{font-family:"Inter",sans-serif;font-size:clamp(1.1rem,2.4vw,2rem);font-weight:400;line-height:1.4;max-width:26ch;color:var(--bone)}
+.statement em,.hl{font-style:normal;color:var(--lav)}
+.statement .sub{display:block;margin-top:1rem;font-family:"Inter",sans-serif;font-size:clamp(0.82rem,1.25vw,1rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
+
+.readout{position:fixed;bottom:1.8rem;left:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;white-space:nowrap;transition:opacity .4s}
+.readout b{color:var(--bone)}.readout .state{transition:color .25s}
+.cue{position:fixed;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
+.hero-fade{opacity:0 !important}
+
+.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
+
+/* ---- work section ---- */
+.work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:6rem 7vw 7rem}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:1.2rem;margin-bottom:4.5rem}
+.sec-head h2{font-family:"DM Mono",monospace;font-size:0.82rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--lav)}
+.sec-head .count{font-family:"DM Mono",monospace;font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.1em}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5rem 4rem}
+.release{display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit}
+
+.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
+.disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
+  box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
+  transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+.disc::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle at 50% 50%,transparent 0 2px,rgba(255,255,255,0.025) 2.5px 3px)}
+.disc .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.disc .hole{width:8%;height:8%;min-width:5px;min-height:5px;border-radius:50%;background:var(--iris)}
+.sleeve{position:absolute;top:0;left:0;width:64%;height:100%;border-radius:2px;overflow:hidden;z-index:2;
+  display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
+.sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
+.sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
+.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
+.release:hover .disc{transform:translateX(26%)}
+
+.sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
+.sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
+.sl-para{background:linear-gradient(160deg,#222630 0%,#191c24 55%,#142a2f 100%)}
+.sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
+.lbl-teal{background:var(--teal)}.lbl-ox{background:var(--oxblood-lit)}.lbl-lav{background:var(--lav)}
+
+.disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
+.disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
+.disc.slate .label,.disc.slate .hole{display:none}
+.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.5rem;color:var(--teal-lit)}
+.disc.fig{border-radius:3px;background:linear-gradient(135deg,#1f1820,#120b10);overflow:hidden}
+.disc.fig::after{background:radial-gradient(circle at 35% 40%,rgba(168,50,66,0.35) 0 3%,transparent 3.5%),radial-gradient(circle at 60% 30%,rgba(183,167,216,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 55% 65%,rgba(95,155,148,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 40% 70%,rgba(168,50,66,0.25) 0 2%,transparent 2.5%)}
+.disc.fig .label,.disc.fig .hole{display:none}
+.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.4rem;color:var(--oxblood-lit)}
+
+.meta{max-width:34ch}
+.idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
+.ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
+.hook{font-family:"Inter",sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
+.hook .hl{color:var(--lav)}
+.demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--teal-lit);margin-bottom:14px}
+.demo::before{content:"\25B8 "}
+.tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.tag{font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
+.tag.t-mus{color:var(--lav);border-color:rgba(183,167,216,0.4)}
+.tag.t-cog{color:var(--teal-lit);border-color:rgba(95,155,148,0.4)}
+.tag.t-dat{color:var(--bone);border-color:rgba(236,232,242,0.28)}
+.tag.t-tec{color:var(--oxblood-lit);border-color:rgba(168,50,66,0.45)}
+.tag.t-ind{color:var(--bone-dim)}
+
+@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:4rem 7vw}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.readout{left:6vw}.cue{display:none}}
+@media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
+</style></head>
+<body>
+
+<canvas id="wave"></canvas>
+<div class="grain"></div>
+
+<nav id="nav">
+  <a href="#work">Work</a><a href="#about">About</a><a href="mailto:chaeyeonkimwork@gmail.com">Contact</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="eyebrow">music &nbsp;&middot;&nbsp; cognitive science &nbsp;&middot;&nbsp; data</div>
+  <h1 class="name">Chaeyeon&nbsp;Kim</h1>
+  <p class="statement">I make <em>invisible internal states</em> perceptible.
+    <span class="sub">Translating stress, insomnia, and attention into sound, image, and interactive systems &mdash; drawn to the problems that sit between disciplines.</span>
+  </p>
+  <div class="scrolldown" id="scrolldown">scroll &darr;</div>
+</header>
+
+<div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
+<div class="cue" id="cue" aria-hidden="true">move to conduct &rarr;</div>
+
+<section class="work" id="work">
+  <div class="sec-head"><h2>Selected Work</h2><span class="count">04 &nbsp;/&nbsp; index</span></div>
+  <div class="grid">
+
+    <a class="release" href="#">
+      <div class="rig">
+        <div class="disc"><div class="label lbl-teal"><div class="hole"></div></div></div>
+        <div class="sleeve sl-body">
+          <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
+          <div class="inote">[ film still ]</div>
+          <div class="stitle">The Body<br>Conducts</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">01</div>
+        <div class="ptitle">The Body Conducts</div>
+        <div class="hook">Stress symphony scored from the brain &mdash; a 5-track music film that turns <span class="hl">invisible inflammation audible.</span> EEG data embedded as genre, rhythm, and texture.</div>
+        <div class="tags"><span class="tag t-mus">Music</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-dat">Data</span></div>
+      </div>
+    </a>
+
+    <a class="release" href="#">
+      <div class="rig">
+        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
+        <div class="sleeve sl-syn">
+          <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
+          <div class="inote">[ app capture ]</div>
+          <div class="stitle">Synthetic<br>Synesthesia</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">02</div>
+        <div class="ptitle">Synthetic Synesthesia</div>
+        <div class="hook">A neurological experience <span class="hl">96% of people can't access,</span> made playable in a browser. Sound becomes color, color becomes sound &mdash; grounded in peer-reviewed research.</div>
+        <div class="demo">live demo</div>
+        <div class="tags"><span class="tag t-tec">Technology</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-mus">Music</span></div>
+      </div>
+    </a>
+
+    <a class="release" href="#">
+      <div class="rig">
+        <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
+        <div class="sleeve sl-para">
+          <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
+          <div class="inote">[ slate still ]</div>
+          <div class="stitle">Paramount</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">03</div>
+        <div class="ptitle">Paramount&nbsp;/&nbsp;GCDR</div>
+        <div class="hook">Research infrastructure that <span class="hl">cut pre-release analysis time by 65%.</span> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</div>
+        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-ind">Industry</span></div>
+      </div>
+    </a>
+
+    <a class="release" href="#">
+      <div class="rig">
+        <div class="disc fig"><div class="figbig">+7pp</div></div>
+        <div class="sleeve sl-eng">
+          <div class="scode"><span>PE&middot;004</span><span>FIG.5/AUC</span></div>
+          <div class="inote">[ network figure ]</div>
+          <div class="stitle">Predicting<br>Engagement</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">04</div>
+        <div class="ptitle">Predicting Engagement</div>
+        <div class="hook">What <span class="hl">&ldquo;engagement&rdquo; actually is,</span> grounded in brain networks. Replicated and extended a study mapping behavioral predictors to attention, reward, and default-mode systems.</div>
+        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-cog">Cognitive Science</span></div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<script>
+(function(){
+const c=document.getElementById('wave'),x=c.getContext('2d');
+const rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const eI=document.getElementById('idx'),eS=document.getElementById('state'),eB=document.getElementById('band'),eH=document.getElementById('hpa');
+const cue=document.getElementById('cue'),readout=document.getElementById('readout'),scrolldown=document.getElementById('scrolldown'),nav=document.getElementById('nav'),wave=document.getElementById('wave');
+let W,H,dpr;
+function rs(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}
+rs();addEventListener('resize',rs);
+
+let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
+const IRIS=[23,21,31],TEAL=[95,155,148],OX=[168,50,66];
+function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+
+/* conduct only while pointer is over the hero region (top viewport) */
+if(!rm){
+ addEventListener('pointermove',e=>{
+   if(e.clientY>H||scrollY>H*0.85)return;
+   const n=performance.now();
+   if(lx!==null){const dx=e.clientX-lx,dy=e.clientY-ly,d=Math.hypot(dx,dy),dt=Math.max(n-lm,1),sp=d/dt;const hf=1-e.clientY/H,sf=Math.min(sp/2.2,1);tar=Math.min(0.04+hf*0.55+sf*0.55,1)}
+   lx=e.clientX;ly=e.clientY;lm=n;
+   if(!done){done=true;cue.style.opacity='0';scrolldown.style.opacity='0.55'}
+ });
+ addEventListener('pointerleave',()=>tar=0.08);
+}
+
+/* scroll: fade the wave + hero overlays as the work section arrives, toggle nav bg */
+function onScroll(){
+ const y=scrollY,fade=Math.min(y/(H*0.6),1);
+ wave.style.opacity=(1-fade*0.92).toFixed(3);
+ const hide=y>H*0.45;
+ readout.classList.toggle('hero-fade',hide);
+ cue.classList.toggle('hero-fade',true===false?false:hide);
+ scrolldown.classList.toggle('hero-fade',y>40);
+ nav.classList.toggle('scrolled',y>H*0.7);
+ if(y>H*0.85)tar=0.08; /* settle the wave when scrolled away */
+}
+addEventListener('scroll',onScroll,{passive:true});
+
+let ph=0;
+function fr(){
+ if(performance.now()-lm>600&&!rm)tar+=(0.08-tar)*0.02;
+ ar+=(tar-ar)*0.06;
+ const amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
+ const col=lerp(TEAL,OX,ar),la=0.30+ar*0.34;
+ const bg=lerp(IRIS,lerp(TEAL,OX,ar),0.05+ar*0.045);
+ if(scrollY<H*0.6)document.body.style.backgroundColor=`rgb(${bg[0]},${bg[1]},${bg[2]})`;
+ else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
+ x.clearRect(0,0,W,H);
+ const ch=7;
+ for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);
+  x.beginPath();
+  for(let px=0;px<=W;px+=6){const nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);const yy=yb+nz*ca;px===0?x.moveTo(px,yy):x.lineTo(px,yy)}
+  x.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=1.4;x.stroke()}
+ const i=ar;eI.textContent=i.toFixed(2);
+ if(i<0.33){eB.textContent='alpha';eH.textContent='inactive';eS.textContent='baseline';eS.style.color=`rgb(${TEAL[0]},${TEAL[1]},${TEAL[2]})`}
+ else if(i<0.66){eB.textContent='alpha\u2192beta';eH.textContent='activating';eS.textContent='arousal rising';eS.style.color=`rgb(${col[0]},${col[1]},${col[2]})`}
+ else{eB.textContent='beta';eH.textContent='active';eS.textContent='stress response';eS.style.color=`rgb(${OX[0]},${OX[1]},${OX[2]})`}
+ requestAnimationFrame(fr)}
+requestAnimationFrame(fr);
+onScroll();
+})();
+</script>
+</body></html>
