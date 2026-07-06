@@ -45,12 +45,27 @@ nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
 
 /* ---- hero ---- */
-.hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
 .eyebrow{font-family:"Inter",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
+
+/* ---- left control panel ---- */
+.panel{position:fixed;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
+.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
+.mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .2s,border-color .2s,box-shadow .2s;image-rendering:pixelated}
+.mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
+.mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
+.mode.active{color:var(--bone)}
+.mode.active .ind,.mode:hover .ind,.mode:focus-visible .ind{background:var(--acc);border-color:var(--acc);box-shadow:0 0 10px var(--acc)}
+.mode.m-music{--acc:#c9436a}
+.mode.m-cog{--acc:#8f8fd0}
+.mode.m-data{--acc:#9fe0d8}
+.mode.m-music.soon{opacity:0.5}
+.mode .soon-tag{font-size:0.55rem;letter-spacing:0.1em;color:var(--bone-dim);margin-left:0.3rem}
+@media(max-width:860px){.panel{position:static;transform:none;flex-direction:row;gap:1.2rem;margin-bottom:1.6rem;flex-wrap:wrap}}
 .name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
-.statement{font-family:"Inter",sans-serif;font-size:clamp(1.1rem,2.4vw,2rem);font-weight:400;line-height:1.4;max-width:26ch;color:var(--bone)}
+.statement{font-family:"Inter",sans-serif;font-size:clamp(1.1rem,2.4vw,2rem);font-weight:400;line-height:1.4;max-width:30ch;color:var(--bone);margin:0 auto}
 .statement em,.hl{font-style:normal;color:var(--lav)}
-.statement .sub{display:block;margin-top:1rem;font-family:"Inter",sans-serif;font-size:clamp(0.82rem,1.25vw,1rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
+.statement .sub{display:block;margin:1rem auto 0;font-family:"Inter",sans-serif;font-size:clamp(0.82rem,1.25vw,1rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
 
 .readout{position:fixed;bottom:1.8rem;left:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;white-space:nowrap;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
@@ -116,7 +131,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 @media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:4rem 7vw}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.readout{left:6vw}.cue{display:none}}
 @media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
-</style></head>
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
 <body>
 
 <canvas id="wave"></canvas>
@@ -127,7 +144,11 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 </nav>
 
 <header class="hero" id="top">
-  <div class="eyebrow">music &nbsp;&middot;&nbsp; cognitive science &nbsp;&middot;&nbsp; data</div>
+  <div class="panel" id="panel">
+    <button class="mode m-music" data-mode="music" aria-label="Music mode"><span class="ind"></span>Music</button>
+    <button class="mode m-cog active" data-mode="cog" aria-label="Cognitive science mode"><span class="ind"></span>Cognitive Science</button>
+    <button class="mode m-data" data-mode="data" aria-label="Data mode"><span class="ind"></span>Data</button>
+  </div>
   <h1 class="name">Chaeyeon&nbsp;Kim</h1>
   <p class="statement">I make <em>invisible internal states</em> perceptible.
     <span class="sub">Translating stress, insomnia, and attention into sound, image, and interactive systems &mdash; drawn to the problems that sit between disciplines.</span>
@@ -225,8 +246,81 @@ function rs(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.w
 rs();addEventListener('resize',rs);
 
 let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
+let MODE='cog',LOCKED='cog';   /* MODE = active visual mode; LOCKED = clicked/locked default */
+
+/* ---- noir-jazz generative audio engine (Tone.js) ---- */
+const AUDIO={on:false,ready:false,meter:null,level:0,lastNote:0};
+async function audioInit(){
+  if(AUDIO.ready) return;
+  await Tone.start();
+  const reverb=new Tone.Reverb({decay:3.4,wet:0.35}).toDestination();
+  AUDIO.meter=new Tone.Meter({smoothing:0.85});
+  // warm electric-piano-ish voice for the melody (noir jazz)
+  AUDIO.lead=new Tone.PolySynth(Tone.FMSynth,{
+    harmonicity:2.2,modulationIndex:6,
+    oscillator:{type:'sine'},envelope:{attack:0.01,decay:0.4,sustain:0.15,release:1.4},
+    modulation:{type:'triangle'},modulationEnvelope:{attack:0.2,decay:0.3,sustain:0.2,release:0.8}
+  }).connect(reverb);
+  AUDIO.lead.volume.value=-12;AUDIO.lead.connect(AUDIO.meter);
+  // low walking-bass pad
+  AUDIO.bass=new Tone.MonoSynth({oscillator:{type:'triangle'},envelope:{attack:0.05,decay:0.3,sustain:0.4,release:1.2},filterEnvelope:{attack:0.02,baseFrequency:120}}).connect(reverb);
+  AUDIO.bass.volume.value=-16;
+  // brushed-cymbal noise for texture
+  AUDIO.hat=new Tone.NoiseSynth({noise:{type:'pink'},envelope:{attack:0.005,decay:0.06,sustain:0}}).connect(reverb);
+  AUDIO.hat.volume.value=-30;
+  // Dm9-ish noir scale (D dorian w/ chromatic passing)
+  AUDIO.scale=['D3','F3','G3','A3','C4','D4','E4','F4','A4','C5','E5','F5'];
+  AUDIO.bassNotes=['D2','F2','G2','A2','C2'];
+  // slow ambient bass + brush loop
+  AUDIO.loop=new Tone.Loop(t=>{
+    const bn=AUDIO.bassNotes[Math.floor(Math.random()*AUDIO.bassNotes.length)];
+    AUDIO.bass.triggerAttackRelease(bn,'2n',t);
+    if(Math.random()<0.6)AUDIO.hat.triggerAttackRelease('16n',t+0.25);
+  },'2n');
+  Tone.Transport.bpm.value=72;
+  AUDIO.ready=true;
+}
+function audioStart(){ if(!AUDIO.ready)return; Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; }
+function audioStop(){ if(!AUDIO.ready)return; AUDIO.loop.stop(); Tone.Transport.stop(); AUDIO.on=false; AUDIO.level=0; }
+/* play a note based on cursor position — higher = higher pitch */
+function audioNoteFromCursor(cx,cy){
+  if(!AUDIO.on)return;
+  const now=performance.now();
+  if(now-AUDIO.lastNote<90)return; /* rate-limit into a "lick" */
+  AUDIO.lastNote=now;
+  const hf=1-Math.min(Math.max(cy/innerHeight,0),1); /* 0 bottom .. 1 top */
+  const idx=Math.min(AUDIO.scale.length-1,Math.floor(hf*AUDIO.scale.length));
+  const note=AUDIO.scale[idx];
+  try{AUDIO.lead.triggerAttackRelease(note,'8n');}catch(e){}
+}
+/* control panel: hover previews a mode, leaving restores the locked one, click locks it */
+const panel=document.getElementById('panel');
+if(panel){
+  const modes=panel.querySelectorAll('.mode');
+  modes.forEach(btn=>{
+    const m=btn.dataset.mode;
+    btn.addEventListener('pointerenter',()=>{ MODE=m; });
+    btn.addEventListener('pointerleave',()=>{ MODE=LOCKED; });
+    btn.addEventListener('click',async()=>{
+      if(m==='music'){
+        if(!AUDIO.on){ await audioInit(); audioStart(); }
+        else { audioStop(); }
+      }
+      LOCKED=m; MODE=m;
+      modes.forEach(b=>b.classList.toggle('active', b.dataset.mode===m));
+      if(m!=='music' && AUDIO.on) audioStop();
+    });
+    btn.addEventListener('focus',()=>{ if(m!=='music') MODE=m; });
+    btn.addEventListener('blur',()=>{ MODE=LOCKED; });
+  });
+}
 const IRIS=[16,23,25],GRAPE=[103,103,162],AMAR=[140,24,62],BONE=[239,231,239];
 function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+
+/* live cursor position for readout / nearest-trace detection */
+let curX=-1,curY=-1;
+addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
+addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
 
 /* conduct only while pointer is over the hero region (top viewport) */
 if(!rm){
@@ -257,7 +351,16 @@ let ph=0;
 function fr(){
  if(performance.now()-lm>600&&!rm)tar+=(0.08-tar)*0.02;
  ar+=(tar-ar)*0.06;
- const amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
+ let amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
+ /* music mode: waves pulse with live audio amplitude */
+ if(MODE==='music'&&AUDIO.on&&AUDIO.meter){
+   let db=AUDIO.meter.getValue(); if(typeof db!=='number')db=-60;
+   const lin=Math.max(0,Math.min(1,(db+60)/60)); /* -60..0 dB -> 0..1 */
+   AUDIO.level+=(lin-AUDIO.level)*0.25;
+   amp=26+AUDIO.level*90;      /* pulse the height */
+   sp=0.015+AUDIO.level*0.06;  /* speed up slightly with loudness */
+   ph+=AUDIO.level*0.04;
+ }
  const la=0.34+ar*0.30;
  /* hero background: full travel from Dusty Grape (calm) to Dark Amaranth (arousal),
     slightly darkened so off-white text stays legible */
@@ -265,15 +368,61 @@ function fr(){
  if(scrollY<H*0.6)document.body.style.backgroundColor=`rgb(${heroBg[0]},${heroBg[1]},${heroBg[2]})`;
  else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
  x.clearRect(0,0,W,H);
- const ch=7;
- for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);
+ const ch=7;const chY=[];
+ for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);chY.push(yb);
   x.beginPath();
-  for(let px=0;px<=W;px+=6){const nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);const yy=yb+nz*ca;px===0?x.moveTo(px,yy):x.lineTo(px,yy)}
+  let prevYY=null;
+  for(let px=0;px<=W;px+=6){
+    let nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);
+    let yy=yb+nz*ca;
+    if(MODE==='data'){
+      /* quantize into a rigid stepped grid: snap Y to bands, hold-then-jump */
+      const band=22;
+      yy=Math.round(yy/band)*band;
+      if(prevYY!==null){x.lineTo(px,prevYY);} /* horizontal hold */
+      px===0?x.moveTo(px,yy):x.lineTo(px,yy); /* vertical step */
+      prevYY=yy;
+    } else {
+      px===0?x.moveTo(px,yy):x.lineTo(px,yy);
+    }
+  }
   x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
- const i=ar;eI.textContent=i.toFixed(2);
- if(i<0.33){eB.textContent='alpha';eH.textContent='inactive';eS.textContent='baseline';eS.style.color='#8f8fd0'}
- else if(i<0.66){eB.textContent='alpha\u2192beta';eH.textContent='activating';eS.textContent='arousal rising';eS.style.color='#b7a7d8'}
- else{eB.textContent='beta';eH.textContent='active';eS.textContent='stress response';eS.style.color='#c9436a'}
+ const i=ar;
+ /* ---- per-mode readout ---- */
+ if(MODE==='data'){
+   /* find nearest trace to the cursor, annotate it in ML/data-science terms */
+   let near=0,best=1e9;
+   if(curY>=0){for(let k=0;k<chY.length;k++){const d=Math.abs(curY-chY[k]);if(d<best){best=d;near=k;}}}
+   const chId=String(near+1).padStart(2,'0');
+   /* value = normalized amplitude at cursor X on that trace (0..1) */
+   const of=near*1.7, ca=amp*(0.55+(near%3)*0.28);
+   const px=curX>=0?curX:W*0.5;
+   const rawNz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of);
+   const val=(rawNz+1.5)/3; /* roughly normalize to 0..1 */
+   /* variance across the trace (spread of the two sine components) */
+   const variance=(0.11+ (near%3)*0.06 + ar*0.18);
+   const features=['amplitude','spectral_centroid','zero_crossing','rms_energy','pause_density','session_len','delta_t'];
+   const feat=features[near%features.length];
+   readout.innerHTML='<b>CH_'+chId+'</b> &middot; feature: <span style="color:#9fe0d8">'+feat+
+     '</span> &middot; value: <b>'+val.toFixed(3)+'</b> &middot; &sigma;&sup2;: '+variance.toFixed(3)+
+     ' &middot; quantized[8] &middot; '+(curX<0?'idle':'sampling');
+ } else if(MODE==='music'){
+   if(AUDIO.on){
+     const lvl=Math.round(AUDIO.level*100);
+     readout.innerHTML='AUDIO &middot; noir-jazz &middot; Dm9 &middot; level: <b>'+String(lvl).padStart(2,'0')+
+       '</b> &middot; <span style="color:#c9436a">move to play &#9834;</span>';
+   } else {
+     readout.innerHTML='AUDIO &middot; synth: idle &middot; <span style="color:#c9436a">click MUSIC to play</span>';
+   }
+ } else {
+   /* cognitive / default: EEG readout */
+   let band,hpa,state,col;
+   if(i<0.33){band='alpha';hpa='inactive';state='baseline';col='#8f8fd0';}
+   else if(i<0.66){band='alpha\u2192beta';hpa='activating';state='arousal rising';col='#b7a7d8';}
+   else{band='beta';hpa='active';state='stress response';col='#c9436a';}
+   readout.innerHTML='EEG &middot; '+band+' &middot; HPA axis: '+hpa+' &middot; stress index: <b>'+i.toFixed(2)+
+     '</b> &middot; <span style="color:'+col+'">'+state+'</span>';
+ }
  requestAnimationFrame(fr)}
 requestAnimationFrame(fr);
 onScroll();
