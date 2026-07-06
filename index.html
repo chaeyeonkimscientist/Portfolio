@@ -16,15 +16,16 @@
   font-weight:normal;font-style:normal;font-display:swap;
 }
 :root{
-  --iris:#101719;        /* Black Iris  — the stage */
-  --iris-soft:#211e2b;
-  --oxblood:#8C183E;     /* Oxblood     — stress / beta */
-  --oxblood-lit:#8C183E;
-  --teal:#6767A2;        /* Faded Teal  — calm / alpha */
-  --teal-lit:#6767A2;
-  --lav:#B7A7D8;         /* Moonlit Lavender — text highlights only */
-  --bone:#ece8f2; --bone-dim:#8d869e;
-  --hair:rgba(183,167,216,0.16);
+  --iris:#101719;        /* Ink Black — general background / stage */
+  --iris-soft:#1a2226;
+  --grape:#6767A2;       /* Dusty Grape — hero CALM background */
+  --grape-lit:#8f8fd0;
+  --amaranth:#8C183E;    /* Dark Amaranth — hero AROUSAL background */
+  --amaranth-lit:#c9436a;
+  --lav:#B7A7D8;         /* Moonlit Lavender — accent / highlights */
+  --bone:#EFE7EF;        /* off-white — text + brainwave lines */
+  --bone-dim:#9a92a0;
+  --hair:rgba(183,167,216,0.18);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -87,30 +88,30 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
 .sl-para{background:linear-gradient(160deg,#222630 0%,#191c24 55%,#142a2f 100%)}
 .sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
-.lbl-teal{background:var(--teal)}.lbl-ox{background:var(--oxblood-lit)}.lbl-lav{background:var(--lav)}
+.lbl-grape{background:var(--grape)}.lbl-amar{background:var(--amaranth-lit)}.lbl-lav{background:var(--lav)}
 
 .disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
 .disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
 .disc.slate .label,.disc.slate .hole{display:none}
-.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.5rem;color:var(--teal-lit)}
+.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.5rem;color:var(--grape-lit)}
 .disc.fig{border-radius:3px;background:linear-gradient(135deg,#1f1820,#120b10);overflow:hidden}
 .disc.fig::after{background:radial-gradient(circle at 35% 40%,rgba(168,50,66,0.35) 0 3%,transparent 3.5%),radial-gradient(circle at 60% 30%,rgba(183,167,216,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 55% 65%,rgba(95,155,148,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 40% 70%,rgba(168,50,66,0.25) 0 2%,transparent 2.5%)}
 .disc.fig .label,.disc.fig .hole{display:none}
-.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.4rem;color:var(--oxblood-lit)}
+.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.4rem;color:var(--amaranth-lit)}
 
 .meta{max-width:34ch}
 .idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
 .ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
 .hook{font-family:"Inter",sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
 .hook .hl{color:var(--lav)}
-.demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--teal-lit);margin-bottom:14px}
+.demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
 .demo::before{content:"\25B8 "}
 .tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
 .tag{font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
 .tag.t-mus{color:var(--lav);border-color:rgba(183,167,216,0.4)}
-.tag.t-cog{color:var(--teal-lit);border-color:rgba(95,155,148,0.4)}
+.tag.t-cog{color:var(--grape-lit);border-color:rgba(143,143,208,0.45)}
 .tag.t-dat{color:var(--bone);border-color:rgba(236,232,242,0.28)}
-.tag.t-tec{color:var(--oxblood-lit);border-color:rgba(168,50,66,0.45)}
+.tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
 .tag.t-ind{color:var(--bone-dim)}
 
 @media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:4rem 7vw}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.readout{left:6vw}.cue{display:none}}
@@ -143,7 +144,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
     <a class="release" href="#">
       <div class="rig">
-        <div class="disc"><div class="label lbl-teal"><div class="hole"></div></div></div>
+        <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
           <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
           <div class="inote">[ film still ]</div>
@@ -224,7 +225,7 @@ function rs(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.w
 rs();addEventListener('resize',rs);
 
 let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
-const IRIS=[23,21,31],TEAL=[95,155,148],OX=[168,50,66];
+const IRIS=[16,23,25],GRAPE=[103,103,162],AMAR=[140,24,62],BONE=[239,231,239];
 function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
 
 /* conduct only while pointer is over the hero region (top viewport) */
@@ -257,20 +258,22 @@ function fr(){
  if(performance.now()-lm>600&&!rm)tar+=(0.08-tar)*0.02;
  ar+=(tar-ar)*0.06;
  const amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
- const col=lerp(TEAL,OX,ar),la=0.30+ar*0.34;
- const bg=lerp(IRIS,lerp(TEAL,OX,ar),0.05+ar*0.045);
- if(scrollY<H*0.6)document.body.style.backgroundColor=`rgb(${bg[0]},${bg[1]},${bg[2]})`;
+ const la=0.34+ar*0.30;
+ /* hero background: full travel from Dusty Grape (calm) to Dark Amaranth (arousal),
+    slightly darkened so off-white text stays legible */
+ const heroBg=lerp(GRAPE,AMAR,ar).map(v=>Math.round(v*0.82));
+ if(scrollY<H*0.6)document.body.style.backgroundColor=`rgb(${heroBg[0]},${heroBg[1]},${heroBg[2]})`;
  else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
  x.clearRect(0,0,W,H);
  const ch=7;
  for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);
   x.beginPath();
   for(let px=0;px<=W;px+=6){const nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);const yy=yb+nz*ca;px===0?x.moveTo(px,yy):x.lineTo(px,yy)}
-  x.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=1.4;x.stroke()}
+  x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
  const i=ar;eI.textContent=i.toFixed(2);
- if(i<0.33){eB.textContent='alpha';eH.textContent='inactive';eS.textContent='baseline';eS.style.color=`rgb(${TEAL[0]},${TEAL[1]},${TEAL[2]})`}
- else if(i<0.66){eB.textContent='alpha\u2192beta';eH.textContent='activating';eS.textContent='arousal rising';eS.style.color=`rgb(${col[0]},${col[1]},${col[2]})`}
- else{eB.textContent='beta';eH.textContent='active';eS.textContent='stress response';eS.style.color=`rgb(${OX[0]},${OX[1]},${OX[2]})`}
+ if(i<0.33){eB.textContent='alpha';eH.textContent='inactive';eS.textContent='baseline';eS.style.color='#8f8fd0'}
+ else if(i<0.66){eB.textContent='alpha\u2192beta';eH.textContent='activating';eS.textContent='arousal rising';eS.style.color='#b7a7d8'}
+ else{eB.textContent='beta';eH.textContent='active';eS.textContent='stress response';eS.style.color='#c9436a'}
  requestAnimationFrame(fr)}
 requestAnimationFrame(fr);
 onScroll();
