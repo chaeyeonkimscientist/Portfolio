@@ -3,7 +3,7 @@
 <title>Chaeyeon Kim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Helvetica:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ---- Display face: Dreamer TM (self-hosted) ----
    Drop DreamerTM.woff2 (and .woff) next to this file.
@@ -29,7 +29,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--iris);color:var(--bone);font-family:"Inter",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
+body{background:var(--iris);color:var(--bone);font-family:"Helvetica",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
 
 /* ---- PIN ZONE: tall scroll track whose inner stage sticks for the mode timeline ---- */
 .pin-zone{position:relative;z-index:2;height:400vh}
@@ -37,7 +37,7 @@ body{background:var(--iris);color:var(--bone);font-family:"Inter",-apple-system,
 
 /* ---- wave layer: absolute inside the sticky stage, fades out at the end of the timeline ---- */
 #wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .3s linear}
-.grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
+.grain{position:fixed;inset:0;z-index:1;opacity:0.05;poHelvetica-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ---- nav ---- */
@@ -48,12 +48,12 @@ nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
 
 /* ---- hero (inside the sticky stage) ---- */
-.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
-.eyebrow{font-family:"Inter",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
+.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;poHelvetica-events:none;cursor:crosshair}
+.eyebrow{font-family:"Helvetica",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
 
 /* ---- left control panel ---- */
-.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
-.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
+.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;poHelvetica-events:auto}
+.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:poHelvetica;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
 .mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .2s,border-color .2s,box-shadow .2s;image-rendering:pixelated}
 .mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
 .mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
@@ -69,21 +69,21 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
 
 /* ---- readout: now flows under the name, centered ---- */
-.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
+.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);poHelvetica-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
 .readout.mute{opacity:0;visibility:hidden}
 .readout .hpa{transition:color .3s ease,text-shadow .3s ease;font-weight:500}
 
-.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
+.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;poHelvetica-events:none;transition:opacity .6s}
 .hero-fade{opacity:0 !important}
 
-.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
+.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;poHelvetica-events:none;transition:opacity .4s}
 
 /* ---- statement (relocated below the fold) ---- */
 .statement-block{position:relative;z-index:5;background:var(--iris);padding:9rem 8vw 6rem;display:flex;justify-content:center;text-align:center}
-.statement{font-family:"Inter",sans-serif;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:400;line-height:1.35;max-width:30ch;color:var(--bone)}
+.statement{font-family:"Helvetica",sans-serif;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:400;line-height:1.35;max-width:30ch;color:var(--bone)}
 .statement em,.hl{font-style:normal;color:var(--lav)}
-.statement .sub{display:block;margin:1.4rem auto 0;font-family:"Inter",sans-serif;font-size:clamp(0.86rem,1.25vw,1.02rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
+.statement .sub{display:block;margin:1.4rem auto 0;font-family:"Helvetica",sans-serif;font-size:clamp(0.86rem,1.25vw,1.02rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
 
 /* ---- work section ---- */
 .work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:2rem 7vw 7rem}
@@ -94,7 +94,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5rem 4rem}
 .release{display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit}
 
-.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
+.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:poHelvetica}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
   box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
@@ -107,7 +107,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
 .sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
 .sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
-.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
+.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);poHelvetica-events:none}
 .release:hover .disc{transform:translateX(26%)}
 
 .sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
@@ -128,7 +128,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .meta{max-width:34ch}
 .idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
 .ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
-.hook{font-family:"Inter",sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
+.hook{font-family:"Helvetica",sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
 .hook .hl{color:var(--lav)}
 .demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
 .demo::before{content:"\25B8 "}
@@ -177,8 +177,8 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 <!-- ===== relocated statement, below the fold ===== -->
 <section class="statement-block" id="about">
-  <p class="statement">I make <em>invisible internal states</em> perceptible.
-    <span class="sub">Translating stress, insomnia, and attention into sound, image, and interactive systems &mdash; drawn to the problems that sit between disciplines.</span>
+  <p class="statement">I make <em>invisible Helveticanal states</em> perceptible.
+    <span class="sub">Translating stress, insomnia, and attention into sound, image, and Helveticaactive systems &mdash; drawn to the problems that sit between disciplines.</span>
   </p>
 </section>
 
@@ -323,7 +323,7 @@ async function armAudio(){
     if(SCROLL_MODE==='music'||MODE==='music') audioStart();
   }catch(e){/* user hasn't gestured yet / audio unavailable */}
 }
-['pointermove','pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
+['poHelveticamove','poHelveticadown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
   addEventListener(ev,armAudio,{once:true,passive:true});
 });
 
@@ -341,8 +341,8 @@ function scrollTargetFor(m){
 
 modeBtns.forEach(btn=>{
   const m=btn.dataset.mode;
-  btn.addEventListener('pointerenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
-  btn.addEventListener('pointerleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
+  btn.addEventListener('poHelveticaenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
+  btn.addEventListener('poHelveticaleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
   btn.addEventListener('focus',()=>{HOVER=m;MODE=m;paintButtons(m);});
   btn.addEventListener('blur',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
   btn.addEventListener('click',async()=>{
@@ -364,20 +364,20 @@ function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
 let curX=-1,curY=-1;
 /* rolling window of sampled values per-channel, for a real variance figure */
 const SAMPLES=[];const SAMPLE_MAX=60;
-addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
-addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
+addEventListener('poHelveticamove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
+addEventListener('poHelveticaleave',()=>{curX=-1;curY=-1;});
 
 /* conduct while the stage is pinned */
 let pinned=true;
 if(!rm){
- addEventListener('pointermove',e=>{
+ addEventListener('poHelveticamove',e=>{
    if(!pinned||e.clientY>H)return;
    const n=performance.now();
    if(lx!==null){const dx=e.clientX-lx,dy=e.clientY-ly,d=Math.hypot(dx,dy),dt=Math.max(n-lm,1),sp=d/dt;const hf=1-e.clientY/H,sf=Math.min(sp/2.2,1);tar=Math.min(0.04+hf*0.55+sf*0.55,1)}
    lx=e.clientX;ly=e.clientY;lm=n;
    if(!done){done=true;cue.style.opacity='0';}
  });
- addEventListener('pointerleave',()=>tar=0.08);
+ addEventListener('poHelveticaleave',()=>tar=0.08);
 }
 
 /* ---- scroll timeline: drives MODE through three zones, then unpins ---- */
