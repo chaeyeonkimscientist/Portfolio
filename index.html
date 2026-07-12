@@ -5,7 +5,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ---- Display face: Dreamer TM (self-hosted) ---- */
+/* ---- Display face: Dreamer TM (self-hosted) ----
+   Drop DreamerTM.woff2 (and .woff) next to this file.
+   Falls back to a pixel face, then mono, if the file isn't found. */
 @font-face{
   font-family:"Dreamer TM";
   src:url("DreamerTM.woff2") format("woff2"),
@@ -14,14 +16,14 @@
   font-weight:normal;font-style:normal;font-display:swap;
 }
 :root{
-  --iris:#101719;
+  --iris:#101719;        /* Ink Black — general background / stage */
   --iris-soft:#1a2226;
-  --grape:#6767A2;
+  --grape:#6767A2;       /* Dusty Grape — hero CALM background */
   --grape-lit:#8f8fd0;
-  --amaranth:#8C183E;
+  --amaranth:#8C183E;    /* Dark Amaranth — hero AROUSAL background */
   --amaranth-lit:#c9436a;
-  --lav:#B7A7D8;
-  --bone:#EFE7EF;
+  --lav:#B7A7D8;         /* Moonlit Lavender — accent / highlights */
+  --bone:#EFE7EF;        /* off-white — text + brainwave lines */
   --bone-dim:#9a92a0;
   --hair:rgba(183,167,216,0.18);
 }
@@ -29,38 +31,28 @@
 html{scroll-behavior:smooth}
 body{background:var(--iris);color:var(--bone);font-family:"Inter",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
 
-/* ===================================================================
-   SCROLL-DRIVEN SEQUENCE ARCHITECTURE
-   -------------------------------------------------------------------
-   .stage      = tall scroll track (400vh). Gives us runway to scroll.
-   .hero       = sticky, pinned for the whole duration of .stage.
-   The three phases (music / cog / data) map to scroll progress
-   through .stage; phase 4 is simply .stage ending and the page
-   unpinning so the bio + work below flow up naturally.
-   =================================================================== */
-.stage{position:relative;z-index:2;height:400vh}         /* runway: 4 screens of scroll */
+/* ---- PIN ZONE: tall scroll track whose inner stage sticks for the mode timeline ---- */
+.pin-zone{position:relative;z-index:2;height:400vh}
+.pin-stage{position:sticky;top:0;height:100vh;overflow:hidden}
 
-/* ---- fixed wave layer: pinned behind the hero, fades out as we exit the stage ---- */
-#wave{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .5s ease}
+/* ---- wave layer: absolute inside the sticky stage, fades out at the end of the timeline ---- */
+#wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .3s linear}
 .grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ---- nav ---- */
 nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
   padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
-  transition:background-color .3s,backdrop-filter .3s}
-nav.scrolled{background:transparent;backdrop-filter:none;border-bottom:none}
+  background:transparent;border:none;backdrop-filter:none}
 nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
 
-/* ---- hero: now STICKY + pinned for the length of .stage ---- */
-.hero{position:sticky;top:0;height:100vh;overflow:hidden;z-index:2;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;
-  cursor:crosshair}
+/* ---- hero (inside the sticky stage) ---- */
+.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
 .eyebrow{font-family:"Inter",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
 
 /* ---- left control panel ---- */
-.panel{position:fixed;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
+.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
 .mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
 .mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .2s,border-color .2s,box-shadow .2s;image-rendering:pixelated}
 .mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
@@ -71,30 +63,27 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .mode.m-cog{--acc:#8f8fd0}
 .mode.m-data{--acc:#9fe0d8}
 .mode .soon-tag{font-size:0.55rem;letter-spacing:0.1em;color:var(--bone-dim);margin-left:0.3rem}
-@media(max-width:860px){.panel{left:5vw}}
+@media(max-width:860px){
+  .panel{position:absolute;left:0;right:0;top:auto;bottom:5.5rem;transform:none;flex-direction:row;justify-content:center;gap:1.2rem;flex-wrap:wrap;padding:0 6vw}
+}
+.name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
 
-.name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.1rem}
-
-/* ---- biometric readout: RELOCATED to sit directly beneath the name ---- */
-.readout{z-index:3;font-family:"DM Mono",monospace;font-size:clamp(0.62rem,1.1vw,0.74rem);letter-spacing:0.06em;color:var(--bone-dim);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* ---- readout: now flows under the name, centered ---- */
+.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
+.readout.mute{opacity:0;visibility:hidden}
+.readout .hpa{transition:color .3s ease,text-shadow .3s ease;font-weight:500}
 
-.cue{position:fixed;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
+.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
+.hero-fade{opacity:0 !important}
 
 .scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
 
-/* ---- phase label: tells the viewer where they are in the sequence ---- */
-.phaselabel{position:fixed;bottom:1.8rem;left:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);pointer-events:none;transition:opacity .4s}
-.phaselabel b{color:var(--bone)}
-
-/* ---- BIO block: MOVED below the fold — revealed only after the stage unpins ---- */
-.bio{position:relative;z-index:5;background:var(--iris);text-align:center;
-  min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6rem 8vw}
-.statement{font-family:"Inter",sans-serif;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:400;line-height:1.4;max-width:24ch;color:var(--bone);margin:0 auto}
+/* ---- statement (relocated below the fold) ---- */
+.statement-block{position:relative;z-index:5;background:var(--iris);padding:9rem 8vw 6rem;display:flex;justify-content:center;text-align:center}
+.statement{font-family:"Inter",sans-serif;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:400;line-height:1.35;max-width:30ch;color:var(--bone)}
 .statement em,.hl{font-style:normal;color:var(--lav)}
-.statement .sub{display:block;margin:1.4rem auto 0;font-family:"Inter",sans-serif;font-size:clamp(0.9rem,1.4vw,1.1rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
-
-.hero-fade{opacity:0 !important}
+.statement .sub{display:block;margin:1.4rem auto 0;font-family:"Inter",sans-serif;font-size:clamp(0.86rem,1.25vw,1.02rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
 
 /* ---- work section ---- */
 .work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:2rem 7vw 7rem}
@@ -151,46 +140,43 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
 .tag.t-ind{color:var(--bone-dim)}
 
-@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.phaselabel{left:6vw}.cue{display:none}}
+@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.statement-block{padding:6rem 7vw 4rem}}
 @media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 </head>
 <body>
 
-<canvas id="wave"></canvas>
 <div class="grain"></div>
 
 <nav id="nav">
   <a href="#work">Work</a><a href="#about">About</a><a href="mailto:chaeyeonkimwork@gmail.com">Contact</a>
 </nav>
 
-<!-- ============ PINNED SCROLL STAGE (400vh runway) ============ -->
-<div class="stage" id="stage">
+<!-- ===== PIN ZONE: 400vh scroll track, sticky 100vh stage ===== -->
+<div class="pin-zone" id="pinzone">
+  <div class="pin-stage" id="pinstage">
+    <canvas id="wave"></canvas>
 
-  <!-- control panel: stays exactly as before, just fixed on the left -->
-  <div class="panel" id="panel">
-    <button class="mode m-music" data-mode="music" aria-label="Music mode"><span class="ind"></span>Music</button>
-    <button class="mode m-cog" data-mode="cog" aria-label="Cognitive science mode"><span class="ind"></span>Cognitive Science</button>
-    <button class="mode m-data" data-mode="data" aria-label="Data mode"><span class="ind"></span>Data</button>
+    <header class="hero" id="top">
+      <div class="panel" id="panel">
+        <button class="mode m-music" data-mode="music" aria-label="Music mode"><span class="ind"></span>Music</button>
+        <button class="mode m-cog active" data-mode="cog" aria-label="Cognitive science mode"><span class="ind"></span>Cognitive Science</button>
+        <button class="mode m-data" data-mode="data" aria-label="Data mode"><span class="ind"></span>Data</button>
+      </div>
+
+      <h1 class="name">Chaeyeon&nbsp;Kim</h1>
+
+      <div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
+
+      <div class="cue" id="cue" aria-hidden="true">move to conduct &rarr;</div>
+      <div class="scrolldown" id="scrolldown">scroll &darr;</div>
+    </header>
   </div>
-
-  <header class="hero" id="top">
-    <h1 class="name">Chaeyeon&nbsp;Kim</h1>
-    <!-- biometric readout relocated: now sits directly under the name -->
-    <div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
-    <div class="scrolldown" id="scrolldown">scroll &darr;</div>
-  </header>
-
 </div>
-<!-- ============ END PINNED STAGE ============ -->
 
-<!-- phase HUD + conduct cue live outside the hero so they persist while pinned -->
-<div class="phaselabel" id="phaselabel" aria-hidden="true">phase <b id="phasenum">01</b> &middot; <span id="phasename">music</span></div>
-<div class="cue" id="cue" aria-hidden="true">scroll to conduct &rarr;</div>
-
-<!-- ============ BIO: moved below the fold, revealed after unpin ============ -->
-<section class="bio" id="about">
+<!-- ===== relocated statement, below the fold ===== -->
+<section class="statement-block" id="about">
   <p class="statement">I make <em>invisible internal states</em> perceptible.
     <span class="sub">Translating stress, insomnia, and attention into sound, image, and interactive systems &mdash; drawn to the problems that sit between disciplines.</span>
   </p>
@@ -276,30 +262,21 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 (function(){
 const c=document.getElementById('wave'),x=c.getContext('2d');
 const rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const eI=document.getElementById('idx'),eS=document.getElementById('state'),eB=document.getElementById('band'),eH=document.getElementById('hpa');
 const cue=document.getElementById('cue'),readout=document.getElementById('readout'),scrolldown=document.getElementById('scrolldown'),nav=document.getElementById('nav'),wave=document.getElementById('wave');
-const stage=document.getElementById('stage'),phaselabel=document.getElementById('phaselabel'),phasenum=document.getElementById('phasenum'),phasename=document.getElementById('phasename');
+const pinzone=document.getElementById('pinzone');
 let W,H,dpr;
 function rs(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}
-rs();addEventListener('resize',rs);
+rs();addEventListener('resize',()=>{rs();onScroll()});
 
-/* ---- arousal + mode state ----
-   MODE      = which visual language the wave is currently speaking.
-   ar / tar  = smoothed / target "arousal" (0..1) that drives amp, color, jitter.
-   In this scroll-driven build, scroll progress sets BOTH the mode and a
-   target arousal per phase; we still ease toward the target every frame. */
-let ar=0.08,tar=0.08,lm=0;
-let MODE='music';
+let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
+const ORDER=['music','cog','data'];
+let MODE='music';          /* active visual mode */
+let SCROLL_MODE='music';   /* mode dictated by scroll position */
+let HOVER=null;            /* transient hover preview */
 
-/* ---- morph weights: smoothly blend between wave "languages" ----
-   Each phase drives one weight toward 1 and the others toward 0.
-   The render loop reads these so transitions between sound / brainwave /
-   data-grid are continuous instead of hard switches. */
-const W_TARGET={music:1,cog:0,data:0};   /* set by scroll phase */
-const W_NOW={music:1,cog:0,data:0};      /* eased every frame */
-
-/* ---- noir-jazz generative audio engine (Tone.js) — unchanged ---- */
+/* ---- noir-jazz generative audio engine (Tone.js) ---- */
 const AUDIO={on:false,ready:false,meter:null,level:0,lastNote:0};
+let MUTED=false;   /* set true only if the user explicitly clicks MUSIC off */
 async function audioInit(){
   if(AUDIO.ready) return;
   await Tone.start();
@@ -321,11 +298,6 @@ async function audioInit(){
     const bn=AUDIO.bassNotes[Math.floor(Math.random()*AUDIO.bassNotes.length)];
     AUDIO.bass.triggerAttackRelease(bn,'2n',t);
     if(Math.random()<0.6)AUDIO.hat.triggerAttackRelease('16n',t+0.25);
-    /* ambient auto-melody so Phase 1 has life even without cursor input */
-    if(Math.random()<0.5){
-      const note=AUDIO.scale[Math.floor(Math.random()*AUDIO.scale.length)];
-      try{AUDIO.lead.triggerAttackRelease(note,'8n',t+0.5);}catch(e){}
-    }
   },'2n');
   Tone.Transport.bpm.value=72;
   AUDIO.ready=true;
@@ -339,183 +311,200 @@ function audioNoteFromCursor(cx,cy){
   AUDIO.lastNote=now;
   const hf=1-Math.min(Math.max(cy/innerHeight,0),1);
   const idx=Math.min(AUDIO.scale.length-1,Math.floor(hf*AUDIO.scale.length));
-  const note=AUDIO.scale[idx];
-  try{AUDIO.lead.triggerAttackRelease(note,'8n');}catch(e){}
+  try{AUDIO.lead.triggerAttackRelease(AUDIO.scale[idx],'8n');}catch(e){}
 }
 
-/* control panel now REFLECTS scroll state; clicking still lets you jump/scrub.
-   Clicking a mode scrolls the page to that phase's midpoint so the scroll
-   position and the UI never disagree. */
+/* ---- auto-arm: browsers require a gesture, so latch onto the FIRST one ---- */
+let ARMED=false;
+async function armAudio(){
+  if(ARMED)return; ARMED=true;
+  try{
+    await audioInit();
+    if(SCROLL_MODE==='music'||MODE==='music') audioStart();
+  }catch(e){/* user hasn't gestured yet / audio unavailable */}
+}
+['pointermove','pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
+  addEventListener(ev,armAudio,{once:true,passive:true});
+});
+
+/* ---- control panel ---- */
 const panel=document.getElementById('panel');
-const modeButtons={};
-if(panel){
-  panel.querySelectorAll('.mode').forEach(btn=>{
-    modeButtons[btn.dataset.mode]=btn;
-    btn.addEventListener('click',()=>{
-      const targets={music:0.16,cog:0.5,data:0.83};      /* fraction into the stage */
-      const st=stage.getBoundingClientRect().top+scrollY;  /* stage top in doc coords */
-      const span=stage.offsetHeight-H;                     /* scrollable runway */
-      window.scrollTo({top:st+span*targets[btn.dataset.mode],behavior:'smooth'});
-    });
+const modeBtns=panel?panel.querySelectorAll('.mode'):[];
+function paintButtons(m){modeBtns.forEach(b=>b.classList.toggle('active',b.dataset.mode===m));}
+
+/* map a mode to the scroll depth at the center of its zone */
+function scrollTargetFor(m){
+  const top=pinzone.offsetTop, track=pinzone.offsetHeight-innerHeight;
+  const centers={music:0.16,cog:0.50,data:0.84};
+  return top+track*centers[m];
+}
+
+modeBtns.forEach(btn=>{
+  const m=btn.dataset.mode;
+  btn.addEventListener('pointerenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
+  btn.addEventListener('pointerleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
+  btn.addEventListener('focus',()=>{HOVER=m;MODE=m;paintButtons(m);});
+  btn.addEventListener('blur',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
+  btn.addEventListener('click',async()=>{
+    /* click toggles audio on/off; it's already armed by the first gesture */
+    if(m==='music'){
+      if(!AUDIO.on){ await audioInit(); audioStart(); MUTED=false; }
+      else { audioStop(); MUTED=true; }
+    } else if(AUDIO.on){ audioStop(); }
+    /* scroll to the matching depth in the timeline; scroll handler sets MODE */
+    HOVER=null;
+    MODE=m; SCROLL_MODE=m; paintButtons(m);
+    window.scrollTo({top:scrollTargetFor(m),behavior:'smooth'});
   });
-}
-function setActiveButton(m){
-  for(const k in modeButtons)modeButtons[k].classList.toggle('active',k===m);
-}
+});
 
 const IRIS=[16,23,25],GRAPE=[103,103,162],AMAR=[140,24,62],BONE=[239,231,239];
 function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
-function mix(a,b,t){return a+(b-a)*t}
 
-/* live cursor position — still lets Phase 1 be "played" by moving the mouse */
 let curX=-1,curY=-1;
+/* rolling window of sampled values per-channel, for a real variance figure */
+const SAMPLES=[];const SAMPLE_MAX=60;
 addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
 addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
 
-/* ===================================================================
-   SCROLL → PHASE MAPPING
-   -------------------------------------------------------------------
-   progress p (0..1) = how far we are through the stage's runway.
-     p < 0.33  -> Phase 1  MUSIC   (sound waves,  low arousal)
-     p < 0.66  -> Phase 2  COG     (brainwaves,   arousal ramps)
-     p < 1.0   -> Phase 3  DATA    (quantized grid, high arousal)
-     p >=1     -> Phase 4  unpinned (bio + work flow up)
-   We convert p into (a) morph weights, (b) target arousal, (c) active
-   mode/label, and (d) audio on/off. Everything else eases each frame.
-   =================================================================== */
-let currentPhase='music';
-function updateFromScroll(){
-  const st=stage.getBoundingClientRect().top;         /* stage top vs viewport */
-  const span=stage.offsetHeight-H;                     /* total scroll runway */
-  const p=Math.min(Math.max(-st/span,0),1);            /* 0..1 progress */
-
-  let phase,pnum,tArousal;
-  if(p<0.33){ phase='music'; pnum='01'; tArousal=mix(0.06,0.14,p/0.33); }
-  else if(p<0.66){ phase='cog'; pnum='02'; tArousal=mix(0.30,0.62,(p-0.33)/0.33); }
-  else { phase='data'; pnum='03'; tArousal=mix(0.72,0.95,(p-0.66)/0.34); }
-
-  /* set morph targets (render loop eases W_NOW toward these) */
-  W_TARGET.music=phase==='music'?1:0;
-  W_TARGET.cog  =phase==='cog'  ?1:0;
-  W_TARGET.data =phase==='data' ?1:0;
-
-  tar=tArousal;
-  MODE=phase;
-
-  /* update UI + audio only when the phase actually changes */
-  if(phase!==currentPhase){
-    currentPhase=phase;
-    setActiveButton(phase);
-    phasenum.textContent=pnum;
-    phasename.textContent=phase==='music'?'music':phase==='cog'?'cognitive science':'data';
-    /* audio follows the phase: on in MUSIC, off elsewhere */
-    if(phase==='music'){ (async()=>{ await audioInit(); audioStart(); })(); }
-    else if(AUDIO.on){ audioStop(); }
-  }
-
-  /* fade the whole wave + HUD out as we approach the unpin (Phase 4) */
-  const exitFade=Math.max(0,(p-0.9)/0.1);              /* 0 until 90%, ->1 at end */
-  wave.style.opacity=(1-exitFade*0.95).toFixed(3);
-  readout.style.opacity=(1-exitFade).toFixed(3);        /* readout rides with the name */
-  phaselabel.classList.toggle('hero-fade',exitFade>0.5);
-  cue.classList.toggle('hero-fade',p>0.05||exitFade>0);
-  scrolldown.classList.toggle('hero-fade',p>0.02);
-  nav.classList.toggle('scrolled',st<-H*0.7);
+/* conduct while the stage is pinned */
+let pinned=true;
+if(!rm){
+ addEventListener('pointermove',e=>{
+   if(!pinned||e.clientY>H)return;
+   const n=performance.now();
+   if(lx!==null){const dx=e.clientX-lx,dy=e.clientY-ly,d=Math.hypot(dx,dy),dt=Math.max(n-lm,1),sp=d/dt;const hf=1-e.clientY/H,sf=Math.min(sp/2.2,1);tar=Math.min(0.04+hf*0.55+sf*0.55,1)}
+   lx=e.clientX;ly=e.clientY;lm=n;
+   if(!done){done=true;cue.style.opacity='0';}
+ });
+ addEventListener('pointerleave',()=>tar=0.08);
 }
-addEventListener('scroll',updateFromScroll,{passive:true});
 
-/* ---- render loop: reads MODE, arousal, morph weights → draws the wave ---- */
+/* ---- scroll timeline: drives MODE through three zones, then unpins ---- */
+function onScroll(){
+ const top=pinzone.offsetTop;
+ const track=Math.max(pinzone.offsetHeight-innerHeight,1);
+ const p=Math.min(Math.max((scrollY-top)/track,0),1);   /* 0..1 through the pin zone */
+ pinned=(scrollY-top)<track;
+
+ /* three zones */
+ let m;
+ if(p<0.33) m='music';
+ else if(p<0.66) m='cog';
+ else m='data';
+ if(m!==SCROLL_MODE){
+   SCROLL_MODE=m;
+   if(HOVER===null){ MODE=m; paintButtons(m); }
+ }
+ /* audio follows the timeline once armed by a real gesture; a click can mute it */
+ if(m==='music'){
+   if(ARMED&&AUDIO.ready&&!AUDIO.on&&!MUTED) audioStart();
+ } else if(AUDIO.on){ audioStop(); }
+
+ /* fade the canvas out in the last stretch of the timeline */
+ const fade=Math.min(Math.max((p-0.86)/0.14,0),1);
+ wave.style.opacity=(1-fade*0.95).toFixed(3);
+ readout.classList.toggle('hero-fade',fade>0.5);
+ cue.classList.toggle('hero-fade',p>0.05);
+ scrolldown.classList.toggle('hero-fade',p>0.02);
+
+ if(!pinned)tar=0.08;
+ document.body.style.backgroundColor=(p>=1||scrollY>top+track)
+   ? `rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})` : document.body.style.backgroundColor;
+}
+addEventListener('scroll',onScroll,{passive:true});
+
 let ph=0;
+let FPS=60,lastF=performance.now();
 function fr(){
-  ar+=(tar-ar)*0.06;
-  /* ease morph weights toward their scroll-driven targets */
-  for(const k in W_TARGET)W_NOW[k]+=(W_TARGET[k]-W_NOW[k])*0.08;
-
-  let amp=26+ar*14, fq=0.004+ar*0.012, sp=0.015+ar*0.05, jt=ar*ar*22; ph+=sp;
-
-  /* MUSIC mode: waves pulse with live audio amplitude, weighted by morph */
-  if(AUDIO.on&&AUDIO.meter){
-    let db=AUDIO.meter.getValue(); if(typeof db!=='number')db=-60;
-    const lin=Math.max(0,Math.min(1,(db+60)/60));
-    AUDIO.level+=(lin-AUDIO.level)*0.25;
-    amp+=W_NOW.music*(AUDIO.level*80);   /* only while music weight is high */
-    sp+=W_NOW.music*(AUDIO.level*0.05);
-    ph+=W_NOW.music*AUDIO.level*0.03;
-  }
-  const la=0.34+ar*0.30;
-
-  /* hero background: Dusty Grape (calm) -> Dark Amaranth (arousal), darkened */
-  const heroBg=lerp(GRAPE,AMAR,ar).map(v=>Math.round(v*0.82));
-  const st=stage.getBoundingClientRect().top;
-  const span=stage.offsetHeight-H;
-  const p=Math.min(Math.max(-st/span,0),1);
-  if(p<0.98)document.body.style.backgroundColor=`rgb(${heroBg[0]},${heroBg[1]},${heroBg[2]})`;
-  else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
-
-  x.clearRect(0,0,W,H);
-  const ch=7;const chY=[];
-  for(let k=0;k<ch;k++){
-    const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);chY.push(yb);
-    x.beginPath();
-    let prevYY=null;
-    for(let px=0;px<=W;px+=6){
-      /* base continuous waveform (sound / brainwave share this) */
-      let nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);
-      let yy=yb+nz*ca;
-
-      /* DATA morph: quantize toward a rigid stepped grid.
-         We blend the smooth Y with its quantized version by W_NOW.data,
-         so the "snap" eases in instead of popping. */
-      if(W_NOW.data>0.001){
-        const band=22;
-        const q=Math.round(yy/band)*band;
-        yy=mix(yy,q,W_NOW.data);
-        if(W_NOW.data>0.5&&prevYY!==null)x.lineTo(px,prevYY); /* horizontal hold once mostly-data */
-      }
+ const nowF=performance.now();
+ FPS+=((1000/Math.max(nowF-lastF,1))-FPS)*0.08; lastF=nowF;
+ if(performance.now()-lm>600&&!rm)tar+=(0.08-tar)*0.02;
+ ar+=(tar-ar)*0.06;
+ let amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
+ if(MODE==='music'&&AUDIO.on&&AUDIO.meter){
+   let db=AUDIO.meter.getValue(); if(typeof db!=='number')db=-60;
+   const lin=Math.max(0,Math.min(1,(db+60)/60));
+   AUDIO.level+=(lin-AUDIO.level)*0.25;
+   amp=26+AUDIO.level*90;
+   sp=0.015+AUDIO.level*0.06;
+   ph+=AUDIO.level*0.04;
+ } else if(MODE==='music'){
+   /* visual-only sound-wave character when audio hasn't been enabled */
+   amp=30+ar*40; fq=0.010+ar*0.014; ph+=0.012;
+ }
+ const la=0.34+ar*0.30;
+ const heroBg=lerp(GRAPE,AMAR,ar).map(v=>Math.round(v*0.82));
+ if(pinned)document.body.style.backgroundColor=`rgb(${heroBg[0]},${heroBg[1]},${heroBg[2]})`;
+ else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
+ x.clearRect(0,0,W,H);
+ const ch=7;const chY=[];
+ for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);chY.push(yb);
+  x.beginPath();
+  let prevYY=null;
+  for(let px=0;px<=W;px+=6){
+    let nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);
+    let yy=yb+nz*ca;
+    if(MODE==='data'){
+      const band=22;
+      yy=Math.round(yy/band)*band;
+      if(prevYY!==null){x.lineTo(px,prevYY);}
       px===0?x.moveTo(px,yy):x.lineTo(px,yy);
       prevYY=yy;
-    }
-    x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()
-  }
-
-  /* ---- per-mode readout beneath the name ---- */
-  const i=ar;
-  if(MODE==='data'){
-    let near=0,best=1e9;
-    if(curY>=0){for(let k=0;k<chY.length;k++){const d=Math.abs(curY-chY[k]);if(d<best){best=d;near=k;}}}
-    const chId=String(near+1).padStart(2,'0');
-    const of=near*1.7;
-    const px=curX>=0?curX:W*0.5;
-    const rawNz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of);
-    const val=(rawNz+1.5)/3;
-    const variance=(0.11+(near%3)*0.06+ar*0.18);
-    const features=['amplitude','spectral_centroid','zero_crossing','rms_energy','pause_density','session_len','delta_t'];
-    const feat=features[near%features.length];
-    readout.innerHTML='<b>CH_'+chId+'</b> &middot; feature: <span style="color:#9fe0d8">'+feat+
-      '</span> &middot; value: <b>'+val.toFixed(3)+'</b> &middot; &sigma;&sup2;: '+variance.toFixed(3)+
-      ' &middot; quantized[8]';
-  } else if(MODE==='music'){
-    if(AUDIO.on){
-      const lvl=Math.round(AUDIO.level*100);
-      readout.innerHTML='AUDIO &middot; noir-jazz &middot; Dm9 &middot; level: <b>'+String(lvl).padStart(2,'0')+
-        '</b> &middot; <span style="color:#c9436a">move to play &#9834;</span>';
     } else {
-      readout.innerHTML='AUDIO &middot; noir-jazz &middot; Dm9 &middot; <span style="color:#c9436a">warming up &#9834;</span>';
+      px===0?x.moveTo(px,yy):x.lineTo(px,yy);
     }
-  } else {
-    let band,hpa,state,col;
-    if(i<0.33){band='alpha';hpa='inactive';state='baseline';col='#8f8fd0';}
-    else if(i<0.66){band='alpha\u2192beta';hpa='activating';state='arousal rising';col='#b7a7d8';}
-    else{band='beta';hpa='active';state='stress response';col='#c9436a';}
-    readout.innerHTML='EEG &middot; '+band+' &middot; HPA axis: '+hpa+' &middot; stress index: <b>'+i.toFixed(2)+
-      '</b> &middot; <span style="color:'+col+'">'+state+'</span>';
   }
-  requestAnimationFrame(fr)
-}
+  x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
+ const i=ar;
+ if(MODE==='music'){
+   /* music mode: no readout at all — the waves are the instrument */
+   readout.classList.add('mute');
+   readout.innerHTML='';
+ } else if(MODE==='data'){
+   readout.classList.remove('mute');
+   /* every field below is derived from live render state — nothing decorative */
+   const px=curX>=0?curX:W*0.5;
+   const rawNz=Math.sin(px*fq+ph)+0.5*Math.sin(px*fq*2.3+ph*1.4);
+   const val=(rawNz+1.5)/3;
+   /* rolling variance over the sample window */
+   SAMPLES.push(val); if(SAMPLES.length>SAMPLE_MAX)SAMPLES.shift();
+   const mean=SAMPLES.reduce((a,b)=>a+b,0)/SAMPLES.length;
+   const variance=SAMPLES.reduce((a,b)=>a+(b-mean)*(b-mean),0)/SAMPLES.length;
+   /* frequency: spatial freq -> cycles across the viewport */
+   const cycles=(fq*W)/(2*Math.PI);
+   /* SNR: sine power vs. injected jitter power, in dB */
+   const sigP=1+0.25;                 /* var of sin + 0.5*sin components */
+   const noiP=Math.max((jt/30)*(jt/30)*0.5,1e-6);
+   const snr=10*Math.log10(sigP/noiP);
+   /* Δ: how far the smoothed arousal still lags the target */
+   const lag=Math.abs(tar-ar);
+   readout.innerHTML='f: <b>'+cycles.toFixed(2)+'</b> cyc/vw &middot; A: <b>'+amp.toFixed(1)+
+     '</b> px &middot; &sigma;&sup2;: <b>'+variance.toFixed(3)+'</b> &middot; SNR: <b style="color:'+
+     (snr<12?'#e8425f':snr<24?'#e0b45c':'#9fe0d8')+'">'+snr.toFixed(1)+
+     '</b> dB &middot; &Delta;: '+lag.toFixed(3)+' &middot; '+FPS.toFixed(0)+' fps';
+ } else {
+   readout.classList.remove('mute');
+   if(SAMPLES.length)SAMPLES.length=0;
+   let band,hpa,state,col,hcol,hglow;
+   if(i<0.33){
+     band='alpha';hpa='inactive';state='baseline';col='#8f8fd0';
+     hcol='#5fb89b';hglow='rgba(95,184,155,0.55)';          /* green — at rest */
+   } else if(i<0.66){
+     band='alpha\u2192beta';hpa='activating';state='arousal rising';col='#b7a7d8';
+     hcol='#e0b45c';hglow='rgba(224,180,92,0.55)';          /* amber — ramping */
+   } else {
+     band='beta';hpa='active';state='stress response';col='#c9436a';
+     hcol='#e8425f';hglow='rgba(232,66,95,0.7)';            /* red — cortisol cascade */
+   }
+   readout.innerHTML='EEG &middot; '+band+' &middot; HPA axis: <span class="hpa" style="color:'+hcol+
+     ';text-shadow:0 0 8px '+hglow+'">'+hpa+'</span> &middot; stress index: <b>'+i.toFixed(2)+
+     '</b> &middot; <span style="color:'+col+'">'+state+'</span>';
+ }
+ requestAnimationFrame(fr)}
 requestAnimationFrame(fr);
-
-setActiveButton('music');
-updateFromScroll();
+paintButtons('music');
+onScroll();
 })();
 </script>
 </body></html>
