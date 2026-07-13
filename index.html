@@ -3,7 +3,7 @@
 <title>Chaeyeon Kim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Helvetica:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ---- Display face: Dreamer TM (self-hosted) ----
    Drop DreamerTM.woff2 (and .woff) next to this file.
@@ -29,7 +29,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--iris);color:var(--bone);font-family:"Helvetica",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
+body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
 
 /* ---- PIN ZONE: tall scroll track whose inner stage sticks for the mode timeline ---- */
 .pin-zone{position:relative;z-index:2;height:400vh}
@@ -37,23 +37,23 @@ body{background:var(--iris);color:var(--bone);font-family:"Helvetica",-apple-sys
 
 /* ---- wave layer: absolute inside the sticky stage, fades out at the end of the timeline ---- */
 #wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .3s linear}
-.grain{position:fixed;inset:0;z-index:1;opacity:0.05;poHelvetica-events:none;
+.grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ---- nav ---- */
 nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
-  padding:1.6rem 8vw;font-family:"Helvetica",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
+  padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
   background:transparent;border:none;backdrop-filter:none}
 nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
 
 /* ---- hero (inside the sticky stage) ---- */
-.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;poHelvetica-events:none;cursor:crosshair}
-.eyebrow{font-family:"Helvetica",sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
+.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
+.eyebrow{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
 
 /* ---- left control panel ---- */
-.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;poHelvetica-events:auto}
-.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:poHelvetica;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
+.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
+.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
 .mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .2s,border-color .2s,box-shadow .2s;image-rendering:pixelated}
 .mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
 .mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
@@ -69,21 +69,130 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
 
 /* ---- readout: now flows under the name, centered ---- */
-.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);poHelvetica-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
+.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
 .readout.mute{opacity:0;visibility:hidden}
 .readout .hpa{transition:color .3s ease,text-shadow .3s ease;font-weight:500}
 
-.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;poHelvetica-events:none;transition:opacity .6s}
+.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
 .hero-fade{opacity:0 !important}
 
-.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;poHelvetica-events:none;transition:opacity .4s}
+.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
 
-/* ---- statement (relocated below the fold) ---- */
-.statement-block{position:relative;z-index:5;background:var(--iris);padding:9rem 8vw 6rem;display:flex;justify-content:center;text-align:center}
-.statement{font-family:"Helvetica",sans-serif;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:400;line-height:1.35;max-width:30ch;color:var(--bone)}
-.statement em,.hl{font-style:normal;color:var(--lav)}
-.statement .sub{display:block;margin:1.4rem auto 0;font-family:"Helvetica",sans-serif;font-size:clamp(0.86rem,1.25vw,1.02rem);color:var(--bone-dim);max-width:52ch;line-height:1.6}
+/* ---- STATEMENT ZONE: scroll-driven 3D zoom grid ---- */
+.hl{font-style:normal;color:var(--lav)}
+.statement-zone{position:relative;z-index:5;background:var(--iris);height:340vh}
+
+@keyframes zoom-in{
+  0%{transform:translateZ(-1000px);opacity:0;filter:blur(4px)}
+  50%{transform:translateZ(0px);opacity:0.65;filter:blur(0px)}
+  100%{transform:translateZ(1000px);opacity:0;filter:blur(4px)}
+}
+@keyframes zoom-in-center{
+  0%{transform:translateZ(-1400px);opacity:0;filter:blur(12px)}
+  22%{opacity:1;filter:blur(0px)}
+  30%{transform:translateZ(0px);opacity:1;filter:blur(0px)}
+  60%{transform:translateZ(0px);opacity:1;filter:blur(0px)}
+  78%{opacity:1;filter:blur(0px)}
+  100%{transform:translateZ(900px);opacity:0;filter:blur(10px)}
+}
+
+.stuck-grid{
+  block-size:100svh;perspective:1000px;transform-style:preserve-3d;
+  display:grid;grid:repeat(4,25dvh) / repeat(4,25dvw);place-items:center;
+  position:sticky;top:0;overflow:clip;
+}
+.stuck-grid > .grid-item{
+  transform-style:preserve-3d;
+  font-family:"DM Mono",monospace;
+  font-size:clamp(0.9rem,2.6vmin,1.6rem);font-weight:400;
+  text-wrap:nowrap;color:var(--lav);opacity:0.45;
+}
+.stuck-grid > .statement{
+  grid-row:2 / span 2;grid-column:2 / span 2;
+  place-self:center;max-inline-size:22ch;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:clamp(1.5rem,4vmin,3rem);font-weight:400;line-height:1.25;
+  text-align:center;text-wrap:balance;white-space:normal;
+  color:var(--bone);opacity:1;z-index:2;
+}
+@supports (animation-timeline:view()){
+ @media (prefers-reduced-motion:no-preference){
+  .stuck-grid > .grid-item{
+    animation:zoom-in linear both;animation-timeline:view(block);
+    will-change:transform,opacity,filter;
+  }
+  .stuck-grid > .statement{
+    animation:zoom-in-center linear both;animation-timeline:view(block);
+    will-change:transform,opacity,filter;
+  }
+  .stuck-grid > .statement.s1{animation-range:contain 0%  contain 35%}
+  .stuck-grid > .statement.s2{animation-range:contain 35% contain 70%}
+  .stuck-grid > .statement.s3{animation-range:contain 70% contain 100%}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(1){animation-range:contain 40% contain 50%;grid-area:1/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(2){animation-range:contain 20% contain 30%;grid-area:1/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(3){animation-range:contain 52% contain 62%;grid-area:1/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(4){animation-range:contain 50% contain 60%;grid-area:1/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(5){animation-range:contain 45% contain 55%;grid-area:2/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(6){animation-range:contain 10% contain 20%;grid-area:2/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(7){animation-range:contain 90% contain 100%;grid-area:2/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(8){animation-range:contain 30% contain 40%;grid-area:2/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(9){animation-range:contain 80% contain 90%;grid-area:3/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(10){animation-range:contain 70% contain 80%;grid-area:3/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(11){animation-range:contain 0% contain 50%;grid-area:3/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(12){animation-range:contain 52% contain 62%;grid-area:3/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(13){animation-range:contain 15% contain 25%;grid-area:4/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(14){animation-range:contain 7% contain 17%;grid-area:4/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(15){animation-range:contain 75% contain 85%;grid-area:4/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(16){animation-range:contain 3% contain 13%;grid-area:4/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(17){animation-range:contain 87% contain 97%;grid-area:2/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(18){animation-range:contain 42% contain 52%;grid-area:2/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(19){animation-range:contain 57% contain 67%;grid-area:2/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(20){animation-range:contain 37% contain 47%;grid-area:2/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(21){animation-range:contain 12% contain 22%;grid-area:3/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(22){animation-range:contain 8% contain 18%;grid-area:3/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(23){animation-range:contain 84% contain 94%;grid-area:3/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(24){animation-range:contain 33% contain 43%;grid-area:3/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(25){animation-range:contain 48% contain 58%;grid-area:1/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(26){animation-range:contain 13% contain 23%;grid-area:1/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(27){animation-range:contain 78% contain 88%;grid-area:1/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(28){animation-range:contain 62% contain 72%;grid-area:1/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(29){animation-range:contain 31% contain 41%;grid-area:4/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(30){animation-range:contain 8% contain 18%;grid-area:4/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(31){animation-range:contain 4% contain 14%;grid-area:4/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(32){animation-range:contain 74% contain 84%;grid-area:4/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(33){animation-range:contain 61% contain 71%;grid-area:2/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(34){animation-range:contain 26% contain 36%;grid-area:2/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(35){animation-range:contain 63% contain 73%;grid-area:2/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(36){animation-range:contain 11% contain 21%;grid-area:2/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(37){animation-range:contain 89% contain 99%;grid-area:3/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(38){animation-range:contain 33% contain 43%;grid-area:3/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(39){animation-range:contain 88% contain 98%;grid-area:3/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(40){animation-range:contain 22% contain 32%;grid-area:3/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(41){animation-range:contain 16% contain 26%;grid-area:1/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(42){animation-range:contain 26% contain 36%;grid-area:1/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(43){animation-range:contain 66% contain 76%;grid-area:1/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(44){animation-range:contain 3% contain 13%;grid-area:1/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(45){animation-range:contain 44% contain 54%;grid-area:4/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(46){animation-range:contain 11% contain 21%;grid-area:4/2}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(47){animation-range:contain 23% contain 33%;grid-area:4/3}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(48){animation-range:contain 39% contain 49%;grid-area:4/4}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(49){animation-range:contain 59% contain 69%;grid-area:3/1}
+  .stuck-grid > .grid-item:not(.statement):nth-of-type(50){animation-range:contain 6% contain 16%;grid-area:3/2}
+ }
+}
+/* fallback: Safari/Firefox or reduced-motion -> statements simply stack */
+@supports not (animation-timeline:view()){
+  .statement-zone{height:auto;padding:8rem 8vw}
+  .stuck-grid{display:flex;flex-direction:column;gap:4rem;position:static;block-size:auto;perspective:none;align-items:center}
+  .stuck-grid > .grid-item:not(.statement){display:none}
+  .stuck-grid > .statement{max-inline-size:30ch}
+}
+@media(prefers-reduced-motion:reduce){
+  .statement-zone{height:auto;padding:8rem 8vw}
+  .stuck-grid{display:flex;flex-direction:column;gap:4rem;position:static;block-size:auto;perspective:none;align-items:center}
+  .stuck-grid > .grid-item:not(.statement){display:none}
+}
 
 /* ---- work section ---- */
 .work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:2rem 7vw 7rem}
@@ -94,7 +203,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5rem 4rem}
 .release{display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit}
 
-.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:poHelvetica}
+.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
   box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
@@ -107,7 +216,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
 .sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
 .sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
-.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);poHelvetica-events:none}
+.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
 .release:hover .disc{transform:translateX(26%)}
 
 .sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
@@ -128,7 +237,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .meta{max-width:34ch}
 .idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
 .ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
-.hook{font-family:"Helvetica",sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
+.hook{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
 .hook .hl{color:var(--lav)}
 .demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
 .demo::before{content:"\25B8 "}
@@ -140,7 +249,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
 .tag.t-ind{color:var(--bone-dim)}
 
-@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.statement-block{padding:6rem 7vw 4rem}}
+@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}}
 @media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
@@ -175,11 +284,64 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   </div>
 </div>
 
-<!-- ===== relocated statement, below the fold ===== -->
-<section class="statement-block" id="about">
-  <p class="statement">I make <em>invisible internal states</em> perceptible.
-    <span class="sub">Translating stress, insomnia, and attention into patterns, sound, and interactive systems.<br>I specialize in solving problems that sit between disciplines.</span>
-  </p>
+<!-- ===== STATEMENT ZONE: scroll-driven 3D zoom grid ===== -->
+<section class="statement-zone" id="about">
+  <div class="stuck-grid">
+    <div class="grid-item">EEG</div>
+    <div class="grid-item">Tone.js</div>
+    <div class="grid-item">Signal Processing</div>
+    <div class="grid-item">Biometrics</div>
+    <div class="grid-item">Neuroscience</div>
+    <div class="grid-item">Data Visualization</div>
+    <div class="grid-item">D3.js</div>
+    <div class="grid-item">Machine Learning</div>
+    <div class="grid-item">Psychoacoustics</div>
+    <div class="grid-item">Fourier Transform</div>
+    <div class="grid-item">HPA Axis</div>
+    <div class="grid-item">Alpha Waves</div>
+    <div class="grid-item">Beta Spikes</div>
+    <div class="grid-item">HRV Tracking</div>
+    <div class="grid-item">Interaction Design</div>
+    <div class="grid-item">Generative Art</div>
+    <div class="grid-item">Web Audio API</div>
+    <div class="grid-item">Creative Coding</div>
+    <div class="grid-item">Sonification</div>
+    <div class="grid-item">Data Mapping</div>
+    <div class="grid-item">Neural Networks</div>
+    <div class="grid-item">Cognitive Load</div>
+    <div class="grid-item">Attention Mapping</div>
+    <div class="grid-item">Bio-sensors</div>
+    <div class="grid-item">UX Research</div>
+    <div class="grid-item">Oscilloscope</div>
+    <div class="grid-item">Algorithmic Composition</div>
+    <div class="grid-item">Synthesizer</div>
+    <div class="grid-item">FMSynth</div>
+    <div class="grid-item">Digital Signal Processing</div>
+    <div class="grid-item">Brain-Computer Interface</div>
+    <div class="grid-item">Cross-modal</div>
+    <div class="grid-item">Synesthesia</div>
+    <div class="grid-item">Spectral Analysis</div>
+    <div class="grid-item">Time-Series Data</div>
+    <div class="grid-item">Neuro-design</div>
+    <div class="grid-item">Waveform Architecture</div>
+    <div class="grid-item">Fast Fourier</div>
+    <div class="grid-item">Galvanic Skin Response</div>
+    <div class="grid-item">Cortisol Rhythm</div>
+    <div class="grid-item">Vector Fields</div>
+    <div class="grid-item">Ambient Computing</div>
+    <div class="grid-item">Audio Synthesis</div>
+    <div class="grid-item">Empirical Aesthetics</div>
+    <div class="grid-item">Perceptual Mapping</div>
+    <div class="grid-item">Somatosensory</div>
+    <div class="grid-item">Neuromodulation</div>
+    <div class="grid-item">Human-Computer Interaction</div>
+    <div class="grid-item">Affective Computing</div>
+    <div class="grid-item">Data Wrangling</div>
+
+    <div class="grid-item statement s1">I make invisible internal states perceptible.</div>
+    <div class="grid-item statement s2">Translating stress, insomnia, and attention into patterns, sound, and interactive systems.</div>
+    <div class="grid-item statement s3">I specialize in solving problems that sit between disciplines.</div>
+  </div>
 </section>
 
 <section class="work" id="work">
@@ -274,7 +436,7 @@ let MODE='music';          /* active visual mode */
 let SCROLL_MODE='music';   /* mode dictated by scroll position */
 let HOVER=null;            /* transient hover preview */
 
-/* ---- noir-jazz generative audio engine (Tone.js) ---- */
+/* ---- generative audio engine (Tone.js) ---- */
 const AUDIO={on:false,ready:false,meter:null,level:0,lastNote:0};
 let MUTED=false;   /* set true only if the user explicitly clicks MUSIC off */
 async function audioInit(){
@@ -323,7 +485,7 @@ async function armAudio(){
     if(SCROLL_MODE==='music'||MODE==='music') audioStart();
   }catch(e){/* user hasn't gestured yet / audio unavailable */}
 }
-['poHelveticamove','poHelveticadown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
+['pointermove','pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
   addEventListener(ev,armAudio,{once:true,passive:true});
 });
 
@@ -341,8 +503,8 @@ function scrollTargetFor(m){
 
 modeBtns.forEach(btn=>{
   const m=btn.dataset.mode;
-  btn.addEventListener('poHelveticaenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
-  btn.addEventListener('poHelveticaleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
+  btn.addEventListener('pointerenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
+  btn.addEventListener('pointerleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
   btn.addEventListener('focus',()=>{HOVER=m;MODE=m;paintButtons(m);});
   btn.addEventListener('blur',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
   btn.addEventListener('click',async()=>{
@@ -364,20 +526,20 @@ function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
 let curX=-1,curY=-1;
 /* rolling window of sampled values per-channel, for a real variance figure */
 const SAMPLES=[];const SAMPLE_MAX=60;
-addEventListener('poHelveticamove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
-addEventListener('poHelveticaleave',()=>{curX=-1;curY=-1;});
+addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
+addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
 
 /* conduct while the stage is pinned */
 let pinned=true;
 if(!rm){
- addEventListener('poHelveticamove',e=>{
+ addEventListener('pointermove',e=>{
    if(!pinned||e.clientY>H)return;
    const n=performance.now();
    if(lx!==null){const dx=e.clientX-lx,dy=e.clientY-ly,d=Math.hypot(dx,dy),dt=Math.max(n-lm,1),sp=d/dt;const hf=1-e.clientY/H,sf=Math.min(sp/2.2,1);tar=Math.min(0.04+hf*0.55+sf*0.55,1)}
    lx=e.clientX;ly=e.clientY;lm=n;
    if(!done){done=true;cue.style.opacity='0';}
  });
- addEventListener('poHelveticaleave',()=>tar=0.08);
+ addEventListener('pointerleave',()=>tar=0.08);
 }
 
 /* ---- scroll timeline: drives MODE through three zones, then unpins ---- */
