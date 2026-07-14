@@ -53,11 +53,13 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 /* ---- left control panel ---- */
 .panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
-.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .2s}
-.mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .2s,border-color .2s,box-shadow .2s;image-rendering:pixelated}
+.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .25s ease,transform .35s cubic-bezier(.2,.8,.3,1);transform-origin:left center}
+.mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .25s,border-color .25s,box-shadow .25s,width .3s,height .3s;image-rendering:pixelated}
 .mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
 .mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
-.mode.active{color:var(--bone)}
+.mode.active{color:var(--bone);transform:scale(1.12);transform-origin:left center}
+@media(max-width:860px){.mode.active{transform-origin:center}}
+.mode.active .ind{width:14px;height:14px;flex:0 0 14px}
 .mode.active .ind,.mode:hover .ind,.mode:focus-visible .ind{background:var(--acc);border-color:var(--acc);box-shadow:0 0 10px var(--acc)}
 .mode.m-music{--acc:#c9436a}
 .mode.m-cog{--acc:#8f8fd0}
@@ -77,6 +79,16 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
 .hero-fade{opacity:0 !important}
 
+/* ---- "move to begin" prompt: browsers block audio until a gesture ---- */
+.armprompt{position:absolute;bottom:4.6rem;left:50%;transform:translateX(-50%);z-index:4;
+  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--lav);pointer-events:none;white-space:nowrap;
+  animation:armpulse 2.4s ease-in-out infinite;
+  transition:opacity .6s ease}
+.armprompt.gone{opacity:0}
+@keyframes armpulse{0%,100%{opacity:0.45}50%{opacity:0.95}}
+@media(prefers-reduced-motion:reduce){.armprompt{animation:none;opacity:0.7}}
+
 .scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
 
 /* ---- STATEMENT ZONE: scroll-driven 3D zoom grid ---- */
@@ -85,7 +97,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 @keyframes zoom-in{
   0%{transform:translateZ(-1000px);opacity:0;filter:blur(4px)}
-  50%{transform:translateZ(0px);opacity:0.65;filter:blur(0px)}
+  50%{transform:translateZ(0px);opacity:0.45;filter:blur(0px)}
   100%{transform:translateZ(1000px);opacity:0;filter:blur(4px)}
 }
 @keyframes zoom-in-center{
@@ -378,8 +390,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 @media (prefers-reduced-motion: reduce){
   #turntable-overlay{ display:none !important; }
 }
+
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -405,6 +418,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
       <div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
 
+      <div class="armprompt" id="armprompt" aria-hidden="true">move your cursor to conduct the orchestra</div>
       <div class="cue" id="cue" aria-hidden="true">move to conduct &rarr;</div>
       <div class="scrolldown" id="scrolldown">scroll &darr;</div>
     </header>
@@ -563,56 +577,278 @@ let MODE='music';          /* active visual mode */
 let SCROLL_MODE='music';   /* mode dictated by scroll position */
 let HOVER=null;            /* transient hover preview */
 
-/* ---- generative audio engine (Tone.js) ---- */
-const AUDIO={on:false,ready:false,meter:null,level:0,lastNote:0};
-let MUTED=false;   /* set true only if the user explicitly clicks MUSIC off */
-async function audioInit(){
-  if(AUDIO.ready) return;
-  await Tone.start();
-  const reverb=new Tone.Reverb({decay:3.4,wet:0.35}).toDestination();
-  AUDIO.meter=new Tone.Meter({smoothing:0.85});
-  AUDIO.lead=new Tone.PolySynth(Tone.FMSynth,{
-    harmonicity:2.2,modulationIndex:6,
-    oscillator:{type:'sine'},envelope:{attack:0.01,decay:0.4,sustain:0.15,release:1.4},
-    modulation:{type:'triangle'},modulationEnvelope:{attack:0.2,decay:0.3,sustain:0.2,release:0.8}
-  }).connect(reverb);
-  AUDIO.lead.volume.value=-12;AUDIO.lead.connect(AUDIO.meter);
-  AUDIO.bass=new Tone.MonoSynth({oscillator:{type:'triangle'},envelope:{attack:0.05,decay:0.3,sustain:0.4,release:1.2},filterEnvelope:{attack:0.02,baseFrequency:120}}).connect(reverb);
-  AUDIO.bass.volume.value=-16;
-  AUDIO.hat=new Tone.NoiseSynth({noise:{type:'pink'},envelope:{attack:0.005,decay:0.06,sustain:0}}).connect(reverb);
-  AUDIO.hat.volume.value=-30;
-  AUDIO.scale=['D3','F3','G3','A3','C4','D4','E4','F4','A4','C5','E5','F5'];
-  AUDIO.bassNotes=['D2','F2','G2','A2','C2'];
-  AUDIO.loop=new Tone.Loop(t=>{
-    const bn=AUDIO.bassNotes[Math.floor(Math.random()*AUDIO.bassNotes.length)];
-    AUDIO.bass.triggerAttackRelease(bn,'2n',t);
-    if(Math.random()<0.6)AUDIO.hat.triggerAttackRelease('16n',t+0.25);
-  },'2n');
-  Tone.Transport.bpm.value=72;
-  AUDIO.ready=true;
+/* ============ ORCHESTRAL ENGINE — REAL SAMPLED INSTRUMENTS ============
+   Samples: nbrosowsky/tonejs-instruments (VSCO2 Versilian Studios Chamber
+   Orchestra + Freesound + Iowa). Actual recorded violin, cello, contrabass,
+   flute, clarinet, bassoon, french horn, harp, piano — not synthesis.
+   Tone.Sampler repitches between sample points to cover the full range.
+
+   The cursor CONDUCTS: height selects the section, velocity sets dynamics.
+   ==================================================================== */
+/* Sample host. The preview sandbox's CSP (connect-src) may block a given host,
+   surfacing as "Failed to fetch". We probe a list and use the first that works;
+   if none respond, audioInit falls back to a synthesized orchestra. */
+const SAMPLE_HOSTS=[
+  'https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/',
+  'https://cdn.jsdelivr.net/gh/nbrosowsky/tonejs-instruments@master/samples/'
+];
+let SAMPLE_BASE=SAMPLE_HOSTS[0];
+async function pickSampleHost(){
+  for(const h of SAMPLE_HOSTS){
+    try{
+      const r=await fetch(h+'violin/A4.mp3',{cache:'force-cache'});
+      if(r.ok){SAMPLE_BASE=h;return h;}
+    }catch(e){/* blocked/offline — next */}
+  }
+  return null;
 }
-function audioStart(){ if(!AUDIO.ready)return; Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; }
-function audioStop(){ if(!AUDIO.ready)return; AUDIO.loop.stop(); Tone.Transport.stop(); AUDIO.on=false; AUDIO.level=0; }
+const AUDIO={on:false,ready:false,loading:false,meter:null,level:0,lastNote:0,vel:0,loaded:0,total:0};
+let MUTED=false;
+
+/* only the notes that actually exist in the library, per instrument */
+const KITS={
+  violin:{A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',G5:'G5.mp3',A5:'A5.mp3',C6:'C6.mp3'},
+  cello:{C2:'C2.mp3',E2:'E2.mp3',G2:'G2.mp3',A2:'A2.mp3',C3:'C3.mp3',E3:'E3.mp3',G3:'G3.mp3',A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3'},
+  contrabass:{C2:'C2.mp3',D2:'D2.mp3',E2:'E2.mp3',G1:'G1.mp3',A2:'A2.mp3','F#1':'Fs1.mp3','G#2':'Gs2.mp3'},
+  flute:{C4:'C4.mp3',E4:'E4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',A5:'A5.mp3',C6:'C6.mp3'},
+  clarinet:{D3:'D3.mp3',F3:'F3.mp3','A#3':'As3.mp3',D4:'D4.mp3',F4:'F4.mp3','A#4':'As4.mp3',D5:'D5.mp3',F5:'F5.mp3'},
+  bassoon:{G2:'G2.mp3',A2:'A2.mp3',C3:'C3.mp3',G3:'G3.mp3',A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3'},
+  'french-horn':{A1:'A1.mp3',C2:'C2.mp3',G2:'G2.mp3',D3:'D3.mp3',F3:'F3.mp3',A3:'A3.mp3',C4:'C4.mp3'},
+  harp:{E1:'E1.mp3',G1:'G1.mp3',B1:'B1.mp3',D2:'D2.mp3',F2:'F2.mp3',A2:'A2.mp3',C3:'C3.mp3',E3:'E3.mp3',G3:'G3.mp3',B3:'B3.mp3',D4:'D4.mp3',F4:'F4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',G5:'G5.mp3'},
+  piano:{C3:'C3.mp3','D#3':'Ds3.mp3','F#3':'Fs3.mp3',A3:'A3.mp3',C4:'C4.mp3','D#4':'Ds4.mp3','F#4':'Fs4.mp3',A4:'A4.mp3',C5:'C5.mp3','D#5':'Ds5.mp3','F#5':'Fs5.mp3',A5:'A5.mp3'}
+};
+
+/* v14.8.49 Sampler: `onerror` does NOT exist here (v15 only) — passing it
+   throws and kills init. Only onload/urls/baseUrl/release/volume are valid. */
+function makeSampler(name,vol,rel,dest){
+  try{
+    const smp=new Tone.Sampler({
+      urls:KITS[name],
+      baseUrl:SAMPLE_BASE+name+'/',
+      release:rel,
+      volume:vol,
+      onload:()=>{AUDIO.loaded++;updateLoad();}
+    }).connect(dest);
+    return smp;
+  }catch(err){
+    console.warn('[orchestra] '+name+' failed to build:',err);
+    AUDIO.loaded++; updateLoad();
+    return silentStub();
+  }
+}
+/* a no-op stand-in so a missing instrument can never throw at play time */
+function silentStub(){
+  return {triggerAttackRelease(){},triggerAttack(){},triggerRelease(){},releaseAll(){},loaded:false};
+}
+function updateLoad(){
+  const el=document.getElementById('armprompt');
+  if(!el)return;
+  if(AUDIO.loaded>=AUDIO.total){
+    el.classList.add('gone');
+  } else {
+    el.textContent='tuning the orchestra \u00b7 '+AUDIO.loaded+'/'+AUDIO.total;
+  }
+}
+
+/* ---- the score: harmony + the per-bar sustaining bed. Shared by both the
+        sampled orchestra and the synth fallback (they expose the same names). ---- */
+function wireScore(){
+  AUDIO.chords=[
+    ['D3','F3','A3','C4'],
+    ['Bb2','D3','F3','A3'],
+    ['F3','A3','C4','E4'],
+    ['G2','Bb2','D3','F3'],
+    ['A2','C3','E3','G3']
+  ];
+  AUDIO.roots=['D2','Bb1','F2','G2','A2'];
+  AUDIO.melody=['D4','E4','F4','G4','A4','Bb4','C5','D5','E5','F5','A5'];
+  AUDIO.chordIdx=0;
+  AUDIO.loop=new Tone.Loop(t=>{
+    const ch=AUDIO.chords[AUDIO.chordIdx%5];
+    const root=AUDIO.roots[AUDIO.chordIdx%5];
+    const dyn=0.22+AUDIO.vel*0.6;
+    AUDIO.violin.triggerAttackRelease(ch.slice(2),'1m',t,dyn*0.42);
+    AUDIO.cello.triggerAttackRelease([ch[0],ch[1]],'1m',t,dyn*0.5);
+    AUDIO.bass.triggerAttackRelease([root],'1m',t,dyn*0.55);
+    if(Math.random()<0.4) AUDIO.horn.triggerAttackRelease([ch[1]],'2n',t,dyn*0.35);
+    if(Math.random()<0.45){
+      const off=t+Tone.Time('2n').toSeconds();
+      (Math.random()<0.5?AUDIO.clarinet:AUDIO.bassoon).triggerAttackRelease([ch[2]],'2n',off,dyn*0.4);
+    }
+    if(Math.random()<0.65) AUDIO.piano.triggerAttackRelease([ch[0],ch[2]],'2n',t,0.22+AUDIO.vel*0.35);
+    AUDIO.chordIdx++;
+  },'1m');
+}
+
+/* ---- synthesized fallback orchestra: only used when NO sample host is
+        reachable. Warmer-shaped synths standing in for each section so the
+        conducting still works even with audio fully sandboxed. ---- */
+function buildSynthOrchestra(){
+  const hall=new Tone.Reverb({decay:5,wet:0.32}).toDestination();
+  const bus=new Tone.Gain(0.9).connect(hall); bus.connect(Tone.Destination);
+  AUDIO.meter=new Tone.Meter({smoothing:0.82}); bus.connect(AUDIO.meter);
+  const strF=new Tone.Filter({frequency:2200,type:'lowpass'}).connect(bus);
+  AUDIO.violin=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'fatsawtooth',count:4,spread:28},envelope:{attack:0.7,decay:0.4,sustain:0.85,release:2.8}}).connect(strF); AUDIO.violin.volume.value=-17;
+  AUDIO.cello=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'fatsawtooth',count:3,spread:16},envelope:{attack:1,decay:0.4,sustain:0.9,release:3.4}}).connect(new Tone.Filter({frequency:900,type:'lowpass'}).connect(bus)); AUDIO.cello.volume.value=-17;
+  AUDIO.bass=AUDIO.cello;
+  AUDIO.flute=new Tone.PolySynth(Tone.AMSynth,{harmonicity:2,oscillator:{type:'triangle'},envelope:{attack:0.25,decay:0.2,sustain:0.7,release:1.4}}).connect(new Tone.Filter({frequency:3200,type:'lowpass'}).connect(bus)); AUDIO.flute.volume.value=-18;
+  AUDIO.clarinet=AUDIO.flute; AUDIO.bassoon=AUDIO.cello; AUDIO.horn=AUDIO.cello;
+  AUDIO.piano=new Tone.PolySynth(Tone.FMSynth,{harmonicity:3,modulationIndex:8,oscillator:{type:'triangle'},envelope:{attack:0.004,decay:1.6,sustain:0.04,release:1.3}}).connect(bus); AUDIO.piano.volume.value=-14;
+  AUDIO.harp=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'triangle'},envelope:{attack:0.005,decay:1.5,sustain:0,release:1.6}}).connect(bus); AUDIO.harp.volume.value=-20;
+  wireScore();
+}
+
+async function audioInit(){
+  if(AUDIO.ready||AUDIO.loading) return;
+  AUDIO.loading=true;
+  try{
+  await Tone.start();
+
+  /* find a reachable sample host first; if none, synthesize */
+  const host=await pickSampleHost();
+  if(!host){
+    console.warn('[orchestra] no sample host reachable — using synthesized fallback');
+    buildSynthOrchestra();
+    AUDIO.synthMode=true;
+    Tone.Transport.bpm.value=56;
+    AUDIO.ready=true; AUDIO.loading=false;
+    const p=document.getElementById('armprompt'); if(p)p.classList.add('gone');
+    return;
+  }
+
+  /* concert hall */
+  const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
+  const bus=new Tone.Gain(0.9).connect(hall);
+  bus.connect(Tone.Destination);
+  AUDIO.meter=new Tone.Meter({smoothing:0.82});
+  bus.connect(AUDIO.meter);
+
+  /* gentle section widening — a real room, not a chorus pedal.
+     StereoWidener is guarded: if unavailable, fall back to the dry bus. */
+  let wide;
+  try{ wide=new Tone.StereoWidener(0.65).connect(bus); }
+  catch(err){ console.warn('[orchestra] StereoWidener unavailable, using dry bus'); wide=bus; }
+
+  AUDIO.total=Object.keys(KITS).length;
+  AUDIO.loaded=0;
+
+  AUDIO.violin  = makeSampler('violin',      -14, 1.8, wide);
+  AUDIO.cello   = makeSampler('cello',       -12, 2.2, wide);
+  AUDIO.bass    = makeSampler('contrabass',  -13, 2.4, bus);
+  AUDIO.flute   = makeSampler('flute',       -16, 1.4, wide);
+  AUDIO.clarinet= makeSampler('clarinet',    -15, 1.4, wide);
+  AUDIO.bassoon = makeSampler('bassoon',     -15, 1.6, wide);
+  AUDIO.horn    = makeSampler('french-horn', -14, 2.0, wide);
+  AUDIO.harp    = makeSampler('harp',        -13, 2.6, wide);
+  AUDIO.piano   = makeSampler('piano',        -9, 1.6, bus);
+
+  wireScore();
+  Tone.Transport.bpm.value=56;   /* adagio */
+  AUDIO.ready=true;
+  }catch(err){
+    console.error('[orchestra] audioInit error:',err);
+  }finally{
+    AUDIO.loading=false;
+  }
+}
+
+function audioStart(){
+  if(!AUDIO.ready||!AUDIO.loop)return;
+  try{ Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; }
+  catch(err){ console.error('[orchestra] start failed:',err); }
+}
+function audioStop(){
+  if(!AUDIO.ready)return;
+  AUDIO.loop.stop(); Tone.Transport.stop();
+  ['violin','cello','bass','flute','clarinet','bassoon','horn','harp','piano']
+    .forEach(k=>{try{AUDIO[k].releaseAll();}catch(e){}});
+  AUDIO.on=false; AUDIO.level=0;
+}
+
+/* ---- THE BATON ---- */
+let lastCx=null,lastCy=null,lastCt=0;
 function audioNoteFromCursor(cx,cy){
   if(!AUDIO.on)return;
   const now=performance.now();
-  if(now-AUDIO.lastNote<90)return;
+
+  if(lastCx!==null){
+    const d=Math.hypot(cx-lastCx,cy-lastCy);
+    const dt=Math.max(now-lastCt,1);
+    AUDIO.vel+=(Math.min((d/dt)/1.8,1)-AUDIO.vel)*0.18;
+  }
+  const rising = lastCy!==null && (lastCy-cy)>20;
+  lastCx=cx;lastCy=cy;lastCt=now;
+
+  const gap = 300 - AUDIO.vel*170;      /* faster baton -> denser phrasing */
+  if(now-AUDIO.lastNote<gap)return;
   AUDIO.lastNote=now;
+
   const hf=1-Math.min(Math.max(cy/innerHeight,0),1);
-  const idx=Math.min(AUDIO.scale.length-1,Math.floor(hf*AUDIO.scale.length));
-  try{AUDIO.lead.triggerAttackRelease(AUDIO.scale[idx],'8n');}catch(e){}
+  const dyn=0.16+AUDIO.vel*0.68;
+  const ch=AUDIO.chords[AUDIO.chordIdx%5];
+
+  try{
+    if(hf>0.66){
+      /* HIGH — flute & violin sing above the staff */
+      const i=Math.floor((hf-0.66)/0.34*(AUDIO.melody.length-5))+5;
+      const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
+      AUDIO.flute.triggerAttackRelease(n,'2n',undefined,dyn);
+      if(AUDIO.vel>0.25)
+        AUDIO.violin.triggerAttackRelease(n,'2n',undefined,dyn*0.6);
+      if(rising&&AUDIO.vel>0.35){
+        /* harp gliss on a big upward sweep */
+        ch.forEach((nn,k)=>AUDIO.harp.triggerAttackRelease(
+          Tone.Frequency(nn).transpose(12),'4n',Tone.now()+k*0.05,0.45));
+      }
+    } else if(hf>0.3){
+      /* MID — piano takes the melody, clarinet shadows it */
+      const i=Math.floor(hf/0.66*(AUDIO.melody.length-2));
+      const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
+      AUDIO.piano.triggerAttackRelease(n,'4n',undefined,dyn);
+      if(AUDIO.vel>0.4)
+        AUDIO.clarinet.triggerAttackRelease(n,'4n',undefined,dyn*0.5);
+    } else {
+      /* LOW — cello answers; bassoon & horn on a forceful stroke */
+      AUDIO.cello.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.8);
+      if(AUDIO.vel>0.45){
+        AUDIO.bassoon.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.6);
+        AUDIO.horn.triggerAttackRelease([AUDIO.roots[AUDIO.chordIdx%5]],'2n',undefined,dyn*0.5);
+      }
+    }
+  }catch(e){}
 }
 
 /* ---- auto-arm: browsers require a gesture, so latch onto the FIRST one ---- */
 let ARMED=false;
 async function armAudio(){
   if(ARMED)return; ARMED=true;
+  const prompt=document.getElementById('armprompt');
+  if(prompt)prompt.textContent='tuning the orchestra\u2026';
   try{
     await audioInit();
+    /* synth fallback has no samples to await */
+    if(AUDIO.synthMode){
+      /* nothing to load */
+    } else if(Tone.Buffer && typeof Tone.Buffer.loaded==='function'){
+      await Tone.Buffer.loaded();
+    } else {
+      /* last-resort: poll our own per-sampler load counter */
+      await new Promise(res=>{
+        const t0=Date.now();
+        (function poll(){
+          if(AUDIO.loaded>=AUDIO.total||Date.now()-t0>20000) return res();
+          setTimeout(poll,120);
+        })();
+      });
+    }
+    if(prompt)prompt.classList.add('gone');
     if(SCROLL_MODE==='music'||MODE==='music') audioStart();
-  }catch(e){/* user hasn't gestured yet / audio unavailable */}
+  }catch(err){
+    console.error('[orchestra] init failed:',err);
+    if(prompt)prompt.classList.add('gone');
+  }
 }
-['pointermove','pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>{
+['pointermove','pointerdown','keydown','wheel','touchstart','scroll','click'].forEach(ev=>{
   addEventListener(ev,armAudio,{once:true,passive:true});
 });
 
@@ -747,7 +983,7 @@ function fr(){
   x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
  const i=ar;
  if(MODE==='music'){
-   /* music mode: no readout at all — the waves are the instrument */
+   /* music mode: no readout — the orchestra is the instrument */
    readout.classList.add('mute');
    readout.innerHTML='';
  } else if(MODE==='data'){
@@ -964,4 +1200,5 @@ onScroll();
   });
 })();
  </script>
+
 </body></html>
