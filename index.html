@@ -489,7 +489,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   <div class="sec-head"><h2>Selected Work</h2><span class="count">04 &nbsp;/&nbsp; index</span></div>
   <div class="grid">
 
-    <a class="release" href="body-conducts.html">
+    <a class="release" href="#">
       <div class="rig">
         <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
@@ -592,16 +592,7 @@ const SAMPLE_HOSTS=[
   'https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/',
   'https://cdn.jsdelivr.net/gh/nbrosowsky/tonejs-instruments@master/samples/'
 ];
-let SAMPLE_BASE=SAMPLE_HOSTS[0];
-async function pickSampleHost(){
-  for(const h of SAMPLE_HOSTS){
-    try{
-      const r=await fetch(h+'violin/A4.mp3',{cache:'force-cache'});
-      if(r.ok){SAMPLE_BASE=h;return h;}
-    }catch(e){/* blocked/offline — next */}
-  }
-  return null;
-}
+let SAMPLE_BASE=SAMPLE_HOSTS[0];   /* makeSampler uses this; no pre-probe */
 const AUDIO={on:false,ready:false,loading:false,meter:null,level:0,lastNote:0,vel:0,loaded:0,total:0};
 let MUTED=false;
 
@@ -664,6 +655,9 @@ function wireScore(){
   AUDIO.melody=['D4','E4','F4','G4','A4','Bb4','C5','D5','E5','F5','A5'];
   AUDIO.chordIdx=0;
   AUDIO.loop=new Tone.Loop(t=>{
+    /* don't trigger sampled instruments before their buffers decode —
+       a Sampler with no buffer plays silence and hides the problem */
+    if(!AUDIO.synthMode && AUDIO.loaded===0) return;
     const ch=AUDIO.chords[AUDIO.chordIdx%5];
     const root=AUDIO.roots[AUDIO.chordIdx%5];
     const dyn=0.22+AUDIO.vel*0.6;
@@ -704,17 +698,10 @@ async function audioInit(){
   try{
   await Tone.start();
 
-  /* find a reachable sample host first; if none, synthesize */
-  const host=await pickSampleHost();
-  if(!host){
-    console.warn('[orchestra] no sample host reachable — using synthesized fallback');
-    buildSynthOrchestra();
-    AUDIO.synthMode=true;
-    Tone.Transport.bpm.value=56;
-    AUDIO.ready=true; AUDIO.loading=false;
-    const p=document.getElementById('armprompt'); if(p)p.classList.add('gone');
-    return;
-  }
+  /* Build the sampled orchestra directly. We do NOT pre-probe the host with a
+     separate fetch(): that request and Tone's internal loader can disagree, and
+     a false negative silently drops us to the synth. Instead each Sampler loads
+     independently; if ALL fail, onload never advances and we fall back then. */
 
   /* concert hall */
   const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
@@ -744,12 +731,45 @@ async function audioInit(){
 
   wireScore();
   Tone.Transport.bpm.value=56;   /* adagio */
+
+  /* Wait until the samples actually decode before we call ourselves ready.
+     If nothing loads within the timeout (host blocked / offline), tear down
+     and swap in the synth orchestra so the page is never silent. */
+  const ok = await waitForSamples(12000);
+  if(!ok){
+    console.warn('[orchestra] samples did not load in time — synth fallback');
+    teardownSamplers();
+    buildSynthOrchestra();
+    AUDIO.synthMode=true;
+    Tone.Transport.bpm.value=56;
+  }
   AUDIO.ready=true;
   }catch(err){
     console.error('[orchestra] audioInit error:',err);
+    /* last-ditch: synth so something plays */
+    try{ if(!AUDIO.ready){ buildSynthOrchestra(); AUDIO.synthMode=true; AUDIO.ready=true; } }
+    catch(e2){ console.error('[orchestra] synth fallback also failed:',e2); }
   }finally{
     AUDIO.loading=false;
   }
+}
+
+/* resolves true once a majority of samplers report loaded, false on timeout */
+function waitForSamples(timeoutMs){
+  return new Promise(resolve=>{
+    const t0=Date.now();
+    const need=Math.ceil(AUDIO.total*0.6);   /* enough to sound like an orchestra */
+    (function poll(){
+      if(AUDIO.loaded>=need) return resolve(true);
+      if(Date.now()-t0>timeoutMs) return resolve(AUDIO.loaded>0);
+      setTimeout(poll,100);
+    })();
+  });
+}
+function teardownSamplers(){
+  ['violin','cello','bass','flute','clarinet','bassoon','horn','harp','piano']
+    .forEach(k=>{try{AUDIO[k]&&AUDIO[k].dispose&&AUDIO[k].dispose();}catch(e){}});
+  try{AUDIO.loop&&AUDIO.loop.dispose();}catch(e){}
 }
 
 function audioStart(){
@@ -825,22 +845,7 @@ async function armAudio(){
   const prompt=document.getElementById('armprompt');
   if(prompt)prompt.textContent='tuning the orchestra\u2026';
   try{
-    await audioInit();
-    /* synth fallback has no samples to await */
-    if(AUDIO.synthMode){
-      /* nothing to load */
-    } else if(Tone.Buffer && typeof Tone.Buffer.loaded==='function'){
-      await Tone.Buffer.loaded();
-    } else {
-      /* last-resort: poll our own per-sampler load counter */
-      await new Promise(res=>{
-        const t0=Date.now();
-        (function poll(){
-          if(AUDIO.loaded>=AUDIO.total||Date.now()-t0>20000) return res();
-          setTimeout(poll,120);
-        })();
-      });
-    }
+    await audioInit();     /* now resolves only when ready (samples or synth) */
     if(prompt)prompt.classList.add('gone');
     if(SCROLL_MODE==='music'||MODE==='music') audioStart();
   }catch(err){
