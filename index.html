@@ -251,6 +251,133 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 @media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}}
 @media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
+
+/* ============================================================
+   TURNTABLE PAGE TRANSITION
+   Total timeline ≈ 1.2s  (0.4 slide → 0.5 spin → 0.3 wipe)
+   Only transform / opacity are animated.
+   ============================================================ */
+:root{
+  --tt-slide: 400ms;
+  --tt-spin: 500ms;
+  --tt-wipe: 300ms;
+  --tt-ease: cubic-bezier(.22,.7,.25,1);
+  --tt-disc-size: 46vmin;      /* final centred size */
+  --tt-ink: #101719;
+  --tt-lav: #B7A7D8;
+  --tt-bone: #EFE7EF;
+}
+
+#turntable-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: none;
+  will-change: transform, opacity;
+  transform: translate3d(0,0,0);
+}
+
+/* Curtain-drop exit: whole rig (platter + record) slides out the bottom */
+#turntable-overlay.tt-exit{
+  transition: transform var(--tt-wipe) cubic-bezier(.6,0,.85,.3),
+              opacity   var(--tt-wipe) linear;
+  transform: translate3d(0, 110vh, 0);
+  opacity: .35;
+}
+
+/* ---------- Platter / spindle (pure CSS vector) ---------- */
+.tt-platter{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: var(--tt-disc-size);
+  height: var(--tt-disc-size);
+  margin: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate3d(-50%,-50%,0) scale(.86);
+  transition: opacity var(--tt-slide) linear,
+              transform var(--tt-slide) var(--tt-ease);
+  will-change: transform, opacity;
+
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(183,167,216,.30) 0 1.4%,          /* spindle pin */
+      rgba(16,23,25,0)      1.6% 100%),
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(183,167,216,.05) 0 6px,
+      rgba(183,167,216,.00) 6px 12px),
+    radial-gradient(circle at 50% 45%, #23202b 0%, #14121a 70%, #0b0a0e 100%);
+  box-shadow:
+    0 0 0 1px rgba(183,167,216,.18),
+    0 40px 120px rgba(0,0,0,.6);
+}
+.tt-platter.tt-in{
+  opacity: 1;
+  transform: translate3d(-50%,-50%,0) scale(1.14);   /* slightly larger than disc */
+}
+
+/* Tonearm — minimal vector, swings in on needle-drop */
+.tt-arm{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--tt-disc-size) * 0.78);
+  height: 2px;
+  transform-origin: right center;
+  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-42deg);
+  background: linear-gradient(90deg, var(--tt-lav), rgba(183,167,216,.35));
+  opacity: 0;
+  border-radius: 2px;
+  transition: opacity 180ms linear,
+              transform var(--tt-spin) var(--tt-ease);
+  will-change: transform, opacity;
+}
+.tt-arm::before{                                  /* headshell / needle */
+  content:"";
+  position:absolute; left:-6px; top:-4px;
+  width:12px; height:10px; border-radius:2px;
+  background: var(--tt-bone);
+}
+.tt-arm.tt-drop{
+  opacity: .9;
+  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-14deg);
+}
+
+/* ---------- The flying record clone ---------- */
+.tt-disc-clone{
+  position: fixed;
+  margin: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  /* left/top/width/height are set inline from getBoundingClientRect() */
+  transition: transform var(--tt-slide) var(--tt-ease);
+}
+
+/* Infinite spin, applied once the record locks to the spindle.
+   Nested wrapper trick: the OUTER element owns the fly-to-centre transform,
+   the INNER owns the rotation, so the two never fight. */
+.tt-disc-spinner{
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.tt-disc-spinner.tt-spinning{
+  animation: tt-rotate 900ms linear infinite;
+}
+@keyframes tt-rotate{
+  from{ transform: rotate(0deg); }
+  to  { transform: rotate(360deg); }
+}
+
+/* Original disc left behind in the sleeve */
+.release .disc.tt-hidden{ opacity: 0; transition: opacity 120ms linear; }
+
+@media (prefers-reduced-motion: reduce){
+  #turntable-overlay{ display:none !important; }
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 </head>
@@ -669,4 +796,172 @@ paintButtons('music');
 onScroll();
 })();
 </script>
+<div id="turntable-overlay" style="position:fixed;inset:0;z-index:999;pointer-events:none;display:none;"></div>
+
+ <script>
+   /* ============================================================
+   TURNTABLE TRANSITION  —  vanilla, no deps beyond your Tone.js
+   Timeline:  0ms  click → clone + slide/scale to centre
+             400ms  locked → spin + needle drop + audio cue
+             900ms  curtain drop
+            1200ms  window.location.href = target
+   ============================================================ */
+(function () {
+  'use strict';
+
+  const SLIDE = 400, SPIN = 500, WIPE = 300;
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const overlay = document.getElementById('turntable-overlay');
+  if (!overlay) return;
+
+  let busy = false;   // guards against double-clicks mid-transition
+
+  /* ---------- Audio cue: reuse the existing Tone.js engine ---------- */
+  function cue() {
+    if (typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
+    try {
+      const now = Tone.now();
+
+      // Needle crackle — short pink-noise burst through a lowpass.
+      const crackle = new Tone.NoiseSynth({
+        noise: { type: 'pink' },
+        envelope: { attack: 0.004, decay: 0.28, sustain: 0 }
+      }).connect(new Tone.Filter(2200, 'lowpass').toDestination());
+      crackle.volume.value = -22;
+      crackle.triggerAttackRelease('8n', now);
+
+      // Signature chord — Dm9, matches the site's D-minor scale.
+      const chord = new Tone.PolySynth(Tone.FMSynth, {
+        harmonicity: 2.2, modulationIndex: 6,
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.02, decay: 0.6, sustain: 0.25, release: 1.6 }
+      }).connect(new Tone.Reverb({ decay: 3.2, wet: 0.4 }).toDestination());
+      chord.volume.value = -14;
+      chord.triggerAttackRelease(['D3', 'F3', 'A3', 'C4', 'E4'], '2n', now + 0.06);
+
+      // Dispose after the tails ring out — keeps the node graph clean.
+      setTimeout(() => { crackle.dispose(); chord.dispose(); }, 3000);
+    } catch (e) { /* audio is decorative — never block navigation */ }
+  }
+
+  /* ---------- Build the centre-stage furniture once per run ---------- */
+  function buildStage() {
+    const platter = document.createElement('div');
+    platter.className = 'tt-platter';
+
+    const arm = document.createElement('div');
+    arm.className = 'tt-arm';
+
+    overlay.append(platter, arm);
+    return { platter, arm };
+  }
+
+  /* ---------- Clone the .disc, pinned to its exact screen box ---------- */
+  function cloneDisc(disc) {
+    const r = disc.getBoundingClientRect();
+
+    // Outer: owns position + fly-to-centre transform.
+    const outer = document.createElement('div');
+    outer.className = 'tt-disc-clone';
+    Object.assign(outer.style, {
+      left:   r.left + 'px',
+      top:    r.top  + 'px',
+      width:  r.width  + 'px',
+      height: r.height + 'px'
+    });
+
+    // Inner: owns the rotation. Separating the two prevents the
+    // translate and the rotate from clobbering each other.
+    const spinner = document.createElement('div');
+    spinner.className = 'tt-disc-spinner';
+    spinner.appendChild(disc.cloneNode(true));   // keeps grooves / label / hole
+    const inner = spinner.firstElementChild;
+    Object.assign(inner.style, {
+      position: 'absolute', inset: '0',
+      width: '100%', height: '100%',
+      top: '0', right: 'auto', transform: 'none', opacity: '1'
+    });
+
+    outer.appendChild(spinner);
+    return { outer, spinner, rect: r };
+  }
+
+  /* ---------- Compute the translate/scale that lands it dead centre ---------- */
+  function centreTransform(rect) {
+    const size = Math.min(innerWidth, innerHeight) * 0.46;   // matches --tt-disc-size
+    const scale = size / Math.max(rect.width, rect.height);
+
+    // Delta between the element's current centre and the viewport centre.
+    const dx = (innerWidth  / 2) - (rect.left + rect.width  / 2);
+    const dy = (innerHeight / 2) - (rect.top  + rect.height / 2);
+
+    return `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
+  }
+
+  /* ---------- Main sequence ---------- */
+  function run(link, disc, url) {
+    busy = true;
+
+    const { outer, spinner, rect } = cloneDisc(disc);
+    const { platter, arm } = buildStage();
+
+    disc.classList.add('tt-hidden');   // record "leaves" the sleeve
+    overlay.appendChild(outer);
+    overlay.style.display = 'block';
+
+    // Force layout so the browser registers the start state before we transition.
+    void overlay.offsetWidth;
+
+    /* --- STEP 2: slide & centre (0 → 400ms) --- */
+    requestAnimationFrame(() => {
+      outer.style.transform = centreTransform(rect);
+      platter.classList.add('tt-in');
+    });
+
+    /* --- STEP 3: needle drop, spin, audio (400 → 900ms) --- */
+    setTimeout(() => {
+      spinner.classList.add('tt-spinning');
+      arm.classList.add('tt-drop');
+      cue();
+    }, SLIDE);
+
+    /* --- STEP 4: curtain drop (900 → 1200ms) --- */
+    setTimeout(() => {
+      overlay.classList.add('tt-exit');
+    }, SLIDE + SPIN);
+
+    /* --- Navigate. Prefer transitionend; setTimeout is the safety net. --- */
+    let gone = false;
+    const go = () => {
+      if (gone) return;
+      gone = true;
+      window.location.href = url;
+    };
+    overlay.addEventListener('transitionend', (e) => {
+      if (e.target === overlay && e.propertyName === 'transform') go();
+    }, { once: true });
+    setTimeout(go, SLIDE + SPIN + WIPE + 60);
+  }
+
+  /* ---------- Delegated click interception ---------- */
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a.release');
+    if (!link) return;
+
+    const url = link.getAttribute('href');
+
+    // Bail out for modifier-clicks, new tabs, anchors, and missing targets —
+    // the user's intent there is explicitly "not a page transition".
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
+
+    const disc = link.querySelector('.disc');
+    if (!disc || busy || REDUCED) return;
+
+    e.preventDefault();
+    run(link, disc, url);
+  });
+})();
+ </script>
 </body></html>
