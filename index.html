@@ -404,7 +404,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
    Act 1: click the glowing tip -> camera pushes into the podium.
    Act 2: the baton lifts off the stand, rings concert-A (A440).
    Act 3: the gate dissolves into the soundwave hero.
-   Hotspot measured from baton-stand.jpg: tip at 60% x, 34.1% y.
+   Hotspot measured from baton-stand.png: tip at 60% x, 34.1% y.
    ============================================================ */
 #baton-gate{
   position:fixed; inset:0; z-index:10000;
@@ -418,7 +418,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
    with the transform origin sitting on the baton tip (60% / 34.1%). */
 .gate-scene{
   position:absolute; inset:0;
-  background:url('baton-stand.jpg') center center / cover no-repeat;
+  background:url('baton-stand.png') center center / cover no-repeat;
   transform-origin:60% 34.1%;
   transform:scale(1);
   transition:transform 1.15s cubic-bezier(.66,0,.2,1), filter 1.15s ease;
