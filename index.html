@@ -5,9 +5,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ---- Display face: Dreamer TM (self-hosted) ----
-   Drop DreamerTM.woff2 (and .woff) next to this file.
-   Falls back to a pixel face, then mono, if the file isn't found. */
 @font-face{
   font-family:"Dreamer TM";
   src:url("DreamerTM.woff2") format("woff2"),
@@ -16,14 +13,14 @@
   font-weight:normal;font-style:normal;font-display:swap;
 }
 :root{
-  --iris:#101719;        /* Ink Black — general background / stage */
+  --iris:#101719;
   --iris-soft:#1a2226;
-  --grape:#6767A2;       /* Dusty Grape — hero CALM background */
+  --grape:#6767A2;
   --grape-lit:#8f8fd0;
-  --amaranth:#8C183E;    /* Dark Amaranth — hero AROUSAL background */
+  --amaranth:#8C183E;
   --amaranth-lit:#c9436a;
-  --lav:#B7A7D8;         /* Moonlit Lavender — accent / highlights */
-  --bone:#EFE7EF;        /* off-white — text + brainwave lines */
+  --lav:#B7A7D8;
+  --bone:#EFE7EF;
   --bone-dim:#9a92a0;
   --hair:rgba(183,167,216,0.18);
 }
@@ -31,27 +28,22 @@
 html{scroll-behavior:smooth}
 body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
 
-/* ---- PIN ZONE: tall scroll track whose inner stage sticks for the mode timeline ---- */
 .pin-zone{position:relative;z-index:2;height:400vh}
 .pin-stage{position:sticky;top:0;height:100vh;overflow:hidden}
 
-/* ---- wave layer: absolute inside the sticky stage, fades out at the end of the timeline ---- */
 #wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .3s linear}
 .grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-/* ---- nav ---- */
 nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
   padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
   background:transparent;border:none;backdrop-filter:none}
 nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
 
-/* ---- hero (inside the sticky stage) ---- */
 .hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
 .eyebrow{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
 
-/* ---- left control panel ---- */
 .panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
 .mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .25s ease,transform .35s cubic-bezier(.2,.8,.3,1);transform-origin:left center}
 .mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .25s,border-color .25s,box-shadow .25s,width .3s,height .3s;image-rendering:pixelated}
@@ -70,7 +62,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 .name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
 
-/* ---- readout: now flows under the name, centered ---- */
 .readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
 .readout.mute{opacity:0;visibility:hidden}
@@ -79,7 +70,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
 .hero-fade{opacity:0 !important}
 
-/* ---- "move to begin" prompt: browsers block audio until a gesture ---- */
 .armprompt{position:absolute;bottom:4.6rem;left:50%;transform:translateX(-50%);z-index:4;
   font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
   color:var(--lav);pointer-events:none;white-space:nowrap;
@@ -91,7 +81,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 .scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
 
-/* ---- STATEMENT ZONE: scroll-driven 3D zoom grid ---- */
 .hl{font-style:normal;color:var(--lav)}
 .statement-zone{position:relative;z-index:5;background:var(--iris);height:340vh}
 
@@ -193,7 +182,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .stuck-grid > .grid-item:not(.statement):nth-of-type(50){animation-range:contain 6% contain 16%;grid-area:3/2}
  }
 }
-/* fallback: Safari/Firefox or reduced-motion -> statements simply stack */
 @supports not (animation-timeline:view()){
   .statement-zone{height:auto;padding:8rem 8vw}
   .stuck-grid{display:flex;flex-direction:column;gap:4rem;position:static;block-size:auto;perspective:none;align-items:center}
@@ -206,7 +194,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .stuck-grid > .grid-item:not(.statement){display:none}
 }
 
-/* ---- work section ---- */
 .work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:2rem 7vw 7rem}
 .sec-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:1.2rem;margin-bottom:4.5rem}
 .sec-head h2{font-family:"DM Mono",monospace;font-size:0.82rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--lav)}
@@ -264,17 +251,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 @media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}}
 @media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
 
-/* ============================================================
-   TURNTABLE PAGE TRANSITION
-   Total timeline ≈ 1.2s  (0.4 slide → 0.5 spin → 0.3 wipe)
-   Only transform / opacity are animated.
-   ============================================================ */
 :root{
   --tt-slide: 400ms;
   --tt-spin: 500ms;
   --tt-wipe: 300ms;
   --tt-ease: cubic-bezier(.22,.7,.25,1);
-  --tt-disc-size: 46vmin;      /* final centred size */
+  --tt-disc-size: 46vmin;
   --tt-ink: #101719;
   --tt-lav: #B7A7D8;
   --tt-bone: #EFE7EF;
@@ -290,7 +272,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   transform: translate3d(0,0,0);
 }
 
-/* Curtain-drop exit: whole rig (platter + record) slides out the bottom */
 #turntable-overlay.tt-exit{
   transition: transform var(--tt-wipe) cubic-bezier(.6,0,.85,.3),
               opacity   var(--tt-wipe) linear;
@@ -298,7 +279,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   opacity: .35;
 }
 
-/* ---------- Platter / spindle (pure CSS vector) ---------- */
 .tt-platter{
   position: fixed;
   top: 50%;
@@ -315,7 +295,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
   background:
     radial-gradient(circle at 50% 50%,
-      rgba(183,167,216,.30) 0 1.4%,          /* spindle pin */
+      rgba(183,167,216,.30) 0 1.4%,
       rgba(16,23,25,0)      1.6% 100%),
     repeating-radial-gradient(circle at 50% 50%,
       rgba(183,167,216,.05) 0 6px,
@@ -327,10 +307,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 .tt-platter.tt-in{
   opacity: 1;
-  transform: translate3d(-50%,-50%,0) scale(1.14);   /* slightly larger than disc */
+  transform: translate3d(-50%,-50%,0) scale(1.14);
 }
 
-/* Tonearm — minimal vector, swings in on needle-drop */
 .tt-arm{
   position: fixed;
   top: 50%;
@@ -346,7 +325,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
               transform var(--tt-spin) var(--tt-ease);
   will-change: transform, opacity;
 }
-.tt-arm::before{                                  /* headshell / needle */
+.tt-arm::before{
   content:"";
   position:absolute; left:-6px; top:-4px;
   width:12px; height:10px; border-radius:2px;
@@ -357,19 +336,14 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-14deg);
 }
 
-/* ---------- The flying record clone ---------- */
 .tt-disc-clone{
   position: fixed;
   margin: 0;
   transform-origin: 50% 50%;
   will-change: transform, opacity;
-  /* left/top/width/height are set inline from getBoundingClientRect() */
   transition: transform var(--tt-slide) var(--tt-ease);
 }
 
-/* Infinite spin, applied once the record locks to the spindle.
-   Nested wrapper trick: the OUTER element owns the fly-to-centre transform,
-   the INNER owns the rotation, so the two never fight. */
 .tt-disc-spinner{
   width: 100%;
   height: 100%;
@@ -384,7 +358,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   to  { transform: rotate(360deg); }
 }
 
-/* Original disc left behind in the sleeve */
 .release .disc.tt-hidden{ opacity: 0; transition: opacity 120ms linear; }
 
 @media (prefers-reduced-motion: reduce){
@@ -392,7 +365,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 
 
-/* ---- diagnostic HUD (visible only with #debug in the URL) ---- */
 #tt-debug{position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;
   font-family:"DM Mono",monospace;font-size:11px;line-height:1.5;
   color:#9fe0d8;background:rgba(10,12,16,.88);border:1px solid rgba(159,224,216,.4);
@@ -400,53 +372,190 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 #tt-debug.on{display:block}
 
 /* ============================================================
-   BATON GATE — three-act entry over the real podium image.
-   Act 1: click the glowing tip -> camera pushes into the podium.
-   Act 2: the baton lifts off the stand, rings concert-A (A440).
-   Act 3: the gate dissolves into the soundwave hero.
-   Hotspot measured from baton-stand.png: tip at 60% x, 34.1% y.
+   BATON GATE — fully code-based 3D concert-hall scene.
+   No image asset: holographic hall (SVG), spotlight (CSS),
+   carbon-fibre music stand (CSS/SVG), idle baton (SVG),
+   all reacting to a low-inertia cursor parallax.
+   Hotspot: baton tip at 60% x, 34.1% y.
    ============================================================ */
 #baton-gate{
   position:fixed; inset:0; z-index:10000;
-  background:#05060a;
+  background:radial-gradient(120% 90% at 50% 22%, #0d0e1a 0%, #08090f 55%, #030308 100%);
   overflow:hidden; cursor:pointer;
+  perspective:1400px;              /* the room has real depth */
+  perspective-origin:60% 40%;
   transition:opacity 1s cubic-bezier(.4,0,.2,1), visibility 1s;
 }
 #baton-gate.unlocked{ opacity:0; visibility:hidden; pointer-events:none; }
 
-/* the scene = the image. We scale THIS to fake a camera push-in,
-   with the transform origin sitting on the baton tip (60% / 34.1%). */
+/* the whole scene is a 3D card that the cursor gently rotates */
 .gate-scene{
   position:absolute; inset:0;
-  background:url('baton-stand.png') center center / cover no-repeat;
   transform-origin:60% 34.1%;
+  transform-style:preserve-3d;
   transform:scale(1);
   transition:transform 1.15s cubic-bezier(.66,0,.2,1), filter 1.15s ease;
   will-change:transform, filter;
 }
-/* vignette so text/tip read against the busy image */
-.gate-scene::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(70% 60% at 60% 34%, rgba(5,6,10,0) 0%, rgba(5,6,10,.35) 70%, rgba(5,6,10,.72) 100%);
+/* parallax layer that JS drives every frame; sits inside .gate-scene so the
+   ACT-1 zoom (which writes .gate-scene transform) never fights the tilt */
+.gate-parallax{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  will-change:transform;
 }
-/* ACT 1: push the camera toward the tip */
-#baton-gate.zooming .gate-scene{
-  transform:scale(2.15);
-  filter:brightness(1.08);
+/* floor + top vignette so the vector room reads against the copy */
+.gate-scene::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:5;
+  background:radial-gradient(72% 62% at 60% 34%, rgba(5,6,10,0) 0%, rgba(5,6,10,.28) 66%, rgba(5,6,10,.75) 100%);
 }
 
-/* ---- the glowing tip: click target + pulse ---- */
+/* ---- layer: the holographic wireframe hall ---- */
+.hall-layer{
+  position:absolute; inset:-6% -6%;
+  transform:translateZ(-360px) scale(1.28);   /* pushed deep -> parallax */
+  z-index:1;
+}
+.hall-layer svg{ width:100%; height:100%; display:block; }
+.hall-stroke{
+  fill:none;
+  stroke:rgba(183,167,216,0.28);
+  stroke-width:1.1;
+  vector-effect:non-scaling-stroke;
+}
+.hall-arch{ stroke:rgba(183,167,216,0.22); }
+.hall-wave{ stroke:rgba(183,167,216,0.32); stroke-width:1; }
+.hall-wave.deep{ stroke:rgba(143,143,208,0.20); }
+/* alive: a slow shimmer sweeping the strokes' opacity */
+.hall-layer .shimmer{
+  animation:hallShimmer 7s ease-in-out infinite;
+}
+.hall-layer .shimmer.s2{ animation-delay:-2.3s; }
+.hall-layer .shimmer.s3{ animation-delay:-4.6s; }
+@keyframes hallShimmer{
+  0%,100%{ opacity:.45; }
+  50%{ opacity:1; }
+}
+/* faint animated 'grid breathe' on the wave field */
+.hall-wave{ animation:waveGlow 9s ease-in-out infinite; }
+@keyframes waveGlow{
+  0%,100%{ stroke-opacity:.55; filter:drop-shadow(0 0 2px rgba(183,167,216,.25)); }
+  50%{ stroke-opacity:1; filter:drop-shadow(0 0 6px rgba(183,167,216,.5)); }
+}
+
+/* ---- layer: the overhead spotlight cone ---- */
+.spotlight{
+  position:absolute; left:60%; top:-8%;
+  width:44vmin; height:88vmin;
+  transform:translateX(-50%) translateZ(-40px);
+  z-index:2; pointer-events:none;
+  mix-blend-mode:screen;
+  background:
+    radial-gradient(60% 40% at 50% 100%, rgba(183,167,216,.28) 0%, rgba(183,167,216,0) 70%),
+    linear-gradient(to bottom,
+      rgba(233,231,246,.34) 0%,
+      rgba(200,193,230,.18) 26%,
+      rgba(160,155,205,.10) 55%,
+      rgba(120,118,175,.04) 78%,
+      rgba(80,80,130,0) 100%);
+  clip-path:polygon(43% 0%, 57% 0%, 82% 100%, 18% 100%);
+  filter:blur(2px);
+  animation:spotBreathe 6s ease-in-out infinite;
+}
+@keyframes spotBreathe{
+  0%,100%{ opacity:.85; }
+  50%{ opacity:1; }
+}
+/* the pool of light on the floor around the base */
+.spot-pool{
+  position:absolute; left:60%; bottom:8%;
+  width:28vmin; height:7vmin;
+  transform:translateX(-50%) translateZ(-30px);
+  z-index:2; pointer-events:none;
+  mix-blend-mode:screen;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(183,167,216,.34) 0%, rgba(183,167,216,0) 70%);
+  filter:blur(5px);
+}
+
+/* ---- layer: the 3D music stand ---- */
+.stand-layer{
+  position:absolute; left:60%; top:34.1%;
+  width:34vmin; height:52vmin;
+  transform:translate(-50%,-16%) translateZ(30px);
+  z-index:4;
+  transform-style:preserve-3d;
+}
+/* the desk face — tilted back for isometric depth, carbon-fibre textured */
+.stand-desk{
+  position:absolute; left:50%; top:-4vmin;
+  width:30vmin; height:20vmin;
+  transform:translateX(-50%) rotateX(52deg) rotateZ(0deg);
+  transform-origin:50% 100%;
+  border-radius:1.4vmin;
+  background:
+    /* carbon-fibre weave */
+    linear-gradient(27deg,  #191919 1.5px, transparent 1.5px) 0 0 / 7px 7px,
+    linear-gradient(-27deg, #191919 1.5px, transparent 1.5px) 0 0 / 7px 7px,
+    linear-gradient(27deg,  #0c0c0c 1.5px, transparent 1.5px) 3.5px 3.5px / 7px 7px,
+    linear-gradient(-27deg, #0c0c0c 1.5px, transparent 1.5px) 3.5px 3.5px / 7px 7px,
+    linear-gradient(150deg, #26262b 0%, #17171b 45%, #0d0d10 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(183,167,216,.22),
+    inset 0 0 24px rgba(0,0,0,.6),
+    0 10px 34px rgba(0,0,0,.55);
+  border:0.5px solid rgba(183,167,216,.16);
+}
+/* soft spotlit sheen falling across the top of the desk */
+.stand-desk::before{
+  content:""; position:absolute; inset:0; border-radius:1.4vmin; pointer-events:none;
+  background:linear-gradient(160deg, rgba(233,231,246,.18) 0%, rgba(233,231,246,0) 42%);
+  mix-blend-mode:screen;
+}
+/* thin lip along the bottom edge of the desk */
+.stand-desk::after{
+  content:""; position:absolute; left:6%; right:6%; bottom:5%;
+  height:5%; border-radius:2px;
+  background:linear-gradient(90deg, rgba(183,167,216,.05), rgba(183,167,216,.28), rgba(183,167,216,.05));
+}
+/* the column + tripod, drawn as SVG below the desk */
+.stand-base{
+  position:absolute; left:50%; top:17vmin;
+  width:24vmin; height:34vmin;
+  transform:translateX(-50%) translateZ(-6px);
+}
+.stand-base svg{ width:100%; height:100%; display:block; overflow:visible; }
+.stand-metal{ stroke:#3a3a42; stroke-width:2.4; fill:none; stroke-linecap:round; stroke-linejoin:round;
+  filter:drop-shadow(0 0 1px rgba(183,167,216,.2)); }
+.stand-metal.lit{ stroke:#6a6675; }
+.stand-fill{ fill:#17171c; }
+
+/* ---- the idle baton resting on the desk (SVG) ---- */
+.idle-baton{
+  position:absolute; left:60%; top:34.1%;
+  width:26vmin; height:8vmin;
+  transform:translate(-100%,-50%) rotate(-32deg);
+  transform-origin:right center;
+  z-index:5; pointer-events:none;
+  transition:opacity .4s ease;
+}
+.idle-baton svg{ width:100%; height:100%; overflow:visible; display:block; }
+.idle-baton .b-shaft{ }
+.idle-baton .b-tip{ filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 16px var(--lav)); }
+#baton-gate.zooming .idle-baton,
+#baton-gate.lifting .idle-baton{ opacity:0; }
+
+/* the glowing tip: click target + pulse (unchanged position) */
 #baton-trigger{
   position:absolute; top:34.1%; left:60%;
   width:70px; height:70px; transform:translate(-50%,-50%);
-  border:none; background:transparent; cursor:pointer; outline:none; z-index:6;
+  border:none; background:transparent; cursor:pointer; outline:none; z-index:7;
   border-radius:50%;
 }
 #baton-trigger:focus-visible{ outline:2px solid var(--lav); outline-offset:6px; }
 .pulse-ring{
   position:absolute; top:34.1%; left:60%;
   width:46px; height:46px; transform:translate(-50%,-50%);
-  border-radius:50%; pointer-events:none; z-index:5;
+  border-radius:50%; pointer-events:none; z-index:6;
   border:2px solid var(--lav);
   box-shadow:0 0 16px var(--lav), inset 0 0 8px rgba(183,167,216,.6);
   animation:gate-pulse 2.2s cubic-bezier(.215,.61,.355,1) infinite;
@@ -455,24 +564,26 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   0%{ transform:translate(-50%,-50%) scale(.5); opacity:.95; }
   80%,100%{ transform:translate(-50%,-50%) scale(2.6); opacity:0; }
 }
-/* the pulse fades as soon as we commit to entering */
 #baton-gate.zooming .pulse-ring{ animation:none; opacity:0; transition:opacity .3s; }
 
-/* ---- ACT 2: a CSS baton clone that lifts off the stand ----
-   It starts lying on the stand at the tip angle (~-32deg), then
-   rises, straightens, and drifts up as if picked up by a hand. */
+/* ACT 1: push the camera toward the tip (scale on the scene) */
+#baton-gate.zooming .gate-scene{
+  transform:scale(2.15);
+  filter:brightness(1.08);
+}
+
+/* ACT 2: the lift baton that rises off the stand */
 .lift-baton{
   position:absolute; top:34.1%; left:60%;
   width:20vmin; height:3px; border-radius:3px;
   transform-origin:right center;
-  /* start: lying on the stand, tip at hotspot, angled down-left */
   transform:translate(-100%,-50%) rotate(-32deg) scale(1);
   background:linear-gradient(90deg, rgba(183,167,216,.4) 0%, #cfc4dc 40%, #efe7ef 100%);
   box-shadow:0 0 10px rgba(239,231,239,.5);
-  opacity:0; z-index:7; pointer-events:none;
+  opacity:0; z-index:8; pointer-events:none;
   will-change:transform, opacity;
 }
-.lift-baton::after{ /* the bright tip */
+.lift-baton::after{
   content:""; position:absolute; right:-3px; top:50%; transform:translateY(-50%);
   width:12px; height:12px; border-radius:50%;
   background:radial-gradient(circle,#fff 0%, var(--lav) 70%, rgba(183,167,216,0) 100%);
@@ -480,14 +591,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 #baton-gate.lifting .lift-baton{
   opacity:1;
-  /* end: lifted up off the stand, rotated toward upright, floating */
   transform:translate(-88%, -190%) rotate(-64deg) scale(1.08);
   transition:transform .9s cubic-bezier(.34,1.2,.4,1), opacity .3s linear;
 }
 
-/* ---- gate copy ---- */
 .gate-copy{
-  position:absolute; left:0; right:0; bottom:8vh; z-index:8;
+  position:absolute; left:0; right:0; bottom:8vh; z-index:9;
   display:flex; flex-direction:column; align-items:center; text-align:center;
   transition:opacity .5s ease;
 }
@@ -508,7 +617,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   to{ text-shadow:0 0 12px var(--lav); opacity:.95; }
 }
 
-/* stardust + baton cursor carried into the site */
 #gate-particles{ position:fixed; inset:0; pointer-events:none; z-index:10002; }
 #custom-baton{
   position:fixed; top:0; left:0; width:12px; height:12px; border-radius:50%;
@@ -521,15 +629,15 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 @media (prefers-reduced-motion:reduce){
   .pulse-ring{ animation:none; }
+  .hall-layer .shimmer, .hall-wave, .spotlight{ animation:none; }
   .gate-scene, #baton-gate.zooming .gate-scene{ transition:none; transform:scale(1); }
+  .gate-parallax{ transform:none !important; }
   #baton-gate.lifting .lift-baton{ transition:opacity .3s; }
   #baton-gate{ transition:opacity .3s linear; }
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
-/* If the primary CDN fails to define Tone, load a fallback synchronously via
-   document.write before the app script runs. */
 if (typeof Tone === 'undefined') {
   document.write('<scr'+'ipt src="https://unpkg.com/tone@14.8.49/build/Tone.js"></scr'+'ipt>');
 }
@@ -537,9 +645,117 @@ if (typeof Tone === 'undefined') {
 </head>
 <body>
 
-<!-- ===== BATON GATE: click the tip -> zoom in -> baton lifts + tunes A -> enter ===== -->
+<!-- ===== BATON GATE: fully code-based 3D concert-hall scene ===== -->
 <div id="baton-gate">
-  <div class="gate-scene"></div>
+  <div class="gate-scene" id="gateScene">
+    <div class="gate-parallax" id="gateParallax">
+
+      <!-- The holographic wireframe hall -->
+      <div class="hall-layer">
+        <svg viewBox="0 0 1024 576" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <!-- left arcade of arches -->
+          <g class="hall-arch shimmer">
+            <path class="hall-stroke" d="M40 150 Q60 40 150 40 L150 300 L40 300 Z"/>
+            <path class="hall-stroke" d="M70 165 Q88 70 165 70 L165 300 L70 300 Z"/>
+            <path class="hall-stroke" d="M150 40 Q240 40 260 150 L260 300 L150 300 Z"/>
+            <path class="hall-stroke" d="M165 70 Q235 70 250 165 L250 300 L165 300 Z"/>
+            <path class="hall-stroke" d="M260 150 Q280 60 360 60 L360 300 L260 300 Z"/>
+            <path class="hall-stroke" d="M360 60 Q430 60 448 150 L448 300 L360 300 Z"/>
+          </g>
+          <!-- right arcade of arches (mirror) -->
+          <g class="hall-arch shimmer s2">
+            <path class="hall-stroke" d="M984 150 Q964 40 874 40 L874 300 L984 300 Z"/>
+            <path class="hall-stroke" d="M954 165 Q936 70 859 70 L859 300 L954 300 Z"/>
+            <path class="hall-stroke" d="M874 40 Q784 40 764 150 L764 300 L874 300 Z"/>
+            <path class="hall-stroke" d="M859 70 Q789 70 774 165 L774 300 L859 300 Z"/>
+            <path class="hall-stroke" d="M764 150 Q744 60 664 60 L664 300 L764 300 Z"/>
+            <path class="hall-stroke" d="M664 60 Q594 60 576 150 L576 300 L664 300 Z"/>
+          </g>
+          <!-- back wall arches receding to centre -->
+          <g class="hall-arch shimmer s3">
+            <path class="hall-stroke" d="M448 150 Q470 90 512 90 Q554 90 576 150 L576 260 L448 260 Z" opacity="0.6"/>
+            <path class="hall-stroke" d="M470 160 Q486 110 512 110 Q538 110 554 160 L554 250 L470 250 Z" opacity="0.45"/>
+          </g>
+          <!-- floor perspective lines -->
+          <g class="hall-stroke" opacity="0.5">
+            <path d="M0 470 L1024 470"/>
+            <path d="M120 576 L440 470"/>
+            <path d="M320 576 L470 470"/>
+            <path d="M700 576 L578 470"/>
+            <path d="M904 576 L602 470"/>
+            <path d="M512 470 L512 576"/>
+          </g>
+          <!-- glowing wave paths sweeping across the hall -->
+          <path class="hall-wave" d="M-20 300 C160 250 300 360 460 320 C560 296 620 250 720 268 C860 292 960 350 1044 300"/>
+          <path class="hall-wave deep" d="M-20 340 C180 300 320 400 500 360 C600 338 660 300 760 316 C880 336 980 392 1044 348"/>
+          <path class="hall-wave" d="M-20 262 C140 224 280 300 440 276 C540 261 600 232 700 244 C840 260 940 300 1044 268" opacity="0.7"/>
+          <!-- scattered node dots on the wave field -->
+          <g fill="rgba(183,167,216,0.5)">
+            <circle cx="70" cy="330" r="1.4"/><circle cx="150" cy="286" r="1.2"/>
+            <circle cx="250" cy="352" r="1.4"/><circle cx="360" cy="318" r="1.2"/>
+            <circle cx="900" cy="326" r="1.4"/><circle cx="820" cy="360" r="1.2"/>
+            <circle cx="720" cy="300" r="1.4"/><circle cx="960" cy="290" r="1.2"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Overhead spotlight cone + floor pool -->
+      <div class="spotlight"></div>
+      <div class="spot-pool"></div>
+
+      <!-- The 3D music stand -->
+      <div class="stand-layer">
+        <div class="stand-desk"></div>
+        <div class="stand-base">
+          <svg viewBox="0 0 240 340" aria-hidden="true">
+            <!-- central column -->
+            <path class="stand-metal lit" d="M120 0 L120 250"/>
+            <rect class="stand-fill" x="114" y="18" width="12" height="150" rx="4"/>
+            <path class="stand-metal" d="M114 18 L114 168 M126 18 L126 168"/>
+            <!-- height-adjust collar -->
+            <ellipse class="stand-fill" cx="120" cy="150" rx="12" ry="5"/>
+            <path class="stand-metal lit" d="M108 150 A12 5 0 0 0 132 150"/>
+            <!-- tripod legs -->
+            <path class="stand-metal" d="M120 250 L58 336"/>
+            <path class="stand-metal" d="M120 250 L120 340"/>
+            <path class="stand-metal" d="M120 250 L182 336"/>
+            <!-- leg feet -->
+            <path class="stand-metal lit" d="M50 336 L70 332 M110 340 L130 340 M170 332 L190 336"/>
+            <!-- hub where legs meet -->
+            <circle class="stand-fill" cx="120" cy="250" r="7"/>
+            <circle class="stand-metal lit" cx="120" cy="250" r="7"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- The idle baton resting on the desk -->
+      <div class="idle-baton">
+        <svg viewBox="0 0 260 40" aria-hidden="true">
+          <defs>
+            <linearGradient id="batonGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#8a7fa6"/>
+              <stop offset="30%" stop-color="#cfc4dc"/>
+              <stop offset="100%" stop-color="#efe7ef"/>
+            </linearGradient>
+            <radialGradient id="tipGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="55%" stop-color="#d7cce6"/>
+              <stop offset="100%" stop-color="rgba(183,167,216,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- cork handle -->
+          <rect x="6" y="15" width="34" height="10" rx="5" fill="#2a2028"/>
+          <!-- tapering shaft -->
+          <path class="b-shaft" d="M40 17 L236 19 L236 21 L40 23 Z" fill="url(#batonGrad)"/>
+          <!-- glowing tip -->
+          <circle class="b-tip" cx="238" cy="20" r="9" fill="url(#tipGlow)"/>
+        </svg>
+      </div>
+
+    </div><!-- /.gate-parallax -->
+  </div><!-- /.gate-scene -->
+
+  <!-- the lift baton (Act 2) sits above the parallax so it isn't tilted -->
   <div class="lift-baton"></div>
   <div class="pulse-ring"></div>
   <button id="baton-trigger" aria-label="Take the baton to begin"></button>
@@ -749,30 +965,18 @@ rs();addEventListener('resize',()=>{rs();onScroll()});
 
 let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
 const ORDER=['music','cog','data'];
-let MODE='music';          /* active visual mode */
-let SCROLL_MODE='music';   /* mode dictated by scroll position */
-let HOVER=null;            /* transient hover preview */
+let MODE='music';
+let SCROLL_MODE='music';
+let HOVER=null;
 
-/* ============ ORCHESTRAL ENGINE — REAL SAMPLED INSTRUMENTS ============
-   Samples: nbrosowsky/tonejs-instruments (VSCO2 Versilian Studios Chamber
-   Orchestra + Freesound + Iowa). Actual recorded violin, cello, contrabass,
-   flute, clarinet, bassoon, french horn, harp, piano — not synthesis.
-   Tone.Sampler repitches between sample points to cover the full range.
-
-   The cursor CONDUCTS: height selects the section, velocity sets dynamics.
-   ==================================================================== */
-/* Sample host. The preview sandbox's CSP (connect-src) may block a given host,
-   surfacing as "Failed to fetch". We probe a list and use the first that works;
-   if none respond, audioInit falls back to a synthesized orchestra. */
 const SAMPLE_HOSTS=[
   'https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/',
   'https://cdn.jsdelivr.net/gh/nbrosowsky/tonejs-instruments@master/samples/'
 ];
-let SAMPLE_BASE=SAMPLE_HOSTS[0];   /* makeSampler uses this; no pre-probe */
+let SAMPLE_BASE=SAMPLE_HOSTS[0];
 const AUDIO={on:false,ready:false,loading:false,meter:null,level:0,lastNote:0,vel:0,loaded:0,total:0};
 let MUTED=false;
 
-/* only the notes that actually exist in the library, per instrument */
 const KITS={
   violin:{A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',G5:'G5.mp3',A5:'A5.mp3',C6:'C6.mp3'},
   cello:{C2:'C2.mp3',E2:'E2.mp3',G2:'G2.mp3',A2:'A2.mp3',C3:'C3.mp3',E3:'E3.mp3',G3:'G3.mp3',A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3'},
@@ -785,8 +989,6 @@ const KITS={
   piano:{C3:'C3.mp3','D#3':'Ds3.mp3','F#3':'Fs3.mp3',A3:'A3.mp3',C4:'C4.mp3','D#4':'Ds4.mp3','F#4':'Fs4.mp3',A4:'A4.mp3',C5:'C5.mp3','D#5':'Ds5.mp3','F#5':'Fs5.mp3',A5:'A5.mp3'}
 };
 
-/* v14.8.49 Sampler: `onerror` does NOT exist here (v15 only) — passing it
-   throws and kills init. Only onload/urls/baseUrl/release/volume are valid. */
 function makeSampler(name,vol,rel,dest){
   try{
     const smp=new Tone.Sampler({
@@ -803,7 +1005,6 @@ function makeSampler(name,vol,rel,dest){
     return silentStub();
   }
 }
-/* a no-op stand-in so a missing instrument can never throw at play time */
 function silentStub(){
   return {triggerAttackRelease(){},triggerAttack(){},triggerRelease(){},releaseAll(){},loaded:false};
 }
@@ -818,8 +1019,6 @@ function updateLoad(){
   }
 }
 
-/* ---- the score: harmony + the per-bar sustaining bed. Shared by both the
-        sampled orchestra and the synth fallback (they expose the same names). ---- */
 function wireScore(){
   AUDIO.chords=[
     ['D3','F3','A3','C4'],
@@ -832,8 +1031,6 @@ function wireScore(){
   AUDIO.melody=['D4','E4','F4','G4','A4','Bb4','C5','D5','E5','F5','A5'];
   AUDIO.chordIdx=0;
   AUDIO.loop=new Tone.Loop(t=>{
-    /* don't trigger sampled instruments before their buffers decode —
-       a Sampler with no buffer plays silence and hides the problem */
     if(!AUDIO.synthMode && AUDIO.loaded===0) return;
     const ch=AUDIO.chords[AUDIO.chordIdx%5];
     const root=AUDIO.roots[AUDIO.chordIdx%5];
@@ -851,9 +1048,6 @@ function wireScore(){
   },'1m');
 }
 
-/* ---- synthesized fallback orchestra: only used when NO sample host is
-        reachable. Warmer-shaped synths standing in for each section so the
-        conducting still works even with audio fully sandboxed. ---- */
 function buildSynthOrchestra(){
   const hall=new Tone.Reverb({decay:5,wet:0.32}).toDestination();
   const bus=new Tone.Gain(0.9).connect(hall); bus.connect(Tone.Destination);
@@ -869,17 +1063,12 @@ function buildSynthOrchestra(){
   wireScore();
 }
 
-/* PRELOAD: build the samplers on PAGE LOAD so their buffers download while the
-   visitor reads the gate. Loading buffers does NOT require a running
-   AudioContext — only playback does — so this is legal before any click and
-   removes the lag that used to happen after entry. */
 let PRELOADED=false;
 function preloadSamples(){
   if(PRELOADED) return;
   PRELOADED=true;
   try{
     (typeof ttlog==="function"?ttlog:function(){})('preloadSamples \u00b7 building');
-    /* concert hall */
     const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
     const bus=new Tone.Gain(0.9).connect(hall);
     bus.connect(Tone.Destination);
@@ -903,10 +1092,10 @@ function preloadSamples(){
     AUDIO.piano   = makeSampler('piano',        -9, 1.6, bus);
 
     wireScore();
-    Tone.Transport.bpm.value=56;   /* adagio */
+    Tone.Transport.bpm.value=56;
   }catch(err){
     console.error('[orchestra] preload error:',err);
-    PRELOADED=false;   /* allow audioInit to build synth fallback later */
+    PRELOADED=false;
   }
 }
 window.__preloadSamples=preloadSamples;
@@ -919,12 +1108,8 @@ async function audioInit(){
   await Tone.start();
   (typeof ttlog==="function"?ttlog:function(){})('Tone.start ok \u00b7 ctx='+Tone.context.state);
 
-  /* samplers were (ideally) already built + downloading during the gate.
-     If preload never ran (e.g. no gate), build them now. */
   if(!PRELOADED) preloadSamples();
 
-  /* Wait until the samples actually decode before we call ourselves ready.
-     Because preload started at page load, this usually resolves instantly. */
   const ok = await waitForSamples(12000);
   (typeof ttlog==="function"?ttlog:function(){})('waitForSamples='+ok+' loaded='+AUDIO.loaded+'/'+AUDIO.total);
   if(!ok){
@@ -944,11 +1129,10 @@ async function audioInit(){
   }
 }
 
-/* resolves true once a majority of samplers report loaded, false on timeout */
 function waitForSamples(timeoutMs){
   return new Promise(resolve=>{
     const t0=Date.now();
-    const need=Math.ceil(AUDIO.total*0.6);   /* enough to sound like an orchestra */
+    const need=Math.ceil(AUDIO.total*0.6);
     (function poll(){
       if(AUDIO.loaded>=need) return resolve(true);
       if(Date.now()-t0>timeoutMs) return resolve(AUDIO.loaded>0);
@@ -963,11 +1147,12 @@ function teardownSamplers(){
 }
 
 function audioStart(){
-  if(AUDIO.on) return;   /* idempotent: already running */
+  if(AUDIO.on) return;
   if(!AUDIO.ready||!AUDIO.loop){(typeof ttlog==="function"?ttlog:function(){})('audioStart SKIP ready='+AUDIO.ready+' loop='+!!AUDIO.loop);return;}
   try{ Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; (typeof ttlog==="function"?ttlog:function(){})('audioStart \u00b7 transport running'); }
   catch(err){ console.error('[orchestra] start failed:',err); }
 }
+window.__audioStart=audioStart;
 function audioStop(){
   if(!AUDIO.ready)return;
   AUDIO.loop.stop(); Tone.Transport.stop();
@@ -976,7 +1161,6 @@ function audioStop(){
   AUDIO.on=false; AUDIO.level=0;
 }
 
-/* ---- THE BATON ---- */
 let lastCx=null,lastCy=null,lastCt=0;
 function audioNoteFromCursor(cx,cy){
   if(!AUDIO.on)return;
@@ -990,7 +1174,7 @@ function audioNoteFromCursor(cx,cy){
   const rising = lastCy!==null && (lastCy-cy)>20;
   lastCx=cx;lastCy=cy;lastCt=now;
 
-  const gap = 300 - AUDIO.vel*170;      /* faster baton -> denser phrasing */
+  const gap = 300 - AUDIO.vel*170;
   if(now-AUDIO.lastNote<gap)return;
   AUDIO.lastNote=now;
 
@@ -1000,26 +1184,22 @@ function audioNoteFromCursor(cx,cy){
 
   try{
     if(hf>0.66){
-      /* HIGH — flute & violin sing above the staff */
       const i=Math.floor((hf-0.66)/0.34*(AUDIO.melody.length-5))+5;
       const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
       AUDIO.flute.triggerAttackRelease(n,'2n',undefined,dyn);
       if(AUDIO.vel>0.25)
         AUDIO.violin.triggerAttackRelease(n,'2n',undefined,dyn*0.6);
       if(rising&&AUDIO.vel>0.35){
-        /* harp gliss on a big upward sweep */
         ch.forEach((nn,k)=>AUDIO.harp.triggerAttackRelease(
           Tone.Frequency(nn).transpose(12),'4n',Tone.now()+k*0.05,0.45));
       }
     } else if(hf>0.3){
-      /* MID — piano takes the melody, clarinet shadows it */
       const i=Math.floor(hf/0.66*(AUDIO.melody.length-2));
       const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
       AUDIO.piano.triggerAttackRelease(n,'4n',undefined,dyn);
       if(AUDIO.vel>0.4)
         AUDIO.clarinet.triggerAttackRelease(n,'4n',undefined,dyn*0.5);
     } else {
-      /* LOW — cello answers; bassoon & horn on a forceful stroke */
       AUDIO.cello.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.8);
       if(AUDIO.vel>0.45){
         AUDIO.bassoon.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.6);
@@ -1029,17 +1209,10 @@ function audioNoteFromCursor(cx,cy){
   }catch(e){}
 }
 
-/* ---- auto-arm: browsers require a gesture, so latch onto the FIRST one ---- */
-let ARMED=false;      /* audioInit has run + context is running */
-let ARMING=false;     /* an arm attempt is in flight */
+let ARMED=false;
+let ARMING=false;
 const TT=(typeof ttlog==="function"?ttlog:function(){});
 
-/* Chrome's autoplay policy only accepts ACTIVATING gestures (pointerdown,
-   keydown, touchstart, click) as consent to start audio. pointermove / scroll
-   / wheel do NOT count — calling Tone.start() there is rejected with
-   "AudioContext was not allowed to start". So we listen ONLY for activating
-   gestures, and we KEEP listening (no {once}) until the context is truly
-   running — because the first attempt can still lose the race. */
 async function armAudio(){
   if(ARMED||ARMING) return;
   ARMING=true;
@@ -1047,15 +1220,12 @@ async function armAudio(){
   const prompt=document.getElementById('armprompt');
   if(prompt)prompt.textContent='tuning the orchestra\u2026';
   try{
-    /* explicitly resume the raw context first — most reliable inside a gesture */
     if(typeof Tone!=='undefined'){
       try{ await Tone.start(); }catch(e){}
       try{ await Tone.context.resume(); }catch(e){}
     }
     TT('after start \u00b7 ctx='+Tone.context.state);
     if(Tone.context.state!=='running'){
-      /* gesture didn't stick (e.g. was a move that slipped through) — let the
-         next activating gesture try again */
       ARMING=false;
       return;
     }
@@ -1064,35 +1234,26 @@ async function armAudio(){
     ARMED=true;
     detachArm();
     if(prompt)prompt.classList.add('gone');
-    /* if the baton gate is orchestrating entry, IT starts the bed (for the
-       crossfade). Otherwise start now as usual. */
     if(!window.__gateDrivingEntry && (SCROLL_MODE==='music'||MODE==='music')) audioStart();
   }catch(err){
     console.error('[orchestra] init failed:',err);
     TT('init FAILED: '+(err&&err.message||err));
     if(prompt)prompt.classList.add('gone');
-    ARMING=false;   /* allow a retry on the next gesture */
+    ARMING=false;
   }
 }
 
-/* activating gestures only; NOT passive, NOT {once} (retry until running).
-   When the baton gate is present, IT is the deliberate unlock, so we don't
-   also arm on stray page clicks — the gate calls armAudio() directly.
-   If the gate is ever absent, we fall back to arming on any activating gesture. */
 const ARM_EVENTS=['pointerdown','mousedown','touchstart','keydown','click'];
 function detachArm(){ ARM_EVENTS.forEach(ev=>removeEventListener(ev,armAudio)); }
 if(!document.getElementById('baton-gate')){
   ARM_EVENTS.forEach(ev=>addEventListener(ev,armAudio));
 }
-/* expose for the gate */
 window.__armAudio=armAudio;
 
-/* ---- control panel ---- */
 const panel=document.getElementById('panel');
 const modeBtns=panel?panel.querySelectorAll('.mode'):[];
 function paintButtons(m){modeBtns.forEach(b=>b.classList.toggle('active',b.dataset.mode===m));}
 
-/* map a mode to the scroll depth at the center of its zone */
 function scrollTargetFor(m){
   const top=pinzone.offsetTop, track=pinzone.offsetHeight-innerHeight;
   const centers={music:0.16,cog:0.50,data:0.84};
@@ -1106,12 +1267,10 @@ modeBtns.forEach(btn=>{
   btn.addEventListener('focus',()=>{HOVER=m;MODE=m;paintButtons(m);});
   btn.addEventListener('blur',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
   btn.addEventListener('click',async()=>{
-    /* click toggles audio on/off; it's already armed by the first gesture */
     if(m==='music'){
       if(!AUDIO.on){ await audioInit(); audioStart(); MUTED=false; }
       else { audioStop(); MUTED=true; }
     } else if(AUDIO.on){ audioStop(); }
-    /* scroll to the matching depth in the timeline; scroll handler sets MODE */
     HOVER=null;
     MODE=m; SCROLL_MODE=m; paintButtons(m);
     window.scrollTo({top:scrollTargetFor(m),behavior:'smooth'});
@@ -1122,12 +1281,10 @@ const IRIS=[16,23,25],GRAPE=[103,103,162],AMAR=[140,24,62],BONE=[239,231,239];
 function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
 
 let curX=-1,curY=-1;
-/* rolling window of sampled values per-channel, for a real variance figure */
 const SAMPLES=[];const SAMPLE_MAX=60;
 addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
 addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
 
-/* conduct while the stage is pinned */
 let pinned=true;
 if(!rm){
  addEventListener('pointermove',e=>{
@@ -1140,14 +1297,12 @@ if(!rm){
  addEventListener('pointerleave',()=>tar=0.08);
 }
 
-/* ---- scroll timeline: drives MODE through three zones, then unpins ---- */
 function onScroll(){
  const top=pinzone.offsetTop;
  const track=Math.max(pinzone.offsetHeight-innerHeight,1);
- const p=Math.min(Math.max((scrollY-top)/track,0),1);   /* 0..1 through the pin zone */
+ const p=Math.min(Math.max((scrollY-top)/track,0),1);
  pinned=(scrollY-top)<track;
 
- /* three zones */
  let m;
  if(p<0.33) m='music';
  else if(p<0.66) m='cog';
@@ -1156,12 +1311,10 @@ function onScroll(){
    SCROLL_MODE=m;
    if(HOVER===null){ MODE=m; paintButtons(m); }
  }
- /* audio follows the timeline once armed by a real gesture; a click can mute it */
  if(m==='music'){
    if(ARMED&&AUDIO.ready&&!AUDIO.on&&!MUTED) audioStart();
  } else if(AUDIO.on){ audioStop(); }
 
- /* fade the canvas out in the last stretch of the timeline */
  const fade=Math.min(Math.max((p-0.86)/0.14,0),1);
  wave.style.opacity=(1-fade*0.95).toFixed(3);
  readout.classList.toggle('hero-fade',fade>0.5);
@@ -1190,7 +1343,6 @@ function fr(){
    sp=0.015+AUDIO.level*0.06;
    ph+=AUDIO.level*0.04;
  } else if(MODE==='music'){
-   /* visual-only sound-wave character when audio hasn't been enabled */
    amp=30+ar*40; fq=0.010+ar*0.014; ph+=0.012;
  }
  const la=0.34+ar*0.30;
@@ -1218,26 +1370,20 @@ function fr(){
   x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
  const i=ar;
  if(MODE==='music'){
-   /* music mode: no readout — the orchestra is the instrument */
    readout.classList.add('mute');
    readout.innerHTML='';
  } else if(MODE==='data'){
    readout.classList.remove('mute');
-   /* every field below is derived from live render state — nothing decorative */
    const px=curX>=0?curX:W*0.5;
    const rawNz=Math.sin(px*fq+ph)+0.5*Math.sin(px*fq*2.3+ph*1.4);
    const val=(rawNz+1.5)/3;
-   /* rolling variance over the sample window */
    SAMPLES.push(val); if(SAMPLES.length>SAMPLE_MAX)SAMPLES.shift();
    const mean=SAMPLES.reduce((a,b)=>a+b,0)/SAMPLES.length;
    const variance=SAMPLES.reduce((a,b)=>a+(b-mean)*(b-mean),0)/SAMPLES.length;
-   /* frequency: spatial freq -> cycles across the viewport */
    const cycles=(fq*W)/(2*Math.PI);
-   /* SNR: sine power vs. injected jitter power, in dB */
-   const sigP=1+0.25;                 /* var of sin + 0.5*sin components */
+   const sigP=1+0.25;
    const noiP=Math.max((jt/30)*(jt/30)*0.5,1e-6);
    const snr=10*Math.log10(sigP/noiP);
-   /* Δ: how far the smoothed arousal still lags the target */
    const lag=Math.abs(tar-ar);
    readout.innerHTML='f: <b>'+cycles.toFixed(2)+'</b> cyc/vw &middot; A: <b>'+amp.toFixed(1)+
      '</b> px &middot; &sigma;&sup2;: <b>'+variance.toFixed(3)+'</b> &middot; SNR: <b style="color:'+
@@ -1249,13 +1395,13 @@ function fr(){
    let band,hpa,state,col,hcol,hglow;
    if(i<0.33){
      band='alpha';hpa='inactive';state='baseline';col='#8f8fd0';
-     hcol='#5fb89b';hglow='rgba(95,184,155,0.55)';          /* green — at rest */
+     hcol='#5fb89b';hglow='rgba(95,184,155,0.55)';
    } else if(i<0.66){
      band='alpha\u2192beta';hpa='activating';state='arousal rising';col='#b7a7d8';
-     hcol='#e0b45c';hglow='rgba(224,180,92,0.55)';          /* amber — ramping */
+     hcol='#e0b45c';hglow='rgba(224,180,92,0.55)';
    } else {
      band='beta';hpa='active';state='stress response';col='#c9436a';
-     hcol='#e8425f';hglow='rgba(232,66,95,0.7)';            /* red — cortisol cascade */
+     hcol='#e8425f';hglow='rgba(232,66,95,0.7)';
    }
    readout.innerHTML='EEG &middot; '+band+' &middot; HPA axis: <span class="hpa" style="color:'+hcol+
      ';text-shadow:0 0 8px '+hglow+'">'+hpa+'</span> &middot; stress index: <b>'+i.toFixed(2)+
@@ -1270,13 +1416,6 @@ onScroll();
 <div id="turntable-overlay" style="position:fixed;inset:0;z-index:999;pointer-events:none;display:none;"></div>
 
  <script>
-   /* ============================================================
-   TURNTABLE TRANSITION  —  vanilla, no deps beyond your Tone.js
-   Timeline:  0ms  click → clone + slide/scale to centre
-             400ms  locked → spin + needle drop + audio cue
-             900ms  curtain drop
-            1200ms  window.location.href = target
-   ============================================================ */
 (function () {
   'use strict';
 
@@ -1286,15 +1425,13 @@ onScroll();
   const overlay = document.getElementById('turntable-overlay');
   if (!overlay) return;
 
-  let busy = false;   // guards against double-clicks mid-transition
+  let busy = false;
 
-  /* ---------- Audio cue: reuse the existing Tone.js engine ---------- */
   function cue() {
     if (typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
     try {
       const now = Tone.now();
 
-      // Needle crackle — short pink-noise burst through a lowpass.
       const crackle = new Tone.NoiseSynth({
         noise: { type: 'pink' },
         envelope: { attack: 0.004, decay: 0.28, sustain: 0 }
@@ -1302,7 +1439,6 @@ onScroll();
       crackle.volume.value = -22;
       crackle.triggerAttackRelease('8n', now);
 
-      // Signature chord — Dm9, matches the site's D-minor scale.
       const chord = new Tone.PolySynth(Tone.FMSynth, {
         harmonicity: 2.2, modulationIndex: 6,
         oscillator: { type: 'sine' },
@@ -1311,12 +1447,10 @@ onScroll();
       chord.volume.value = -14;
       chord.triggerAttackRelease(['D3', 'F3', 'A3', 'C4', 'E4'], '2n', now + 0.06);
 
-      // Dispose after the tails ring out — keeps the node graph clean.
       setTimeout(() => { crackle.dispose(); chord.dispose(); }, 3000);
-    } catch (e) { /* audio is decorative — never block navigation */ }
+    } catch (e) { }
   }
 
-  /* ---------- Build the centre-stage furniture once per run ---------- */
   function buildStage() {
     const platter = document.createElement('div');
     platter.className = 'tt-platter';
@@ -1328,11 +1462,9 @@ onScroll();
     return { platter, arm };
   }
 
-  /* ---------- Clone the .disc, pinned to its exact screen box ---------- */
   function cloneDisc(disc) {
     const r = disc.getBoundingClientRect();
 
-    // Outer: owns position + fly-to-centre transform.
     const outer = document.createElement('div');
     outer.className = 'tt-disc-clone';
     Object.assign(outer.style, {
@@ -1342,11 +1474,9 @@ onScroll();
       height: r.height + 'px'
     });
 
-    // Inner: owns the rotation. Separating the two prevents the
-    // translate and the rotate from clobbering each other.
     const spinner = document.createElement('div');
     spinner.className = 'tt-disc-spinner';
-    spinner.appendChild(disc.cloneNode(true));   // keeps grooves / label / hole
+    spinner.appendChild(disc.cloneNode(true));
     const inner = spinner.firstElementChild;
     Object.assign(inner.style, {
       position: 'absolute', inset: '0',
@@ -1358,51 +1488,43 @@ onScroll();
     return { outer, spinner, rect: r };
   }
 
-  /* ---------- Compute the translate/scale that lands it dead centre ---------- */
   function centreTransform(rect) {
-    const size = Math.min(innerWidth, innerHeight) * 0.46;   // matches --tt-disc-size
+    const size = Math.min(innerWidth, innerHeight) * 0.46;
     const scale = size / Math.max(rect.width, rect.height);
 
-    // Delta between the element's current centre and the viewport centre.
     const dx = (innerWidth  / 2) - (rect.left + rect.width  / 2);
     const dy = (innerHeight / 2) - (rect.top  + rect.height / 2);
 
     return `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
   }
 
-  /* ---------- Main sequence ---------- */
   function run(link, disc, url) {
     busy = true;
 
     const { outer, spinner, rect } = cloneDisc(disc);
     const { platter, arm } = buildStage();
 
-    disc.classList.add('tt-hidden');   // record "leaves" the sleeve
+    disc.classList.add('tt-hidden');
     overlay.appendChild(outer);
     overlay.style.display = 'block';
 
-    // Force layout so the browser registers the start state before we transition.
     void overlay.offsetWidth;
 
-    /* --- STEP 2: slide & centre (0 → 400ms) --- */
     requestAnimationFrame(() => {
       outer.style.transform = centreTransform(rect);
       platter.classList.add('tt-in');
     });
 
-    /* --- STEP 3: needle drop, spin, audio (400 → 900ms) --- */
     setTimeout(() => {
       spinner.classList.add('tt-spinning');
       arm.classList.add('tt-drop');
       cue();
     }, SLIDE);
 
-    /* --- STEP 4: curtain drop (900 → 1200ms) --- */
     setTimeout(() => {
       overlay.classList.add('tt-exit');
     }, SLIDE + SPIN);
 
-    /* --- Navigate. Prefer transitionend; setTimeout is the safety net. --- */
     let gone = false;
     const go = () => {
       if (gone) return;
@@ -1415,15 +1537,12 @@ onScroll();
     setTimeout(go, SLIDE + SPIN + WIPE + 60);
   }
 
-  /* ---------- Delegated click interception ---------- */
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a.release');
     if (!link) return;
 
     const url = link.getAttribute('href');
 
-    // Bail out for modifier-clicks, new tabs, anchors, and missing targets —
-    // the user's intent there is explicitly "not a page transition".
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
 
@@ -1439,13 +1558,11 @@ onScroll();
 
 <script>
 /* ============================================================
-   BATON GATE CONTROLLER — three acts
-   The click on the glowing tip is the browser-required gesture,
-   dressed as taking up the baton:
+   BATON GATE CONTROLLER — three acts + cursor parallax
+     PARALLAX low-inertia POV tilt of the whole scene
      ACT 1  camera pushes into the podium            (0 -> 1.15s)
      ACT 2  baton lifts off the stand + concert-A     (~0.6s -> 1.9s)
      ACT 3  gate dissolves into the soundwave hero    (~1.9s -> 2.9s)
-   The real sampled orchestra arms via the site's armAudio().
    ============================================================ */
 (function(){
   'use strict';
@@ -1453,11 +1570,9 @@ onScroll();
   const trigger = document.getElementById('baton-trigger');
   const baton   = document.getElementById('custom-baton');
   const canvas  = document.getElementById('gate-particles');
+  const parallax= document.getElementById('gateParallax');
   if(!gate || !trigger) return;
 
-  /* Preload the orchestra samples NOW, while the visitor reads the gate.
-     Buffers download without a running AudioContext, so by click-time the
-     orchestra is usually ready and enters with no lag. */
   if(typeof window.__preloadSamples==='function'){
     try{ window.__preloadSamples(); }catch(e){}
   }
@@ -1469,7 +1584,39 @@ onScroll();
   function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  /* ---- stardust that follows the baton cursor into the site ---- */
+  /* ---------- CURSOR-DRIVEN POV PARALLAX ----------
+     Track the cursor as normalized (-1..1) from viewport centre, then lerp
+     the scene's rotation toward it each frame for a low-inertia camera drift.
+     Max tilt kept subtle (~4deg Y / 2deg X) so it reads as an elegant
+     "looking around the hall" rather than a wobble. Runs only while the gate
+     is present and we haven't committed to entry (no fight with the ACT-1
+     zoom, which writes .gate-scene's own transform). */
+  let targX=0, targY=0, curXr=0, curYr=0;
+  let parallaxActive = !REDUCED;
+
+  addEventListener('mousemove', e=>{
+    if(!parallaxActive) return;
+    targX = (e.clientX / innerWidth  - 0.5) * 2;   // -1 .. 1
+    targY = (e.clientY / innerHeight - 0.5) * 2;   // -1 .. 1
+  });
+  // also drift back to rest when the pointer leaves the window
+  addEventListener('mouseleave', ()=>{ targX=0; targY=0; });
+
+  function parallaxLoop(){
+    if(parallaxActive && parallax){
+      // low-inertia lerp toward the target
+      curXr += (targX - curXr) * 0.06;
+      curYr += (targY - curYr) * 0.06;
+      // subtle counter-parallax: layers already sit at different translateZ,
+      // so a single rotation on the parallax wrapper yields real depth.
+      parallax.style.transform =
+        `rotateY(${curXr * 4}deg) rotateX(${-curYr * 2}deg) translateZ(0)`;
+    }
+    requestAnimationFrame(parallaxLoop);
+  }
+  requestAnimationFrame(parallaxLoop);
+
+  /* ---------- stardust cursor trail ---------- */
   class P{
     constructor(x,y){
       this.x=x; this.y=y;
@@ -1499,29 +1646,23 @@ onScroll();
     if(!REDUCED && Math.random()<0.4) particles.push(new P(e.clientX,e.clientY));
   });
 
-  /* ---- concert-A: a SUSTAINED tuning tone we hold until the orchestra is
-     loaded, then crossfade directly into its first D-aeolian downbeat. This
-     is what turns "tune, then play" into one continuous gesture — and it also
-     masks any remaining sample-load time, however long it takes. ---- */
   let tuneRig=null;
   function startTuningA(){
     if(typeof Tone==='undefined') return;
     try{
       const rev=new Tone.Reverb({decay:4.2,wet:0.5}).toDestination();
       const filt=new Tone.Filter(2600,'lowpass').connect(rev);
-      const gain=new Tone.Gain(0).connect(filt);           /* we ride this for fades */
+      const gain=new Tone.Gain(0).connect(filt);
       const a=new Tone.PolySynth(Tone.Synth,{
         oscillator:{type:'sawtooth'},
         envelope:{attack:0.6,decay:0.3,sustain:1.0,release:1.8}
       }).connect(gain);
       a.volume.value=-15;
-      /* A4=440 doubled at the octave + faint fifth = oboe-ish 'A' for the section */
       a.triggerAttack(['A3','A4','E5']);
-      gain.gain.rampTo(1.0, 0.6);                           /* fade the A in */
+      gain.gain.rampTo(1.0, 0.6);
       tuneRig={a,gain,rev,filt};
-    }catch(e){/* decorative */}
+    }catch(e){}
   }
-  /* crossfade: duck the A out over `dur`, dispose after it rings down */
   function resolveTuningA(dur){
     if(!tuneRig) return;
     const {a,gain,rev,filt}=tuneRig; tuneRig=null;
@@ -1537,47 +1678,39 @@ onScroll();
   async function raiseBaton(){
     if(entered) return; entered=true;
 
-    /* tell armAudio the gate owns the first downbeat (for the crossfade) */
+    // freeze the parallax so it doesn't fight the ACT-1 zoom, and ease the
+    // scene back to a neutral pose for a clean push-in.
+    parallaxActive=false;
+    if(parallax){
+      parallax.style.transition='transform .5s ease';
+      parallax.style.transform='rotateY(0deg) rotateX(0deg) translateZ(0)';
+    }
+
     window.__gateDrivingEntry=true;
-    /* the click is the gesture — start the context + ready the orchestra.
-       (samples were already downloading from the gate preload.) */
     const armed = (typeof window.__armAudio==='function')
       ? window.__armAudio() : Promise.resolve();
 
-    /* ACT 1 — camera pushes into the podium */
     gate.classList.add('zooming');
 
-    /* ACT 2 — baton lifts, the sustained concert-A begins and HOLDS */
     setTimeout(()=>{
       gate.classList.add('lifting');
       startTuningA();
     }, 600);
 
-    /* prep the baton cursor for the site */
     if(!REDUCED){
       document.body.style.cursor='none';
       baton.classList.add('active');
     }
 
-    /* Wait until the orchestra is actually ready (armAudio resolves only when
-       samples are loaded, or the synth fallback is up). The A sustains through
-       this wait — so no matter how long loading takes, it's covered. */
     try{ await armed; }catch(e){}
 
-    /* Make sure the A has been ringing at least a musical beat before we resolve,
-       so a fast load still feels like a real tuning note, not a blip. */
-    const MIN_A = 1500;                       /* ms the A should sound minimum */
-    const since = (typeof performance!=='undefined') ? 0 : 0;
+    const MIN_A = 1500;
     await new Promise(r=>setTimeout(r, MIN_A));
 
-    /* ACT 3 — the crossfade: the A resolves straight into the orchestra.
-       Start the D-aeolian bed on the NEXT downbeat, and duck the A out across
-       that same bar so the two overlap into one continuous phrase. */
     const barSec = (typeof Tone!=='undefined') ? Tone.Time('1m').toSeconds() : 2.1;
-    if(typeof audioStart==='function') audioStart();   /* orchestra bed begins */
-    resolveTuningA(barSec * 0.9);                       /* A melts into the bed */
+    if(typeof window.__audioStart==='function') window.__audioStart();
+    resolveTuningA(barSec * 0.9);
 
-    /* dissolve the gate into the hero as the crossfade happens */
     gate.classList.add('unlocked');
     tracking = !REDUCED;
     gate.addEventListener('transitionend',()=>{ gate.remove(); },{once:true});
