@@ -391,10 +391,186 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   #turntable-overlay{ display:none !important; }
 }
 
+
+/* ---- diagnostic HUD (visible only with #debug in the URL) ---- */
+#tt-debug{position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;
+  font-family:"DM Mono",monospace;font-size:11px;line-height:1.5;
+  color:#9fe0d8;background:rgba(10,12,16,.88);border:1px solid rgba(159,224,216,.4);
+  border-radius:6px;padding:8px 10px;white-space:pre-wrap;pointer-events:none;display:none}
+#tt-debug.on{display:block}
+
+/* ============================================================
+   BATON GATE — three-act entry over the real podium image.
+   Act 1: click the glowing tip -> camera pushes into the podium.
+   Act 2: the baton lifts off the stand, rings concert-A (A440).
+   Act 3: the gate dissolves into the soundwave hero.
+   Hotspot measured from baton-stand.jpg: tip at 60% x, 34.1% y.
+   ============================================================ */
+#baton-gate{
+  position:fixed; inset:0; z-index:10000;
+  background:#05060a;
+  overflow:hidden; cursor:pointer;
+  transition:opacity 1s cubic-bezier(.4,0,.2,1), visibility 1s;
+}
+#baton-gate.unlocked{ opacity:0; visibility:hidden; pointer-events:none; }
+
+/* the scene = the image. We scale THIS to fake a camera push-in,
+   with the transform origin sitting on the baton tip (60% / 34.1%). */
+.gate-scene{
+  position:absolute; inset:0;
+  background:url('baton-stand.jpg') center center / cover no-repeat;
+  transform-origin:60% 34.1%;
+  transform:scale(1);
+  transition:transform 1.15s cubic-bezier(.66,0,.2,1), filter 1.15s ease;
+  will-change:transform, filter;
+}
+/* vignette so text/tip read against the busy image */
+.gate-scene::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(70% 60% at 60% 34%, rgba(5,6,10,0) 0%, rgba(5,6,10,.35) 70%, rgba(5,6,10,.72) 100%);
+}
+/* ACT 1: push the camera toward the tip */
+#baton-gate.zooming .gate-scene{
+  transform:scale(2.15);
+  filter:brightness(1.08);
+}
+
+/* ---- the glowing tip: click target + pulse ---- */
+#baton-trigger{
+  position:absolute; top:34.1%; left:60%;
+  width:70px; height:70px; transform:translate(-50%,-50%);
+  border:none; background:transparent; cursor:pointer; outline:none; z-index:6;
+  border-radius:50%;
+}
+#baton-trigger:focus-visible{ outline:2px solid var(--lav); outline-offset:6px; }
+.pulse-ring{
+  position:absolute; top:34.1%; left:60%;
+  width:46px; height:46px; transform:translate(-50%,-50%);
+  border-radius:50%; pointer-events:none; z-index:5;
+  border:2px solid var(--lav);
+  box-shadow:0 0 16px var(--lav), inset 0 0 8px rgba(183,167,216,.6);
+  animation:gate-pulse 2.2s cubic-bezier(.215,.61,.355,1) infinite;
+}
+@keyframes gate-pulse{
+  0%{ transform:translate(-50%,-50%) scale(.5); opacity:.95; }
+  80%,100%{ transform:translate(-50%,-50%) scale(2.6); opacity:0; }
+}
+/* the pulse fades as soon as we commit to entering */
+#baton-gate.zooming .pulse-ring{ animation:none; opacity:0; transition:opacity .3s; }
+
+/* ---- ACT 2: a CSS baton clone that lifts off the stand ----
+   It starts lying on the stand at the tip angle (~-32deg), then
+   rises, straightens, and drifts up as if picked up by a hand. */
+.lift-baton{
+  position:absolute; top:34.1%; left:60%;
+  width:20vmin; height:3px; border-radius:3px;
+  transform-origin:right center;
+  /* start: lying on the stand, tip at hotspot, angled down-left */
+  transform:translate(-100%,-50%) rotate(-32deg) scale(1);
+  background:linear-gradient(90deg, rgba(183,167,216,.4) 0%, #cfc4dc 40%, #efe7ef 100%);
+  box-shadow:0 0 10px rgba(239,231,239,.5);
+  opacity:0; z-index:7; pointer-events:none;
+  will-change:transform, opacity;
+}
+.lift-baton::after{ /* the bright tip */
+  content:""; position:absolute; right:-3px; top:50%; transform:translateY(-50%);
+  width:12px; height:12px; border-radius:50%;
+  background:radial-gradient(circle,#fff 0%, var(--lav) 70%, rgba(183,167,216,0) 100%);
+  box-shadow:0 0 14px #fff, 0 0 30px var(--lav);
+}
+#baton-gate.lifting .lift-baton{
+  opacity:1;
+  /* end: lifted up off the stand, rotated toward upright, floating */
+  transform:translate(-88%, -190%) rotate(-64deg) scale(1.08);
+  transition:transform .9s cubic-bezier(.34,1.2,.4,1), opacity .3s linear;
+}
+
+/* ---- gate copy ---- */
+.gate-copy{
+  position:absolute; left:0; right:0; bottom:8vh; z-index:8;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  transition:opacity .5s ease;
+}
+#baton-gate.zooming .gate-copy{ opacity:0; }
+.gate-title{
+  font-family:"Dreamer TM","Pixelify Sans",monospace; font-weight:400;
+  font-size:clamp(1.6rem,4.5vw,3rem); color:var(--bone); opacity:.94;
+  letter-spacing:.01em; margin-bottom:1rem;
+  text-shadow:0 2px 30px rgba(0,0,0,.8);
+}
+.instruction-text{
+  font-family:"DM Mono",monospace; font-size:.72rem; letter-spacing:.34em;
+  color:var(--bone); opacity:.75; text-transform:uppercase;
+  pointer-events:none; animation:text-glow 3s ease-in-out infinite alternate;
+}
+@keyframes text-glow{
+  from{ text-shadow:0 0 4px rgba(255,255,255,.1); opacity:.55; }
+  to{ text-shadow:0 0 12px var(--lav); opacity:.95; }
+}
+
+/* stardust + baton cursor carried into the site */
+#gate-particles{ position:fixed; inset:0; pointer-events:none; z-index:10002; }
+#custom-baton{
+  position:fixed; top:0; left:0; width:12px; height:12px; border-radius:50%;
+  background:var(--bone); pointer-events:none; z-index:10003;
+  transform:translate3d(-50%,-50%,0);
+  box-shadow:0 0 10px var(--bone), 0 0 25px var(--lav);
+  opacity:0; transition:opacity .5s cubic-bezier(.16,1,.3,1);
+}
+#custom-baton.active{ opacity:1; }
+
+@media (prefers-reduced-motion:reduce){
+  .pulse-ring{ animation:none; }
+  .gate-scene, #baton-gate.zooming .gate-scene{ transition:none; transform:scale(1); }
+  #baton-gate.lifting .lift-baton{ transition:opacity .3s; }
+  #baton-gate{ transition:opacity .3s linear; }
+}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script>
+/* If the primary CDN fails to define Tone, load a fallback synchronously via
+   document.write before the app script runs. */
+if (typeof Tone === 'undefined') {
+  document.write('<scr'+'ipt src="https://unpkg.com/tone@14.8.49/build/Tone.js"></scr'+'ipt>');
+}
+</script>
 </head>
 <body>
+
+<!-- ===== BATON GATE: click the tip -> zoom in -> baton lifts + tunes A -> enter ===== -->
+<div id="baton-gate">
+  <div class="gate-scene"></div>
+  <div class="lift-baton"></div>
+  <div class="pulse-ring"></div>
+  <button id="baton-trigger" aria-label="Take the baton to begin"></button>
+  <div class="gate-copy">
+    <div class="gate-title">Chaeyeon&nbsp;Kim</div>
+    <div class="instruction-text">take the baton</div>
+  </div>
+</div>
+<div id="custom-baton"></div>
+<canvas id="gate-particles"></canvas>
+
+<div id="tt-debug" aria-hidden="true"></div>
+<script>
+(function(){
+  var on = location.hash.indexOf('debug')>=0;
+  var el = document.getElementById('tt-debug');
+  if(on && el) el.classList.add('on');
+  var lines=[];
+  window.ttlog=function(msg){
+    lines.push(msg);
+    if(lines.length>12) lines.shift();
+    if(el) el.textContent=lines.join('\n');
+    try{console.log('[tt]',msg);}catch(e){}
+  };
+  window.addEventListener('error',function(e){
+    ttlog('JS ERROR: '+(e.message||e.type)+(e.filename?' @'+e.filename.split('/').pop()+':'+e.lineno:''));
+  });
+  ttlog('boot \u00b7 Tone='+(typeof Tone!=='undefined'?Tone.version||'yes':'MISSING'));
+})();
+</script>
+
 
 <div class="grain"></div>
 
@@ -418,7 +594,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
       <div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
 
-      <div class="armprompt" id="armprompt" aria-hidden="true">move your cursor to conduct the orchestra</div>
+      <div class="armprompt" id="armprompt" aria-hidden="true">click anywhere to begin &middot; then move to conduct</div>
       <div class="cue" id="cue" aria-hidden="true">move to conduct &rarr;</div>
       <div class="scrolldown" id="scrolldown">scroll &darr;</div>
     </header>
@@ -632,6 +808,7 @@ function silentStub(){
   return {triggerAttackRelease(){},triggerAttack(){},triggerRelease(){},releaseAll(){},loaded:false};
 }
 function updateLoad(){
+  (typeof ttlog==="function"?ttlog:function(){})('sample loaded '+AUDIO.loaded+'/'+AUDIO.total);
   const el=document.getElementById('armprompt');
   if(!el)return;
   if(AUDIO.loaded>=AUDIO.total){
@@ -692,50 +869,64 @@ function buildSynthOrchestra(){
   wireScore();
 }
 
+/* PRELOAD: build the samplers on PAGE LOAD so their buffers download while the
+   visitor reads the gate. Loading buffers does NOT require a running
+   AudioContext — only playback does — so this is legal before any click and
+   removes the lag that used to happen after entry. */
+let PRELOADED=false;
+function preloadSamples(){
+  if(PRELOADED) return;
+  PRELOADED=true;
+  try{
+    (typeof ttlog==="function"?ttlog:function(){})('preloadSamples \u00b7 building');
+    /* concert hall */
+    const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
+    const bus=new Tone.Gain(0.9).connect(hall);
+    bus.connect(Tone.Destination);
+    AUDIO.meter=new Tone.Meter({smoothing:0.82});
+    bus.connect(AUDIO.meter);
+    let wide;
+    try{ wide=new Tone.StereoWidener(0.65).connect(bus); }
+    catch(err){ wide=bus; }
+
+    AUDIO.total=Object.keys(KITS).length;
+    AUDIO.loaded=0;
+
+    AUDIO.violin  = makeSampler('violin',      -14, 1.8, wide);
+    AUDIO.cello   = makeSampler('cello',       -12, 2.2, wide);
+    AUDIO.bass    = makeSampler('contrabass',  -13, 2.4, bus);
+    AUDIO.flute   = makeSampler('flute',       -16, 1.4, wide);
+    AUDIO.clarinet= makeSampler('clarinet',    -15, 1.4, wide);
+    AUDIO.bassoon = makeSampler('bassoon',     -15, 1.6, wide);
+    AUDIO.horn    = makeSampler('french-horn', -14, 2.0, wide);
+    AUDIO.harp    = makeSampler('harp',        -13, 2.6, wide);
+    AUDIO.piano   = makeSampler('piano',        -9, 1.6, bus);
+
+    wireScore();
+    Tone.Transport.bpm.value=56;   /* adagio */
+  }catch(err){
+    console.error('[orchestra] preload error:',err);
+    PRELOADED=false;   /* allow audioInit to build synth fallback later */
+  }
+}
+window.__preloadSamples=preloadSamples;
+
 async function audioInit(){
   if(AUDIO.ready||AUDIO.loading) return;
   AUDIO.loading=true;
   try{
+  (typeof ttlog==="function"?ttlog:function(){})('audioInit \u00b7 ctx='+Tone.context.state);
   await Tone.start();
+  (typeof ttlog==="function"?ttlog:function(){})('Tone.start ok \u00b7 ctx='+Tone.context.state);
 
-  /* Build the sampled orchestra directly. We do NOT pre-probe the host with a
-     separate fetch(): that request and Tone's internal loader can disagree, and
-     a false negative silently drops us to the synth. Instead each Sampler loads
-     independently; if ALL fail, onload never advances and we fall back then. */
-
-  /* concert hall */
-  const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
-  const bus=new Tone.Gain(0.9).connect(hall);
-  bus.connect(Tone.Destination);
-  AUDIO.meter=new Tone.Meter({smoothing:0.82});
-  bus.connect(AUDIO.meter);
-
-  /* gentle section widening — a real room, not a chorus pedal.
-     StereoWidener is guarded: if unavailable, fall back to the dry bus. */
-  let wide;
-  try{ wide=new Tone.StereoWidener(0.65).connect(bus); }
-  catch(err){ console.warn('[orchestra] StereoWidener unavailable, using dry bus'); wide=bus; }
-
-  AUDIO.total=Object.keys(KITS).length;
-  AUDIO.loaded=0;
-
-  AUDIO.violin  = makeSampler('violin',      -14, 1.8, wide);
-  AUDIO.cello   = makeSampler('cello',       -12, 2.2, wide);
-  AUDIO.bass    = makeSampler('contrabass',  -13, 2.4, bus);
-  AUDIO.flute   = makeSampler('flute',       -16, 1.4, wide);
-  AUDIO.clarinet= makeSampler('clarinet',    -15, 1.4, wide);
-  AUDIO.bassoon = makeSampler('bassoon',     -15, 1.6, wide);
-  AUDIO.horn    = makeSampler('french-horn', -14, 2.0, wide);
-  AUDIO.harp    = makeSampler('harp',        -13, 2.6, wide);
-  AUDIO.piano   = makeSampler('piano',        -9, 1.6, bus);
-
-  wireScore();
-  Tone.Transport.bpm.value=56;   /* adagio */
+  /* samplers were (ideally) already built + downloading during the gate.
+     If preload never ran (e.g. no gate), build them now. */
+  if(!PRELOADED) preloadSamples();
 
   /* Wait until the samples actually decode before we call ourselves ready.
-     If nothing loads within the timeout (host blocked / offline), tear down
-     and swap in the synth orchestra so the page is never silent. */
+     Because preload started at page load, this usually resolves instantly. */
   const ok = await waitForSamples(12000);
+  (typeof ttlog==="function"?ttlog:function(){})('waitForSamples='+ok+' loaded='+AUDIO.loaded+'/'+AUDIO.total);
   if(!ok){
     console.warn('[orchestra] samples did not load in time — synth fallback');
     teardownSamplers();
@@ -746,7 +937,6 @@ async function audioInit(){
   AUDIO.ready=true;
   }catch(err){
     console.error('[orchestra] audioInit error:',err);
-    /* last-ditch: synth so something plays */
     try{ if(!AUDIO.ready){ buildSynthOrchestra(); AUDIO.synthMode=true; AUDIO.ready=true; } }
     catch(e2){ console.error('[orchestra] synth fallback also failed:',e2); }
   }finally{
@@ -773,8 +963,9 @@ function teardownSamplers(){
 }
 
 function audioStart(){
-  if(!AUDIO.ready||!AUDIO.loop)return;
-  try{ Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; }
+  if(AUDIO.on) return;   /* idempotent: already running */
+  if(!AUDIO.ready||!AUDIO.loop){(typeof ttlog==="function"?ttlog:function(){})('audioStart SKIP ready='+AUDIO.ready+' loop='+!!AUDIO.loop);return;}
+  try{ Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; (typeof ttlog==="function"?ttlog:function(){})('audioStart \u00b7 transport running'); }
   catch(err){ console.error('[orchestra] start failed:',err); }
 }
 function audioStop(){
@@ -839,23 +1030,62 @@ function audioNoteFromCursor(cx,cy){
 }
 
 /* ---- auto-arm: browsers require a gesture, so latch onto the FIRST one ---- */
-let ARMED=false;
+let ARMED=false;      /* audioInit has run + context is running */
+let ARMING=false;     /* an arm attempt is in flight */
+const TT=(typeof ttlog==="function"?ttlog:function(){});
+
+/* Chrome's autoplay policy only accepts ACTIVATING gestures (pointerdown,
+   keydown, touchstart, click) as consent to start audio. pointermove / scroll
+   / wheel do NOT count — calling Tone.start() there is rejected with
+   "AudioContext was not allowed to start". So we listen ONLY for activating
+   gestures, and we KEEP listening (no {once}) until the context is truly
+   running — because the first attempt can still lose the race. */
 async function armAudio(){
-  if(ARMED)return; ARMED=true;
+  if(ARMED||ARMING) return;
+  ARMING=true;
+  TT('armAudio \u00b7 ctx='+((typeof Tone!=='undefined')?Tone.context.state:'noTone'));
   const prompt=document.getElementById('armprompt');
   if(prompt)prompt.textContent='tuning the orchestra\u2026';
   try{
-    await audioInit();     /* now resolves only when ready (samples or synth) */
+    /* explicitly resume the raw context first — most reliable inside a gesture */
+    if(typeof Tone!=='undefined'){
+      try{ await Tone.start(); }catch(e){}
+      try{ await Tone.context.resume(); }catch(e){}
+    }
+    TT('after start \u00b7 ctx='+Tone.context.state);
+    if(Tone.context.state!=='running'){
+      /* gesture didn't stick (e.g. was a move that slipped through) — let the
+         next activating gesture try again */
+      ARMING=false;
+      return;
+    }
+    await audioInit();
+    TT('ready \u00b7 '+(AUDIO.synthMode?'SYNTH':'samples')+' '+AUDIO.loaded+'/'+AUDIO.total);
+    ARMED=true;
+    detachArm();
     if(prompt)prompt.classList.add('gone');
-    if(SCROLL_MODE==='music'||MODE==='music') audioStart();
+    /* if the baton gate is orchestrating entry, IT starts the bed (for the
+       crossfade). Otherwise start now as usual. */
+    if(!window.__gateDrivingEntry && (SCROLL_MODE==='music'||MODE==='music')) audioStart();
   }catch(err){
     console.error('[orchestra] init failed:',err);
+    TT('init FAILED: '+(err&&err.message||err));
     if(prompt)prompt.classList.add('gone');
+    ARMING=false;   /* allow a retry on the next gesture */
   }
 }
-['pointermove','pointerdown','keydown','wheel','touchstart','scroll','click'].forEach(ev=>{
-  addEventListener(ev,armAudio,{once:true,passive:true});
-});
+
+/* activating gestures only; NOT passive, NOT {once} (retry until running).
+   When the baton gate is present, IT is the deliberate unlock, so we don't
+   also arm on stray page clicks — the gate calls armAudio() directly.
+   If the gate is ever absent, we fall back to arming on any activating gesture. */
+const ARM_EVENTS=['pointerdown','mousedown','touchstart','keydown','click'];
+function detachArm(){ ARM_EVENTS.forEach(ev=>removeEventListener(ev,armAudio)); }
+if(!document.getElementById('baton-gate')){
+  ARM_EVENTS.forEach(ev=>addEventListener(ev,armAudio));
+}
+/* expose for the gate */
+window.__armAudio=armAudio;
 
 /* ---- control panel ---- */
 const panel=document.getElementById('panel');
@@ -1205,5 +1435,161 @@ onScroll();
   });
 })();
  </script>
+
+
+<script>
+/* ============================================================
+   BATON GATE CONTROLLER — three acts
+   The click on the glowing tip is the browser-required gesture,
+   dressed as taking up the baton:
+     ACT 1  camera pushes into the podium            (0 -> 1.15s)
+     ACT 2  baton lifts off the stand + concert-A     (~0.6s -> 1.9s)
+     ACT 3  gate dissolves into the soundwave hero    (~1.9s -> 2.9s)
+   The real sampled orchestra arms via the site's armAudio().
+   ============================================================ */
+(function(){
+  'use strict';
+  const gate    = document.getElementById('baton-gate');
+  const trigger = document.getElementById('baton-trigger');
+  const baton   = document.getElementById('custom-baton');
+  const canvas  = document.getElementById('gate-particles');
+  if(!gate || !trigger) return;
+
+  /* Preload the orchestra samples NOW, while the visitor reads the gate.
+     Buffers download without a running AudioContext, so by click-time the
+     orchestra is usually ready and enters with no lag. */
+  if(typeof window.__preloadSamples==='function'){
+    try{ window.__preloadSamples(); }catch(e){}
+  }
+
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ctx = canvas.getContext('2d');
+  let particles=[], tracking=false;
+
+  function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+  addEventListener('resize',resize); resize();
+
+  /* ---- stardust that follows the baton cursor into the site ---- */
+  class P{
+    constructor(x,y){
+      this.x=x; this.y=y;
+      this.vx=(Math.random()-.5)*1.4;
+      this.vy=(Math.random()-.5)*1.4-0.5;
+      this.a=1; this.decay=Math.random()*0.015+0.01;
+      this.s=Math.random()*3+1;
+      this.c=`oklch(${Math.random()*15+80}% 0.15 ${Math.random()*40+260})`;
+    }
+    step(){ this.x+=this.vx; this.y+=this.vy; this.a-=this.decay; }
+    draw(){
+      ctx.save(); ctx.globalAlpha=Math.max(this.a,0);
+      ctx.shadowBlur=8; ctx.shadowColor=this.c; ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); ctx.restore();
+    }
+  }
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles=particles.filter(p=>p.a>0);
+    particles.forEach(p=>{p.step();p.draw();});
+    requestAnimationFrame(loop);
+  }
+  loop();
+  addEventListener('mousemove',e=>{
+    if(!tracking) return;
+    baton.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0) translate(-50%,-50%)`;
+    if(!REDUCED && Math.random()<0.4) particles.push(new P(e.clientX,e.clientY));
+  });
+
+  /* ---- concert-A: a SUSTAINED tuning tone we hold until the orchestra is
+     loaded, then crossfade directly into its first D-aeolian downbeat. This
+     is what turns "tune, then play" into one continuous gesture — and it also
+     masks any remaining sample-load time, however long it takes. ---- */
+  let tuneRig=null;
+  function startTuningA(){
+    if(typeof Tone==='undefined') return;
+    try{
+      const rev=new Tone.Reverb({decay:4.2,wet:0.5}).toDestination();
+      const filt=new Tone.Filter(2600,'lowpass').connect(rev);
+      const gain=new Tone.Gain(0).connect(filt);           /* we ride this for fades */
+      const a=new Tone.PolySynth(Tone.Synth,{
+        oscillator:{type:'sawtooth'},
+        envelope:{attack:0.6,decay:0.3,sustain:1.0,release:1.8}
+      }).connect(gain);
+      a.volume.value=-15;
+      /* A4=440 doubled at the octave + faint fifth = oboe-ish 'A' for the section */
+      a.triggerAttack(['A3','A4','E5']);
+      gain.gain.rampTo(1.0, 0.6);                           /* fade the A in */
+      tuneRig={a,gain,rev,filt};
+    }catch(e){/* decorative */}
+  }
+  /* crossfade: duck the A out over `dur`, dispose after it rings down */
+  function resolveTuningA(dur){
+    if(!tuneRig) return;
+    const {a,gain,rev,filt}=tuneRig; tuneRig=null;
+    try{
+      gain.gain.rampTo(0.0, dur);
+      setTimeout(()=>{ try{a.releaseAll&&a.releaseAll();}catch(e){}
+        try{a.dispose();gain.dispose();filt.dispose();rev.dispose();}catch(e){} },
+        (dur*1000)+2200);
+    }catch(e){}
+  }
+
+  let entered=false;
+  async function raiseBaton(){
+    if(entered) return; entered=true;
+
+    /* tell armAudio the gate owns the first downbeat (for the crossfade) */
+    window.__gateDrivingEntry=true;
+    /* the click is the gesture — start the context + ready the orchestra.
+       (samples were already downloading from the gate preload.) */
+    const armed = (typeof window.__armAudio==='function')
+      ? window.__armAudio() : Promise.resolve();
+
+    /* ACT 1 — camera pushes into the podium */
+    gate.classList.add('zooming');
+
+    /* ACT 2 — baton lifts, the sustained concert-A begins and HOLDS */
+    setTimeout(()=>{
+      gate.classList.add('lifting');
+      startTuningA();
+    }, 600);
+
+    /* prep the baton cursor for the site */
+    if(!REDUCED){
+      document.body.style.cursor='none';
+      baton.classList.add('active');
+    }
+
+    /* Wait until the orchestra is actually ready (armAudio resolves only when
+       samples are loaded, or the synth fallback is up). The A sustains through
+       this wait — so no matter how long loading takes, it's covered. */
+    try{ await armed; }catch(e){}
+
+    /* Make sure the A has been ringing at least a musical beat before we resolve,
+       so a fast load still feels like a real tuning note, not a blip. */
+    const MIN_A = 1500;                       /* ms the A should sound minimum */
+    const since = (typeof performance!=='undefined') ? 0 : 0;
+    await new Promise(r=>setTimeout(r, MIN_A));
+
+    /* ACT 3 — the crossfade: the A resolves straight into the orchestra.
+       Start the D-aeolian bed on the NEXT downbeat, and duck the A out across
+       that same bar so the two overlap into one continuous phrase. */
+    const barSec = (typeof Tone!=='undefined') ? Tone.Time('1m').toSeconds() : 2.1;
+    if(typeof audioStart==='function') audioStart();   /* orchestra bed begins */
+    resolveTuningA(barSec * 0.9);                       /* A melts into the bed */
+
+    /* dissolve the gate into the hero as the crossfade happens */
+    gate.classList.add('unlocked');
+    tracking = !REDUCED;
+    gate.addEventListener('transitionend',()=>{ gate.remove(); },{once:true});
+    setTimeout(()=>{ if(gate.parentNode) gate.remove(); }, 1400);
+  }
+
+  trigger.addEventListener('click',raiseBaton);
+  trigger.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); raiseBaton(); }
+  });
+})();
+</script>
+
 
 </body></html>
