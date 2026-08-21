@@ -370,271 +370,86 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   color:#9fe0d8;background:rgba(10,12,16,.88);border:1px solid rgba(159,224,216,.4);
   border-radius:6px;padding:8px 10px;white-space:pre-wrap;pointer-events:none;display:none}
 #tt-debug.on{display:block}
-
-/* ============================================================
-   BATON GATE — fully code-based 3D concert-hall scene.
-   No image asset: holographic hall (SVG), spotlight (CSS),
-   carbon-fibre music stand (CSS/SVG), idle baton (SVG),
-   all reacting to a low-inertia cursor parallax.
-   Hotspot: baton tip at 60% x, 34.1% y.
-   ============================================================ */
-#baton-gate{
-  position:fixed; inset:0; z-index:10000;
-  background:radial-gradient(120% 90% at 50% 22%, #0d0e1a 0%, #08090f 55%, #030308 100%);
-  overflow:hidden; cursor:pointer;
-  perspective:1400px;              /* the room has real depth */
-  perspective-origin:60% 40%;
-  transition:opacity 1s cubic-bezier(.4,0,.2,1), visibility 1s;
+</style>
+  
+<!-- PASTE #2 -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+    "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js"
+  }
 }
-#baton-gate.unlocked{ opacity:0; visibility:hidden; pointer-events:none; }
-
-/* the whole scene is a 3D card that the cursor gently rotates */
-.gate-scene{
-  position:absolute; inset:0;
-  transform-origin:60% 34.1%;
-  transform-style:preserve-3d;
-  transform:scale(1);
-  transition:transform 1.15s cubic-bezier(.66,0,.2,1), filter 1.15s ease;
-  will-change:transform, filter;
-}
-/* parallax layer that JS drives every frame; sits inside .gate-scene so the
-   ACT-1 zoom (which writes .gate-scene transform) never fights the tilt */
-.gate-parallax{
-  position:absolute; inset:0;
-  transform-style:preserve-3d;
-  will-change:transform;
-}
-/* floor + top vignette so the vector room reads against the copy */
-.gate-scene::after{
-  content:""; position:absolute; inset:0; pointer-events:none; z-index:5;
-  background:radial-gradient(72% 62% at 60% 34%, rgba(5,6,10,0) 0%, rgba(5,6,10,.28) 66%, rgba(5,6,10,.75) 100%);
-}
-
-/* ---- layer: the holographic wireframe hall ---- */
-.hall-layer{
-  position:absolute; inset:-6% -6%;
-  transform:translateZ(-360px) scale(1.28);   /* pushed deep -> parallax */
-  z-index:1;
-}
-.hall-layer svg{ width:100%; height:100%; display:block; }
-.hall-stroke{
-  fill:none;
-  stroke:rgba(183,167,216,0.28);
-  stroke-width:1.1;
-  vector-effect:non-scaling-stroke;
-}
-.hall-arch{ stroke:rgba(183,167,216,0.22); }
-.hall-wave{ stroke:rgba(183,167,216,0.32); stroke-width:1; }
-.hall-wave.deep{ stroke:rgba(143,143,208,0.20); }
-/* alive: a slow shimmer sweeping the strokes' opacity */
-.hall-layer .shimmer{
-  animation:hallShimmer 7s ease-in-out infinite;
-}
-.hall-layer .shimmer.s2{ animation-delay:-2.3s; }
-.hall-layer .shimmer.s3{ animation-delay:-4.6s; }
-@keyframes hallShimmer{
-  0%,100%{ opacity:.45; }
-  50%{ opacity:1; }
-}
-/* faint animated 'grid breathe' on the wave field */
-.hall-wave{ animation:waveGlow 9s ease-in-out infinite; }
-@keyframes waveGlow{
-  0%,100%{ stroke-opacity:.55; filter:drop-shadow(0 0 2px rgba(183,167,216,.25)); }
-  50%{ stroke-opacity:1; filter:drop-shadow(0 0 6px rgba(183,167,216,.5)); }
-}
-
-/* ---- layer: the overhead spotlight cone ---- */
-.spotlight{
-  position:absolute; left:60%; top:-8%;
-  width:44vmin; height:88vmin;
-  transform:translateX(-50%) translateZ(-40px);
-  z-index:2; pointer-events:none;
-  mix-blend-mode:screen;
-  background:
-    radial-gradient(60% 40% at 50% 100%, rgba(183,167,216,.28) 0%, rgba(183,167,216,0) 70%),
-    linear-gradient(to bottom,
-      rgba(233,231,246,.34) 0%,
-      rgba(200,193,230,.18) 26%,
-      rgba(160,155,205,.10) 55%,
-      rgba(120,118,175,.04) 78%,
-      rgba(80,80,130,0) 100%);
-  clip-path:polygon(43% 0%, 57% 0%, 82% 100%, 18% 100%);
-  filter:blur(2px);
-  animation:spotBreathe 6s ease-in-out infinite;
-}
-@keyframes spotBreathe{
-  0%,100%{ opacity:.85; }
-  50%{ opacity:1; }
-}
-/* the pool of light on the floor around the base */
-.spot-pool{
-  position:absolute; left:60%; bottom:8%;
-  width:28vmin; height:7vmin;
-  transform:translateX(-50%) translateZ(-30px);
-  z-index:2; pointer-events:none;
-  mix-blend-mode:screen;
-  background:radial-gradient(50% 50% at 50% 50%, rgba(183,167,216,.34) 0%, rgba(183,167,216,0) 70%);
-  filter:blur(5px);
-}
-
-/* ---- layer: the 3D music stand ---- */
-.stand-layer{
-  position:absolute; left:60%; top:34.1%;
-  width:34vmin; height:52vmin;
-  transform:translate(-50%,-16%) translateZ(30px);
-  z-index:4;
-  transform-style:preserve-3d;
-}
-/* the desk face — tilted back for isometric depth, carbon-fibre textured */
-.stand-desk{
-  position:absolute; left:50%; top:-4vmin;
-  width:30vmin; height:20vmin;
-  transform:translateX(-50%) rotateX(52deg) rotateZ(0deg);
-  transform-origin:50% 100%;
-  border-radius:1.4vmin;
-  background:
-    /* carbon-fibre weave */
-    linear-gradient(27deg,  #191919 1.5px, transparent 1.5px) 0 0 / 7px 7px,
-    linear-gradient(-27deg, #191919 1.5px, transparent 1.5px) 0 0 / 7px 7px,
-    linear-gradient(27deg,  #0c0c0c 1.5px, transparent 1.5px) 3.5px 3.5px / 7px 7px,
-    linear-gradient(-27deg, #0c0c0c 1.5px, transparent 1.5px) 3.5px 3.5px / 7px 7px,
-    linear-gradient(150deg, #26262b 0%, #17171b 45%, #0d0d10 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(183,167,216,.22),
-    inset 0 0 24px rgba(0,0,0,.6),
-    0 10px 34px rgba(0,0,0,.55);
-  border:0.5px solid rgba(183,167,216,.16);
-}
-/* soft spotlit sheen falling across the top of the desk */
-.stand-desk::before{
-  content:""; position:absolute; inset:0; border-radius:1.4vmin; pointer-events:none;
-  background:linear-gradient(160deg, rgba(233,231,246,.18) 0%, rgba(233,231,246,0) 42%);
-  mix-blend-mode:screen;
-}
-/* thin lip along the bottom edge of the desk */
-.stand-desk::after{
-  content:""; position:absolute; left:6%; right:6%; bottom:5%;
-  height:5%; border-radius:2px;
-  background:linear-gradient(90deg, rgba(183,167,216,.05), rgba(183,167,216,.28), rgba(183,167,216,.05));
-}
-/* the column + tripod, drawn as SVG below the desk */
-.stand-base{
-  position:absolute; left:50%; top:17vmin;
-  width:24vmin; height:34vmin;
-  transform:translateX(-50%) translateZ(-6px);
-}
-.stand-base svg{ width:100%; height:100%; display:block; overflow:visible; }
-.stand-metal{ stroke:#3a3a42; stroke-width:2.4; fill:none; stroke-linecap:round; stroke-linejoin:round;
-  filter:drop-shadow(0 0 1px rgba(183,167,216,.2)); }
-.stand-metal.lit{ stroke:#6a6675; }
-.stand-fill{ fill:#17171c; }
-
-/* ---- the idle baton resting on the desk (SVG) ---- */
-.idle-baton{
-  position:absolute; left:60%; top:34.1%;
-  width:26vmin; height:8vmin;
-  transform:translate(-100%,-50%) rotate(-32deg);
-  transform-origin:right center;
-  z-index:5; pointer-events:none;
-  transition:opacity .4s ease;
-}
-.idle-baton svg{ width:100%; height:100%; overflow:visible; display:block; }
-.idle-baton .b-shaft{ }
-.idle-baton .b-tip{ filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 16px var(--lav)); }
-#baton-gate.zooming .idle-baton,
-#baton-gate.lifting .idle-baton{ opacity:0; }
-
-/* the glowing tip: click target + pulse (unchanged position) */
-#baton-trigger{
-  position:absolute; top:34.1%; left:60%;
-  width:70px; height:70px; transform:translate(-50%,-50%);
-  border:none; background:transparent; cursor:pointer; outline:none; z-index:7;
-  border-radius:50%;
-}
-#baton-trigger:focus-visible{ outline:2px solid var(--lav); outline-offset:6px; }
-.pulse-ring{
-  position:absolute; top:34.1%; left:60%;
-  width:46px; height:46px; transform:translate(-50%,-50%);
-  border-radius:50%; pointer-events:none; z-index:6;
-  border:2px solid var(--lav);
-  box-shadow:0 0 16px var(--lav), inset 0 0 8px rgba(183,167,216,.6);
-  animation:gate-pulse 2.2s cubic-bezier(.215,.61,.355,1) infinite;
-}
-@keyframes gate-pulse{
-  0%{ transform:translate(-50%,-50%) scale(.5); opacity:.95; }
-  80%,100%{ transform:translate(-50%,-50%) scale(2.6); opacity:0; }
-}
-#baton-gate.zooming .pulse-ring{ animation:none; opacity:0; transition:opacity .3s; }
-
-/* ACT 1: push the camera toward the tip (scale on the scene) */
-#baton-gate.zooming .gate-scene{
-  transform:scale(2.15);
-  filter:brightness(1.08);
-}
-
-/* ACT 2: the lift baton that rises off the stand */
-.lift-baton{
-  position:absolute; top:34.1%; left:60%;
-  width:20vmin; height:3px; border-radius:3px;
-  transform-origin:right center;
-  transform:translate(-100%,-50%) rotate(-32deg) scale(1);
-  background:linear-gradient(90deg, rgba(183,167,216,.4) 0%, #cfc4dc 40%, #efe7ef 100%);
-  box-shadow:0 0 10px rgba(239,231,239,.5);
-  opacity:0; z-index:8; pointer-events:none;
-  will-change:transform, opacity;
-}
-.lift-baton::after{
-  content:""; position:absolute; right:-3px; top:50%; transform:translateY(-50%);
-  width:12px; height:12px; border-radius:50%;
-  background:radial-gradient(circle,#fff 0%, var(--lav) 70%, rgba(183,167,216,0) 100%);
-  box-shadow:0 0 14px #fff, 0 0 30px var(--lav);
-}
-#baton-gate.lifting .lift-baton{
-  opacity:1;
-  transform:translate(-88%, -190%) rotate(-64deg) scale(1.08);
-  transition:transform .9s cubic-bezier(.34,1.2,.4,1), opacity .3s linear;
-}
-
-.gate-copy{
-  position:absolute; left:0; right:0; bottom:8vh; z-index:9;
-  display:flex; flex-direction:column; align-items:center; text-align:center;
-  transition:opacity .5s ease;
-}
-#baton-gate.zooming .gate-copy{ opacity:0; }
-.gate-title{
-  font-family:"Dreamer TM","Pixelify Sans",monospace; font-weight:400;
-  font-size:clamp(1.6rem,4.5vw,3rem); color:var(--bone); opacity:.94;
-  letter-spacing:.01em; margin-bottom:1rem;
-  text-shadow:0 2px 30px rgba(0,0,0,.8);
-}
-.instruction-text{
-  font-family:"DM Mono",monospace; font-size:.72rem; letter-spacing:.34em;
-  color:var(--bone); opacity:.75; text-transform:uppercase;
-  pointer-events:none; animation:text-glow 3s ease-in-out infinite alternate;
-}
-@keyframes text-glow{
-  from{ text-shadow:0 0 4px rgba(255,255,255,.1); opacity:.55; }
-  to{ text-shadow:0 0 12px var(--lav); opacity:.95; }
-}
-
-#gate-particles{ position:fixed; inset:0; pointer-events:none; z-index:10002; }
-#custom-baton{
-  position:fixed; top:0; left:0; width:12px; height:12px; border-radius:50%;
-  background:var(--bone); pointer-events:none; z-index:10003;
-  transform:translate3d(-50%,-50%,0);
-  box-shadow:0 0 10px var(--bone), 0 0 25px var(--lav);
-  opacity:0; transition:opacity .5s cubic-bezier(.16,1,.3,1);
-}
-#custom-baton.active{ opacity:1; }
-
-@media (prefers-reduced-motion:reduce){
-  .pulse-ring{ animation:none; }
-  .hall-layer .shimmer, .hall-wave, .spotlight{ animation:none; }
-  .gate-scene, #baton-gate.zooming .gate-scene{ transition:none; transform:scale(1); }
-  .gate-parallax{ transform:none !important; }
-  #baton-gate.lifting .lift-baton{ transition:opacity .3s; }
-  #baton-gate{ transition:opacity .3s linear; }
-}
+</script>
+<style>
+  #baton-gate{
+    position:fixed; inset:0; z-index:10000;
+    background:radial-gradient(120% 90% at 50% 30%, #101719 0%, #0b0c14 55%, #08090f 100%);
+    overflow:hidden; cursor:default;
+    transition:opacity .6s cubic-bezier(.4,0,.2,1), visibility .6s;
+  }
+  #baton-gate.unlocked{ opacity:0; visibility:hidden; pointer-events:none; }
+  #gate-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+ 
+  /* the pulse ring is positioned every frame by JS onto the baton tip */
+  #baton-pulse{
+    position:absolute; top:0; left:0; width:46px; height:46px;
+    transform:translate(-50%,-50%); border-radius:50%; pointer-events:none; z-index:3;
+    border:2px solid var(--lav);
+    box-shadow:0 0 16px var(--lav), inset 0 0 8px rgba(183,167,216,.6);
+  }
+  #baton-pulse::after{
+    content:""; position:absolute; inset:-2px; border-radius:50%;
+    border:2px solid var(--lav);
+    animation:gate-pulse 2.2s cubic-bezier(.215,.61,.355,1) infinite;
+  }
+  @keyframes gate-pulse{
+    0%{ transform:scale(.5); opacity:.95; }
+    80%,100%{ transform:scale(2.6); opacity:0; }
+  }
+ 
+  /* invisible full-tip button for keyboard / screen-reader users */
+  #baton-trigger{
+    position:absolute; top:0; left:0; width:1px; height:1px;
+    opacity:0; border:none; background:transparent; z-index:4;
+  }
+  #baton-trigger:focus-visible{
+    width:70px; height:70px; opacity:1; border-radius:50%;
+    outline:2px solid var(--lav); outline-offset:6px;
+    left:50%; top:50%; transform:translate(-50%,-50%);
+  }
+ 
+  .gate-copy{
+    position:absolute; left:0; right:0; bottom:8vh; z-index:5;
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    pointer-events:none; transition:opacity .5s ease;
+  }
+  .gate-title{
+    font-family:"Dreamer TM","Pixelify Sans",monospace; font-weight:400;
+    font-size:clamp(1.6rem,4.5vw,3rem); color:var(--bone); opacity:.94;
+    margin-bottom:1rem; text-shadow:0 2px 30px rgba(0,0,0,.8);
+  }
+  .instruction-text{
+    font-family:"DM Mono",monospace; font-size:.72rem; letter-spacing:.34em;
+    color:var(--bone); opacity:.75; text-transform:uppercase;
+    animation:text-glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes text-glow{
+    from{ text-shadow:0 0 4px rgba(255,255,255,.1); opacity:.55; }
+    to{ text-shadow:0 0 12px var(--lav); opacity:.95; }
+  }
+  #gate-load{
+    position:absolute; left:50%; bottom:3.5vh; transform:translateX(-50%); z-index:5;
+    font-family:"DM Mono",monospace; font-size:.62rem; letter-spacing:.2em;
+    color:var(--bone-dim); text-transform:uppercase; transition:opacity .4s;
+  }
+  #gate-load.gone{ opacity:0; }
+ 
+  @media (prefers-reduced-motion:reduce){
+    #baton-pulse::after{ animation:none; }
+    .instruction-text{ animation:none; opacity:.8; }
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
@@ -645,127 +460,22 @@ if (typeof Tone === 'undefined') {
 </head>
 <body>
 
-<!-- ===== BATON GATE: fully code-based 3D concert-hall scene ===== -->
+<!-- ============================================================
+     PASTE #3 — the gate markup. Replace your ENTIRE old
+     <div id="baton-gate">…</div> block (and the old
+     <div id="custom-baton"> / <canvas id="gate-particles">)
+     with just this:
+     ============================================================ -->
 <div id="baton-gate">
-  <div class="gate-scene" id="gateScene">
-    <div class="gate-parallax" id="gateParallax">
-
-      <!-- The holographic wireframe hall -->
-      <div class="hall-layer">
-        <svg viewBox="0 0 1024 576" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <!-- left arcade of arches -->
-          <g class="hall-arch shimmer">
-            <path class="hall-stroke" d="M40 150 Q60 40 150 40 L150 300 L40 300 Z"/>
-            <path class="hall-stroke" d="M70 165 Q88 70 165 70 L165 300 L70 300 Z"/>
-            <path class="hall-stroke" d="M150 40 Q240 40 260 150 L260 300 L150 300 Z"/>
-            <path class="hall-stroke" d="M165 70 Q235 70 250 165 L250 300 L165 300 Z"/>
-            <path class="hall-stroke" d="M260 150 Q280 60 360 60 L360 300 L260 300 Z"/>
-            <path class="hall-stroke" d="M360 60 Q430 60 448 150 L448 300 L360 300 Z"/>
-          </g>
-          <!-- right arcade of arches (mirror) -->
-          <g class="hall-arch shimmer s2">
-            <path class="hall-stroke" d="M984 150 Q964 40 874 40 L874 300 L984 300 Z"/>
-            <path class="hall-stroke" d="M954 165 Q936 70 859 70 L859 300 L954 300 Z"/>
-            <path class="hall-stroke" d="M874 40 Q784 40 764 150 L764 300 L874 300 Z"/>
-            <path class="hall-stroke" d="M859 70 Q789 70 774 165 L774 300 L859 300 Z"/>
-            <path class="hall-stroke" d="M764 150 Q744 60 664 60 L664 300 L764 300 Z"/>
-            <path class="hall-stroke" d="M664 60 Q594 60 576 150 L576 300 L664 300 Z"/>
-          </g>
-          <!-- back wall arches receding to centre -->
-          <g class="hall-arch shimmer s3">
-            <path class="hall-stroke" d="M448 150 Q470 90 512 90 Q554 90 576 150 L576 260 L448 260 Z" opacity="0.6"/>
-            <path class="hall-stroke" d="M470 160 Q486 110 512 110 Q538 110 554 160 L554 250 L470 250 Z" opacity="0.45"/>
-          </g>
-          <!-- floor perspective lines -->
-          <g class="hall-stroke" opacity="0.5">
-            <path d="M0 470 L1024 470"/>
-            <path d="M120 576 L440 470"/>
-            <path d="M320 576 L470 470"/>
-            <path d="M700 576 L578 470"/>
-            <path d="M904 576 L602 470"/>
-            <path d="M512 470 L512 576"/>
-          </g>
-          <!-- glowing wave paths sweeping across the hall -->
-          <path class="hall-wave" d="M-20 300 C160 250 300 360 460 320 C560 296 620 250 720 268 C860 292 960 350 1044 300"/>
-          <path class="hall-wave deep" d="M-20 340 C180 300 320 400 500 360 C600 338 660 300 760 316 C880 336 980 392 1044 348"/>
-          <path class="hall-wave" d="M-20 262 C140 224 280 300 440 276 C540 261 600 232 700 244 C840 260 940 300 1044 268" opacity="0.7"/>
-          <!-- scattered node dots on the wave field -->
-          <g fill="rgba(183,167,216,0.5)">
-            <circle cx="70" cy="330" r="1.4"/><circle cx="150" cy="286" r="1.2"/>
-            <circle cx="250" cy="352" r="1.4"/><circle cx="360" cy="318" r="1.2"/>
-            <circle cx="900" cy="326" r="1.4"/><circle cx="820" cy="360" r="1.2"/>
-            <circle cx="720" cy="300" r="1.4"/><circle cx="960" cy="290" r="1.2"/>
-          </g>
-        </svg>
-      </div>
-
-      <!-- Overhead spotlight cone + floor pool -->
-      <div class="spotlight"></div>
-      <div class="spot-pool"></div>
-
-      <!-- The 3D music stand -->
-      <div class="stand-layer">
-        <div class="stand-desk"></div>
-        <div class="stand-base">
-          <svg viewBox="0 0 240 340" aria-hidden="true">
-            <!-- central column -->
-            <path class="stand-metal lit" d="M120 0 L120 250"/>
-            <rect class="stand-fill" x="114" y="18" width="12" height="150" rx="4"/>
-            <path class="stand-metal" d="M114 18 L114 168 M126 18 L126 168"/>
-            <!-- height-adjust collar -->
-            <ellipse class="stand-fill" cx="120" cy="150" rx="12" ry="5"/>
-            <path class="stand-metal lit" d="M108 150 A12 5 0 0 0 132 150"/>
-            <!-- tripod legs -->
-            <path class="stand-metal" d="M120 250 L58 336"/>
-            <path class="stand-metal" d="M120 250 L120 340"/>
-            <path class="stand-metal" d="M120 250 L182 336"/>
-            <!-- leg feet -->
-            <path class="stand-metal lit" d="M50 336 L70 332 M110 340 L130 340 M170 332 L190 336"/>
-            <!-- hub where legs meet -->
-            <circle class="stand-fill" cx="120" cy="250" r="7"/>
-            <circle class="stand-metal lit" cx="120" cy="250" r="7"/>
-          </svg>
-        </div>
-      </div>
-
-      <!-- The idle baton resting on the desk -->
-      <div class="idle-baton">
-        <svg viewBox="0 0 260 40" aria-hidden="true">
-          <defs>
-            <linearGradient id="batonGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#8a7fa6"/>
-              <stop offset="30%" stop-color="#cfc4dc"/>
-              <stop offset="100%" stop-color="#efe7ef"/>
-            </linearGradient>
-            <radialGradient id="tipGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="55%" stop-color="#d7cce6"/>
-              <stop offset="100%" stop-color="rgba(183,167,216,0)"/>
-            </radialGradient>
-          </defs>
-          <!-- cork handle -->
-          <rect x="6" y="15" width="34" height="10" rx="5" fill="#2a2028"/>
-          <!-- tapering shaft -->
-          <path class="b-shaft" d="M40 17 L236 19 L236 21 L40 23 Z" fill="url(#batonGrad)"/>
-          <!-- glowing tip -->
-          <circle class="b-tip" cx="238" cy="20" r="9" fill="url(#tipGlow)"/>
-        </svg>
-      </div>
-
-    </div><!-- /.gate-parallax -->
-  </div><!-- /.gate-scene -->
-
-  <!-- the lift baton (Act 2) sits above the parallax so it isn't tilted -->
-  <div class="lift-baton"></div>
-  <div class="pulse-ring"></div>
+  <canvas id="gate-canvas"></canvas>
+  <div id="baton-pulse"></div>
   <button id="baton-trigger" aria-label="Take the baton to begin"></button>
   <div class="gate-copy">
     <div class="gate-title">Chaeyeon&nbsp;Kim</div>
     <div class="instruction-text">take the baton</div>
   </div>
+  <div id="gate-load">loading the hall</div>
 </div>
-<div id="custom-baton"></div>
-<canvas id="gate-particles"></canvas>
 
 <div id="tt-debug" aria-hidden="true"></div>
 <script>
@@ -1554,175 +1264,12 @@ onScroll();
   });
 })();
  </script>
-
-
-<script>
-/* ============================================================
-   BATON GATE CONTROLLER — three acts + cursor parallax
-     PARALLAX low-inertia POV tilt of the whole scene
-     ACT 1  camera pushes into the podium            (0 -> 1.15s)
-     ACT 2  baton lifts off the stand + concert-A     (~0.6s -> 1.9s)
-     ACT 3  gate dissolves into the soundwave hero    (~1.9s -> 2.9s)
-   ============================================================ */
-(function(){
-  'use strict';
-  const gate    = document.getElementById('baton-gate');
-  const trigger = document.getElementById('baton-trigger');
-  const baton   = document.getElementById('custom-baton');
-  const canvas  = document.getElementById('gate-particles');
-  const parallax= document.getElementById('gateParallax');
-  if(!gate || !trigger) return;
-
-  if(typeof window.__preloadSamples==='function'){
-    try{ window.__preloadSamples(); }catch(e){}
-  }
-
-  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ctx = canvas.getContext('2d');
-  let particles=[], tracking=false;
-
-  function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
-  addEventListener('resize',resize); resize();
-
-  /* ---------- CURSOR-DRIVEN POV PARALLAX ----------
-     Track the cursor as normalized (-1..1) from viewport centre, then lerp
-     the scene's rotation toward it each frame for a low-inertia camera drift.
-     Max tilt kept subtle (~4deg Y / 2deg X) so it reads as an elegant
-     "looking around the hall" rather than a wobble. Runs only while the gate
-     is present and we haven't committed to entry (no fight with the ACT-1
-     zoom, which writes .gate-scene's own transform). */
-  let targX=0, targY=0, curXr=0, curYr=0;
-  let parallaxActive = !REDUCED;
-
-  addEventListener('mousemove', e=>{
-    if(!parallaxActive) return;
-    targX = (e.clientX / innerWidth  - 0.5) * 2;   // -1 .. 1
-    targY = (e.clientY / innerHeight - 0.5) * 2;   // -1 .. 1
-  });
-  // also drift back to rest when the pointer leaves the window
-  addEventListener('mouseleave', ()=>{ targX=0; targY=0; });
-
-  function parallaxLoop(){
-    if(parallaxActive && parallax){
-      // low-inertia lerp toward the target
-      curXr += (targX - curXr) * 0.06;
-      curYr += (targY - curYr) * 0.06;
-      // subtle counter-parallax: layers already sit at different translateZ,
-      // so a single rotation on the parallax wrapper yields real depth.
-      parallax.style.transform =
-        `rotateY(${curXr * 4}deg) rotateX(${-curYr * 2}deg) translateZ(0)`;
-    }
-    requestAnimationFrame(parallaxLoop);
-  }
-  requestAnimationFrame(parallaxLoop);
-
-  /* ---------- stardust cursor trail ---------- */
-  class P{
-    constructor(x,y){
-      this.x=x; this.y=y;
-      this.vx=(Math.random()-.5)*1.4;
-      this.vy=(Math.random()-.5)*1.4-0.5;
-      this.a=1; this.decay=Math.random()*0.015+0.01;
-      this.s=Math.random()*3+1;
-      this.c=`oklch(${Math.random()*15+80}% 0.15 ${Math.random()*40+260})`;
-    }
-    step(){ this.x+=this.vx; this.y+=this.vy; this.a-=this.decay; }
-    draw(){
-      ctx.save(); ctx.globalAlpha=Math.max(this.a,0);
-      ctx.shadowBlur=8; ctx.shadowColor=this.c; ctx.fillStyle='#fff';
-      ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); ctx.restore();
-    }
-  }
-  function loop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles=particles.filter(p=>p.a>0);
-    particles.forEach(p=>{p.step();p.draw();});
-    requestAnimationFrame(loop);
-  }
-  loop();
-  addEventListener('mousemove',e=>{
-    if(!tracking) return;
-    baton.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0) translate(-50%,-50%)`;
-    if(!REDUCED && Math.random()<0.4) particles.push(new P(e.clientX,e.clientY));
-  });
-
-  let tuneRig=null;
-  function startTuningA(){
-    if(typeof Tone==='undefined') return;
-    try{
-      const rev=new Tone.Reverb({decay:4.2,wet:0.5}).toDestination();
-      const filt=new Tone.Filter(2600,'lowpass').connect(rev);
-      const gain=new Tone.Gain(0).connect(filt);
-      const a=new Tone.PolySynth(Tone.Synth,{
-        oscillator:{type:'sawtooth'},
-        envelope:{attack:0.6,decay:0.3,sustain:1.0,release:1.8}
-      }).connect(gain);
-      a.volume.value=-15;
-      a.triggerAttack(['A3','A4','E5']);
-      gain.gain.rampTo(1.0, 0.6);
-      tuneRig={a,gain,rev,filt};
-    }catch(e){}
-  }
-  function resolveTuningA(dur){
-    if(!tuneRig) return;
-    const {a,gain,rev,filt}=tuneRig; tuneRig=null;
-    try{
-      gain.gain.rampTo(0.0, dur);
-      setTimeout(()=>{ try{a.releaseAll&&a.releaseAll();}catch(e){}
-        try{a.dispose();gain.dispose();filt.dispose();rev.dispose();}catch(e){} },
-        (dur*1000)+2200);
-    }catch(e){}
-  }
-
-  let entered=false;
-  async function raiseBaton(){
-    if(entered) return; entered=true;
-
-    // freeze the parallax so it doesn't fight the ACT-1 zoom, and ease the
-    // scene back to a neutral pose for a clean push-in.
-    parallaxActive=false;
-    if(parallax){
-      parallax.style.transition='transform .5s ease';
-      parallax.style.transform='rotateY(0deg) rotateX(0deg) translateZ(0)';
-    }
-
-    window.__gateDrivingEntry=true;
-    const armed = (typeof window.__armAudio==='function')
-      ? window.__armAudio() : Promise.resolve();
-
-    gate.classList.add('zooming');
-
-    setTimeout(()=>{
-      gate.classList.add('lifting');
-      startTuningA();
-    }, 600);
-
-    if(!REDUCED){
-      document.body.style.cursor='none';
-      baton.classList.add('active');
-    }
-
-    try{ await armed; }catch(e){}
-
-    const MIN_A = 1500;
-    await new Promise(r=>setTimeout(r, MIN_A));
-
-    const barSec = (typeof Tone!=='undefined') ? Tone.Time('1m').toSeconds() : 2.1;
-    if(typeof window.__audioStart==='function') window.__audioStart();
-    resolveTuningA(barSec * 0.9);
-
-    gate.classList.add('unlocked');
-    tracking = !REDUCED;
-    gate.addEventListener('transitionend',()=>{ gate.remove(); },{once:true});
-    setTimeout(()=>{ if(gate.parentNode) gate.remove(); }, 1400);
-  }
-
-  trigger.addEventListener('click',raiseBaton);
-  trigger.addEventListener('keydown',e=>{
-    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); raiseBaton(); }
-  });
-})();
-</script>
-
+  
+<!-- ============================================================
+     PASTE #4 — load the controller as a module.
+     Put this near the END of <body>, AFTER your existing
+     wave-engine <script> (so window.__armAudio etc. exist).
+     ============================================================ -->
+<script type="module" src="baton-gate-3d.js"></script>
 
 </body></html>
