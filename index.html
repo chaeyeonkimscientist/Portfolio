@@ -1244,15 +1244,14 @@ onScroll();
     overlay.addEventListener('transitionend', (e) => {
       if (e.target === overlay && e.propertyName === 'transform') go();
     }, { once: true });
-    setTimeout(go, SLIDE + SPIN + WIPE + 60);
+    setTimeout(go, SLIDE + SPIN + WIPE + 200);
   }
 
-  document.addEventListener('click', (e) => {
+   document.addEventListener('click', (e) => {
     const link = e.target.closest('a.release');
     if (!link) return;
 
     const url = link.getAttribute('href');
-
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
 
@@ -1260,7 +1259,7 @@ onScroll();
     if (!disc || busy || REDUCED) return;
 
     e.preventDefault();
-    run(link, disc, url);
+    run(link, disc, link.href);
   });
 })();
  </script>
