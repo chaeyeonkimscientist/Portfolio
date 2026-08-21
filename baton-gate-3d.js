@@ -86,7 +86,7 @@ import { gsap } from 'gsap';
   scene.add(hemi);
 
   // Overhead volumetric key spotlight aimed at the desk.
-  const spot = new THREE.SpotLight(0xffffff, 40, 14, THREE.MathUtils.degToRad(45), 0.8, 1.2);
+  const spot = new THREE.SpotLight(0xffffff, 20, 14, THREE.MathUtils.degToRad(45), 0.8, 1.2);
   spot.position.set(0, 4, 3);
   spot.target.position.copy(SHEET_POS);
   spot.castShadow = true;
