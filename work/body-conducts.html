@@ -11,5 +11,115 @@ h1{font-size:2.5rem;margin-bottom:2rem}
 <body>
   <a href="../index.html">&larr; back</a>
   <h1>The Body Conducts</h1>
-  <p>Project write-up goes here.</p>
+  <p># The Body Conducts
+### Translating Chronic Stress into Music
+
+**Chaeyeon Kim** · Undergraduate Capstone · Sep 2025 – Apr 2026
+Composition · EEG signal processing · Python · Sonification · Dolby Atmos
+
+> *"When the body tells truths language cannot."*
+
+---
+
+## Overview
+
+**The Body Conducts** is a five-track music film that follows a female conductor whose orchestra refuses to sync. It is built on a biometric-to-audio pipeline I designed and ran end to end: I recorded my own EEG under controlled stress, processed the raw signal in Python, and drove the score's sound directly from that data. The invisible physiology of chronic stress becomes something you can hear.
+
+Drawing on Prokofiev's *Peter and the Wolf*, each character and instrument represents a distinct stress response: learned pessimism, overanalysis, raw hope, total overwhelm, and you, built from all of them. The score spans orchestral adagio, dialogic oboe-synth arrangements, a capella, and a full noir jazz brass breakdown, with the composer's own brainwave (EEG) data embedded directly as rhythm and texture. The result makes invisible inflammation audible and inescapable.
+
+**▶ [Listen to the full sequence here]()**  ·  **[Project playlist]()**  ·  **[Code]()**
+
+> *Recommended with headphones. The Body Conducts uses spatial audio; play the full playlist in sequence at 1440p or higher.*
+
+---
+
+## The Problem
+
+Most messaging about stress tells you to meditate more, exercise, and manage your time better. But when stress comes from being the only woman in a leadership room, from social hierarchies, or from structural inequality, individual behavior change is a band-aid on a structural wound.
+
+This framing is scientifically inaccurate. It misrepresents where chronic stress originates, and it lets the systems causing harm off the hook.
+
+Think about this scenario: your boss dismisses you in a meeting, so your heart races, so your immune system reads this as physical danger and floods your body with inflammation, as if preparing for a wound that never comes. Do this daily for months, and your body starts attacking itself.
+
+**The biological mechanism:**
+
+```
+Stress → Neurological Alarm → Immune Inflammation → Body Miscoordination
+   ↑___________________________________________________________|
+```
+
+By the time you feel pain, invisible inflammation has been building for years. The real epidemic is invisible BUT felt, and existing science communication has failed to make it perceived.
+
+Philosopher Elaine Scarry argues that chronic pain has no referential content, which means you hurt but cannot point to why. Language fails the body in pain… but emotionally resonant narratives don't. Music, uniquely, triggers physiological chills and it makes you perceive the experience. Specifically, the score includes my own brainwave (EEG) data sonified into the music, making the invisible biometric reality of stress audible.
+
+In short, to communicate a threat no one can see, you make them feel it.
+
+---
+
+## The Solution
+
+I built a full biometric-to-audio pipeline and used it to produce a finished five-track music film. Rather than illustrating stress from the outside, the pipeline lets a measured brain state become the raw material of the music itself.
+
+### Biometric Integration Pipeline
+
+**1. Data collection.** I wore a 4-channel OpenBCI EEG headset (200 Hz) and a heart-rate monitor during stress-inducing scenarios (N-back tasks, social-evaluative stress) to capture neural activity: alpha waves (8–12 Hz) during baseline, beta waves (12–30 Hz) during stress. Over 40 hours of recording across sessions.
+
+**2. Signal processing & feature extraction.** In Python (MNE, SciPy, NumPy), I preprocessed the raw signals and extracted time-series features: frequency-band power and amplitude variation. I applied 4th-order Butterworth bandpass filtering and sliding-window log band-power extraction on the alpha band, then derived a continuous neural index from band-power dynamics relative to a baseline condition. I also engineered STFT spectrogram analysis across recording conditions to visualize spectral shifts over time, inside a reproducible windowing and normalization framework that adapts to varying recording lengths and real-world artifacts.
+
+**3. Spectral filter mapping.** The stress signal (a continuous 0–1 value derived from alpha suppression) was exported as MIDI CC data using the Mido library and imported into Logic Pro as an automation lane controlling a dynamic spectral EQ filter. As stress rises, the filter sweeps toward brighter frequencies, increased dissonance, and denser texture; as it falls, the sound becomes warmer, more consonant, and more open. Architecturally this is equivalent to real-time parameter control (RTPC) in game audio: one continuous input value driving a live sound transformation.
+
+**4. Direct wavelength translation.** Separately, I transposed the beta-wave patterns directly into the jazz piano lick in *Rot*, creating a transcription of brain state into musical phrase. Where step 3 maps data to a *parameter*, this step maps data to *notes*, so the piece uses two distinct sonification strategies by design.
+
+### Spatial Audio Rendering
+
+The completed score was mastered in Dolby Atmos using Logic Pro's 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.
+
+---
+
+## The Tracklist
+
+Each track is a movement in the conductor's arc, and each carries EEG data from a specific recording condition.
+
+### I. Overture
+The album's opening track establishes the central metaphor: a conductor trying to lead an orchestra that won't synchronize. Built on a distorted recomposition of Prokofiev's Wolf theme, the piece unfolds without structure, regulation, or harmony. The Bird, Duck, and Cat themes are each briefly audible before being swallowed whole into the Wolf's texture, their individual voices absorbed into the dominant stress state. The piece ends unresolved, its harmonic tension passed directly to the tracks that follow.
+
+### II. A440
+The album's most texturally complex piece, *A440* is structured as a dialogue between two distinct voices: Duck, represented by the oboe's penetrating timbre, and Cat, through an electric guitar sequence with synth-pop drums. A440 refers to the standard tuning pitch in orchestral performance, the oboe's A that every instrument must match before a concert begins. The track uses this convention as a metaphor for structural constraint. Duck argues that hope is self-delusion; Cat counters with analysis; and finger snaps on every beat mark time passing through the whole argument. The outro performs dissolution rather than resolution.
+
+### III. Prima
+The album's only fully acapella track, *Prima* carries no lyrics but only the unaccompanied voice, representing the Bird, or pre-trauma state: hope before experience, innocence before hierarchy. The song uses baseline EEG data, before any stressor has been introduced. The track is deliberately fragile: without the scaffolding of rhythm, harmony, or arrangement, the voice has nowhere to hide. It represents the state the body cannot sustain once chronic social stress begins, and its placement at the center of the tracklist makes it the album's quiet axis: the thing the *Overture* has already begun to lose, and the thing the *Finale* is reaching back toward.
+
+### IV. Rot
+> *"Why conduct what's already dead?"*
+
+The album's most sonically disruptive track, *Rot* is the only piece to completely abandon orchestral instrumentation, replacing it with a brass-and-percussion jazz configuration. The song represents the Wolf, or stress. Written in a scat-influenced noir jazz style, the piece incorporates the composer's EEG data averaged from both the cognitive stress and social-evaluative stress sessions as a jazz piano lick, making the composite physiological load audible. *Rot* addresses the listener directly in the second person, immersing the listener in the position of the conductor, experiencing stress chronically.
+
+### V. Finale
+> *Integration, not elimination.*
+
+The closing track is formally the inverse of *Overture*. Where *Overture* absorbed individual voices into the Wolf's texture, *Finale* builds them back one at a time. Bird, now in chords rather than a solo line, enters first, signalling hope that has survived contact with Duck's learned helplessness and Cat's analytical paralysis. Oboe follows with the *A440* tuning note, but blended into the flute's harmonics rather than announced. Violins take an original melody, the first moment the conductor's agency produces new musical material rather than reacting to others' themes.
+
+The piece reaches its central argument in its final section: the orchestral adagio gives way to jazz as Wolf re-enters, but this time the conductor does not try to silence it. The tension between the orchestral and jazz vocabularies is not resolved; the two are held together. *Finale* is mastered with the average of all EEG data, as it is the integration of both stress and recovery.
+
+Unlike Prokofiev's triumphant ending where Peter captures the wolf, my *Finale* subverts resolution. The conductor learns to embrace miscoordination rather than impose perfect order. The resolution isn't conducting success by overpowering Wolf, but conducting success by letting Wolf conduct too.
+
+**Dissonance becomes part of the symphony.**
+
+---
+
+## The Result
+
+A completed, listenable five-movement work (roughly 15 minutes) with a documented, reproducible signal-processing pipeline behind it, translating raw multi-channel physiological data into a controllable creative output.
+
+- **Screened in 5 venues**, 200–300 audience per venue.
+- **Highest grade in the class**, from a committee including a former Metropolitan Museum art historian and a Stanford PhD immunologist, who called it *"a triumph of interdisciplinary research and creativity."*
+
+---
+
+## What This Project Demonstrates
+
+- **Signal processing & data engineering.** End-to-end Python pipeline over 40+ hours of 4-channel EEG (OpenBCI, 200 Hz): acquisition, artifact handling, Butterworth filtering, band-power feature extraction, STFT analysis, and a reproducible normalization framework. Built with MNE, SciPy, NumPy, and Mido.
+- **Creative-technical systems design.** A continuous 0–1 biometric index driving real-time spectral automation across a full score, architecturally equivalent to game-audio RTPC, plus a second, distinct data-to-notes transcription path.
+- **Composition & production.** Original five-track score across four genres, mastered in Dolby Atmos with intentional spatial grammar.
+- **Interdisciplinary communication.** A neuroscience claim about chronic social stress made perceptible through narrative and music, validated by both a scientist and an art historian.</p>
 </body></html>
