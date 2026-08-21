@@ -3,7 +3,7 @@
 <title>Chaeyeon Kim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 @font-face{
   font-family:"Dreamer TM";
@@ -26,7 +26,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default}
+body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default;overflow-x:clip}
 
 .pin-zone{position:relative;z-index:2;height:400vh}
 .pin-stage{position:sticky;top:0;height:100vh;overflow:hidden}
@@ -194,15 +194,40 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .stuck-grid > .grid-item:not(.statement){display:none}
 }
 
-.work{position:relative;z-index:5;background:var(--iris);max-width:1080px;margin:0 auto;padding:2rem 7vw 7rem}
-.sec-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:1.2rem;margin-bottom:4.5rem}
-.sec-head h2{font-family:"DM Mono",monospace;font-size:0.82rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--lav)}
+.work{
+  --work-n:4;
+  --work-hold:80vh;
+  --work-slide:36vh;
+  position:relative;z-index:5;background:var(--iris);
+  width:100%;margin:0;padding:0;overflow-x:clip;
+  height:calc(100vh + (var(--work-n) * var(--work-hold)) + ((var(--work-n) - 1) * var(--work-slide)));
+}
+.work-stage{
+  position:sticky;top:0;height:100vh;width:100%;
+  overflow:hidden;display:flex;flex-direction:column;
+  background:var(--iris);
+}
+.sec-head{
+  flex:0 0 auto;display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--hair);padding:5.6rem 8vw 1.2rem;margin:0;width:100%;
+}
+.sec-head h2{font-family:"Instrument Serif",Georgia,serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
 .sec-head .count{font-family:"DM Mono",monospace;font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.1em}
 
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5rem 4rem}
-.release{display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit}
+.work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative}
+.work-track{
+  display:flex;height:100%;width:calc(var(--work-n) * 100%);
+  will-change:transform;
+}
+.release{
+  flex:0 0 calc(100% / var(--work-n));width:calc(100% / var(--work-n));
+  height:100%;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;text-decoration:none;color:inherit;
+  padding:1.5rem 8vw 3rem;
+}
 
-.rig{position:relative;width:88%;aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
+.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
   box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
@@ -248,8 +273,26 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
 .tag.t-ind{color:var(--bone-dim)}
 
-@media(max-width:760px){.grid{grid-template-columns:1fr;gap:4rem}.work{padding:2rem 7vw 4rem}.hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}.stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}}
-@media(prefers-reduced-motion:reduce){.cue,.scrolldown{display:none}}
+@media(max-width:760px){
+  .hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}
+  .stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}
+  .sec-head{padding:5.2rem 6vw 1rem}
+  .release{padding:1rem 6vw 2.4rem}
+  .rig{width:min(78vmin,88vw);margin-bottom:1.2rem}
+}
+@media(max-height:720px){
+  .rig{width:min(48vmin,420px);margin-bottom:1rem}
+  .ptitle{font-size:1.4rem}
+  .hook{font-size:0.82rem;margin-bottom:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cue,.scrolldown{display:none}
+  .work{height:auto}
+  .work-stage{position:static;height:auto;overflow:visible}
+  .work-viewport{overflow:visible}
+  .work-track{width:100%;flex-direction:column;transform:none !important;will-change:auto}
+  .release{flex:none;width:100%;min-height:100vh;height:auto}
+}
 
 :root{
   --tt-slide: 400ms;
@@ -588,8 +631,10 @@ if (typeof Tone === 'undefined') {
 </section>
 
 <section class="work" id="work">
+  <div class="work-stage">
   <div class="sec-head"><h2>Selected Work</h2><span class="count">04 &nbsp;/&nbsp; index</span></div>
-  <div class="grid">
+  <div class="work-viewport">
+  <div class="work-track" id="work-track">
 
     <a class="release" href="work/body-conducts.html">
       <div class="rig">
@@ -661,7 +706,54 @@ if (typeof Tone === 'undefined') {
     </a>
 
   </div>
+  </div>
+  </div>
 </section>
+
+<script>
+(function(){
+  const work=document.getElementById('work');
+  const track=document.getElementById('work-track');
+  if(!work||!track) return;
+  const n=track.children.length;
+  if(!n) return;
+  work.style.setProperty('--work-n', String(n));
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const HOLD=80, SLIDE=36;
+  let ticking=false;
+
+  function easeInOutCubic(t){
+    return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  }
+  function albumAt(p){
+    const nTrans=n-1;
+    let u=p*(n*HOLD+nTrans*SLIDE);
+    for(let i=0;i<n;i++){
+      if(u<=HOLD || i===nTrans) return i;
+      u-=HOLD;
+      if(u<=SLIDE) return i+easeInOutCubic(Math.min(Math.max(u/SLIDE,0),1));
+      u-=SLIDE;
+    }
+    return nTrans;
+  }
+  function progress(){
+    const total=Math.max(work.offsetHeight-innerHeight,1);
+    return Math.min(Math.max(-work.getBoundingClientRect().top/total,0),1);
+  }
+  function paint(){
+    ticking=false;
+    const pos=albumAt(progress());
+    track.style.transform='translate3d('+(-(pos*(100/n))).toFixed(4)+'%,0,0)';
+  }
+  function requestPaint(){
+    if(!ticking){ ticking=true; requestAnimationFrame(paint); }
+  }
+  addEventListener('scroll',requestPaint,{passive:true});
+  addEventListener('resize',requestPaint);
+  paint();
+})();
+</script>
 
 <script>
 (function(){
