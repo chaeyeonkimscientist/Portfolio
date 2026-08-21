@@ -23,7 +23,7 @@
   const icons = {
     music: document.querySelector('.mode-icon[data-icon="music"]'),
     cog: document.querySelector('.mode-icon[data-icon="cog"]'),
-    tech: document.querySelector('.mode-icon[data-icon="tech"]')
+    data: document.querySelector('.mode-icon[data-icon="data"]')
   };
   const iconSections = Array.prototype.slice.call(
     document.querySelectorAll('[data-icons]')
@@ -134,6 +134,25 @@
 
   layoutNav();
   paint();
+
+  const reveals = document.querySelectorAll('[data-reveal]');
+  if (reveals.length) {
+    if (reduced) {
+      reveals.forEach(function (el) { el.classList.add('is-in'); });
+    } else if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.28 });
+      reveals.forEach(function (el) { io.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }
+  }
 
   const toggle = document.querySelector('[data-track-toggle]');
   if (toggle) {

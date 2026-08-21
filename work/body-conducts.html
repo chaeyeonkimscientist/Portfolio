@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="dive.css">
 </head>
-<body>
+<body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
 
@@ -22,9 +22,9 @@
     <span class="ind"></span>
     <span class="lbl">CogSci</span>
   </div>
-  <div class="mode-icon" data-icon="tech">
+  <div class="mode-icon" data-icon="data">
     <span class="ind"></span>
-    <span class="lbl">Tech</span>
+    <span class="lbl">Data</span>
   </div>
 </div>
 
@@ -39,44 +39,109 @@
   </div>
 </aside>
 
-<main class="dive" id="content">
-  <header class="hero">
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Did you find something about me that you want to take notes of? Add it to your short term memory.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <div class="term-bar">SESSION // CORTEX</div>
+    <pre id="term-warn-msg">WARNING: Session ending. Working memory will be flushed.
+Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes</button>
+      <button type="button" data-term-dismiss>Stay in session</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
     <h1>The Body Conducts</h1>
     <p class="subtitle">Translating Chronic Stress into Music</p>
     <p class="meta">Chaeyeon Kim · Sep 2025 – Apr 2026</p>
     <p class="disciplines">Composition · EEG signal processing · Python · Spatial Audio</p>
     <blockquote class="callout">“When the body tells truths language cannot.”</blockquote>
-  </header>
+  </div>
+</header>
 
+<main class="dive" id="content">
   <section>
     <h2 id="tldr">TL;DR</h2>
     <p class="lede">The Body Conducts is a five-track music film that translates EEG data to music through a Python-based biometric-to-audio pipeline. I recorded my own EEG under controlled stress, processed the raw signal in Python, and drove the score’s sound directly from that data. The invisible physiology of chronic stress becomes audible.</p>
     <p>Drawing on Prokofiev’s <em>Peter and the Wolf</em>, each instrument represents a distinct stress response. The score spans orchestral adagio, dialogic oboe-synth arrangements, a capella, and a full noir jazz brass breakdown, with the composer’s own brainwave (EEG) data embedded directly as rhythm and texture. The result makes invisible inflammation audible and inescapable.</p>
-    <p class="links">
-      <a class="pending-ext" title="URL not provided">Listen to the full sequence here</a>
-      <a class="pending-ext" title="URL not provided">Project playlist</a>
-      <a class="pending-ext" title="URL not provided">Code</a>
+    <p class="cta-row">
+      <a class="cta pending-ext" title="URL not provided">Project playlist</a>
+      <a class="cta pending-ext" title="URL not provided">Code</a>
     </p>
-    <p class="note">The Body Conducts uses spatial audio. Recommended with headphones. Play the full playlist in sequence.</p>
+    <p class="note">The Body Conducts uses spatial audio. Recommended with headphones.</p>
   </section>
 
-  <section data-icons="cog">
-    <h2 id="problem">The Problem</h2>
-    <p>Think about this scenario: you have been quietly enduring workplace stress, so your baseline heart palpitation goes up, so your immune system reads this as physical danger and floods your body with inflammation, as if preparing for a wound that never comes. Do this daily for months, and your body starts attacking itself.</p>
+  <section class="hue-cog" data-icons="cog" data-kind="cog">
+    <h2 id="problem" class="h-cog">The Problem</h2>
+    <div class="scenario" data-reveal>
+      <p class="scenario-kicker">Think about this scenario:</p>
+      <p>you have been quietly enduring workplace stress,</p>
+      <p>so your baseline heart palpitations go up,</p>
+      <p>so your immune system reads this as physical danger</p>
+      <p>and floods your body with inflammation,</p>
+      <p>as if preparing for a wound that never comes.</p>
+      <p>Do this daily for months, and your body starts attacking itself.</p>
+    </div>
     <p>Resources on stress might tell you to meditate more, exercise, and manage your time better. But when stress comes from social hierarchies or structural inequality, these individual behavior changes are a band-aid on a structural wound. It risks scientifically misrepresenting where chronic stress originates, and lets the systems causing harm off the hook.</p>
-    <figure class="mechanism">
+    <figure class="bio-loop">
       <div class="kicker">The biological mechanism</div>
-      <pre>Stress → Neurological Alarm → Immune Inflammation → Body Miscoordination
-   ↑___________________________________________________________|</pre>
+      <ol>
+        <li><span class="node">Stress</span></li>
+        <li><span class="node">Neurological Alarm</span></li>
+        <li><span class="node">Immune Inflammation</span></li>
+        <li><span class="node">Body Miscoordination</span></li>
+      </ol>
     </figure>
     <p>By the time you feel pain, invisible inflammation has been building for years.</p>
-    <p>Philosopher Elaine Scarry argues that chronic pain has no referential content, which means you hurt but cannot point to why. Language fails the body in pain… but emotionally resonant narratives don’t. Music, uniquely, triggers physiological chills and it makes you perceive the experience. Specifically, the score includes my own brainwave (EEG) data sonified into the music, making the invisible biometric reality of stress audible.</p>
-    <p>In short, to communicate a threat no one can see, you make them feel it.</p>
+    <p>Philosopher Elaine Scarry argues that chronic pain has no referential content, which means you hurt but cannot point to why. Language fails the body in pain… but emotionally resonant narratives don’t. Music, uniquely, triggers physiological chills and makes you perceive the experience.</p>
+    <p>In short, to communicate a threat no one can see, you make them hear it.</p>
   </section>
 
-  <section data-icons="music">
-    <h2 id="solution">The Solution</h2>
-    <p>I built a full biometric-to-audio pipeline and used it to produce a finished five-track music film. Rather than illustrating stress from the outside, the pipeline lets a measured brain state become the raw material of the music itself.</p>
+  <section class="hue-data" data-icons="cog data" data-kind="data">
+    <h2 id="solution" class="h-data">The Solution</h2>
+    <p>I built a full biometric-to-audio pipeline and used it to produce a finished five-track music film.</p>
 
     <h3>Biometric Integration Pipeline</h3>
     <ol class="pipeline">
@@ -87,7 +152,7 @@
           <ul>
             <li>Wore a 4-channel OpenBCI EEG headset (200 Hz) during stress-inducing scenarios (N-back tasks, social-evaluative stress) to capture neural activity.</li>
             <li>Alpha waves (8–12 Hz) during baseline, Beta waves (12–30 Hz) during stress.</li>
-            <li>Over 40 hours of recording across sessions.</li>
+            <li>40+ hours of recording across sessions.</li>
           </ul>
         </div>
       </li>
@@ -103,7 +168,7 @@
         </div>
       </li>
       <li>
-        <span class="num">03</span>
+        <span class="num">03-A</span>
         <div>
           <h4>Spectral filter mapping</h4>
           <ul>
@@ -114,7 +179,7 @@
         </div>
       </li>
       <li>
-        <span class="num">04</span>
+        <span class="num">03-B</span>
         <div>
           <h4>Direct wavelength translation</h4>
           <ul>
@@ -125,12 +190,20 @@
       </li>
     </ol>
 
-    <h3>Spatial Audio Rendering</h3>
-    <p>The completed score was mastered in Dolby Atmos using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
+    <div class="split">
+      <div>
+        <h3>Spatial Audio Rendering</h3>
+        <p>The completed score was mastered in Dolby Atmos using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
+      </div>
+      <figure class="img-ph">
+        <div class="frame">[ spatial audio still ]</div>
+        <figcaption>image placeholder</figcaption>
+      </figure>
+    </div>
   </section>
 
-  <section data-icons="tech">
-    <h2 id="signal">The Signal</h2>
+  <section class="hue-data" data-icons="data" data-kind="data">
+    <h2 id="signal" class="h-data">The Signal</h2>
     <p>The pipeline reads a continuous stress index (derived from alpha suppression) that drives the spectral filter, alongside the spectral shift between a calm baseline and an active stressor (alpha power drops, beta power rises).</p>
     <div class="viz-row">
       <figure class="viz-ph">
@@ -148,8 +221,8 @@
     </div>
   </section>
 
-  <section data-icons="music cog tech">
-    <h2 id="tracklist">The Tracklist</h2>
+  <section class="hue-music" data-icons="music" data-kind="music">
+    <h2 id="tracklist" class="h-music">The Tracklist</h2>
     <div class="tracks-wrap">
       <table class="tracks">
         <thead>
@@ -211,7 +284,7 @@
       </article>
       <article class="act">
         <h3>II. A440</h3>
-        <p>The album’s most texturally complex piece, A440 is structured as a dialogue between two distinct voices: Duck, represented by the oboe’s penetrating timbre, and Cat, through an electric guitar sequence with synth-pop drums. A440 refers to the standard tuning pitch in orchestral performance, the oboe’s A that every instrument must match before a concert begins. The track uses this convention as a metaphor for structural constraint. Duck argues that hope is self-delusion; Cat counters with analysis; and finger snaps on every beat mark time passing through the whole argument. The outro performs dissolution rather than resolution.</p>
+        <p>A440 is structured as a dialogue between two distinct voices: Duck, represented by the oboe’s penetrating timbre, and Cat, through an electric guitar sequence with synth-pop drums. A440 refers to the standard tuning pitch in orchestral performance, the oboe’s A that every instrument must match before a concert begins. The track uses this convention as a metaphor for structural constraint. Duck argues that hope is self-delusion; Cat counters with analysis; and finger snaps on every beat mark time passing through the whole argument. The outro performs dissolution rather than resolution.</p>
       </article>
       <article class="act">
         <h3>III. Prima</h3>
@@ -220,21 +293,21 @@
       <article class="act">
         <h3>IV. Rot</h3>
         <blockquote class="callout">“Why conduct what’s already dead?”</blockquote>
-        <p>The album’s most sonically disruptive track, Rot is the only piece to completely abandon orchestral instrumentation, replacing it with a brass-and-percussion jazz configuration. The song represents the Wolf, or stress. Written in a scat-influenced noir jazz style, the piece incorporates the composer’s EEG data averaged from both the cognitive stress and social-evaluative stress sessions as a jazz piano lick, making the composite physiological load audible. Rot addresses the listener directly in the second person, immersing the listener in the position of the conductor, experiencing stress chronically.</p>
+        <p>Rot is the only piece to completely abandon orchestral instrumentation, replacing it with a brass-and-percussion jazz configuration. The song represents the Wolf, or stress. Written in a scat-influenced noir jazz style, the piece incorporates the composer’s EEG data averaged from both the cognitive stress and social-evaluative stress sessions as a jazz piano lick, making the composite physiological load audible. Rot addresses the listener directly in the second person, immersing the listener in the position of the conductor, experiencing stress chronically.</p>
       </article>
       <article class="act">
         <h3>V. Finale</h3>
         <blockquote class="callout">Integration, not elimination.</blockquote>
         <p>The closing track is formally the inverse of Overture. Where Overture absorbed individual voices into the Wolf’s texture, Finale builds them back one at a time. Bird, now in chords rather than a solo line, enters first, signalling hope that has survived contact with Duck’s learned helplessness and Cat’s analytical paralysis. Oboe follows with the A440 tuning note, but blended into the flute’s harmonics rather than announced. Violins take an original melody, the first moment the conductor’s agency produces new musical material rather than reacting to others’ themes.</p>
         <p>The piece reaches its central argument in its final section: the orchestral adagio gives way to jazz as Wolf re-enters, but this time the conductor does not try to silence it. The tension between the orchestral and jazz vocabularies is not resolved; the two are held together. Finale is mastered with the average of all EEG data, as it is the integration of both stress and recovery.</p>
-        <p>Unlike Prokofiev’s triumphant ending where Peter captures the wolf, my Finale subverts resolution. The conductor learns to embrace miscoordination rather than impose perfect order. The resolution isn’t conducting success by overpowering Wolf, but conducting success by letting Wolf conduct too.</p>
+        <p>Unlike Prokofiev’s triumphant ending where Peter captures the wolf, Finale subverts resolution. The conductor learns to embrace miscoordination rather than impose perfect order. The resolution isn’t conducting success by overpowering Wolf, but conducting success by letting Wolf conduct too.</p>
         <p class="closing">Dissonance becomes part of the symphony.</p>
       </article>
     </div>
   </section>
 
   <section>
-    <h2 id="result">The Result</h2>
+    <h2 id="result" class="h-strong">The Result</h2>
     <ul class="bullets">
       <li>Screened in 5 venues, 200–300 audience per venue.</li>
       <li>Highest grade in the cohort (120 students), from a committee including a former Metropolitan Museum art critic and a Stanford immunologist, who called it “a triumph of interdisciplinary research and creativity.”</li>
@@ -242,15 +315,15 @@
   </section>
 
   <section>
-    <h2 id="demonstrates">What This Project Demonstrates</h2>
+    <h2 id="demonstrates" class="h-strong">What This Project Demonstrates</h2>
     <ul class="demo-list">
-      <li>
-        <h3>Signal processing &amp; data engineering</h3>
-        <p>End-to-end Python pipeline over 40+ hours of 4-channel EEG (OpenBCI, 200 Hz): acquisition, artifact handling, Butterworth filtering, band-power feature extraction, STFT analysis, and a reproducible normalization framework. Built with MNE, SciPy, NumPy, and Mido.</p>
-      </li>
       <li>
         <h3>Creative-technical systems design</h3>
         <p>A continuous 0–1 biometric index driving real-time spectral automation across a full score, architecturally equivalent to game-audio RTPC, plus a second, distinct data-to-notes transcription path.</p>
+      </li>
+      <li>
+        <h3>Signal processing &amp; data engineering</h3>
+        <p>End-to-end Python pipeline over 40+ hours of 4-channel EEG (OpenBCI, 200 Hz): acquisition, artifact handling, Butterworth filtering, band-power feature extraction, STFT analysis, and a reproducible normalization framework. Built with MNE, SciPy, NumPy, and Mido.</p>
       </li>
       <li>
         <h3>Composition &amp; production</h3>
@@ -265,5 +338,8 @@
 </main>
 
 <script src="dive-hud.js"></script>
+<script src="dive-waves.js"></script>
+<script src="dive-memory.js"></script>
+<script src="dive-player.js"></script>
 </body>
 </html>
