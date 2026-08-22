@@ -140,6 +140,10 @@
     if (reduced) {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
     } else if ('IntersectionObserver' in window) {
+      // Reveal when an element rises past ~72% of the viewport height.
+      // The bottom rootMargin pulls the trigger line up the screen so stacked
+      // lines (e.g. the scenario) light one at a time as the user scrolls,
+      // rather than all at once when the block first appears.
       const io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
@@ -147,7 +151,7 @@
             io.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.28 });
+      }, { threshold: 0.01, rootMargin: '0px 0px -28% 0px' });
       reveals.forEach(function (el) { io.observe(el); });
     } else {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
