@@ -135,22 +135,22 @@
   layoutNav();
   paint();
 
-  const reveals = document.querySelectorAll('[data-reveal]');
+  const reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
   if (reveals.length) {
-    if (reduced) {
+    if (reduced || !('IntersectionObserver' in window)) {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
-    } else if ('IntersectionObserver' in window) {
+    } else {
       const io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in');
-            io.unobserve(entry.target);
-          }
+          if (!entry.isIntersecting) return;
+          const i = reveals.indexOf(entry.target);
+          reveals.forEach(function (el, j) {
+            if (j <= i) el.classList.add('is-in');
+          });
+          io.unobserve(entry.target);
         });
-      }, { threshold: 0.28 });
+      }, { threshold: 0.2, rootMargin: '-18% 0px -42% 0px' });
       reveals.forEach(function (el) { io.observe(el); });
-    } else {
-      reveals.forEach(function (el) { el.classList.add('is-in'); });
     }
   }
 

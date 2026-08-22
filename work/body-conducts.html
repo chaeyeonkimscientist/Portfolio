@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="dive.css">
+<link rel="stylesheet" href="./dive.css?v=7">
 </head>
 <body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
@@ -115,24 +115,30 @@ Copy your nodes before disconnecting.</pre>
 
   <section class="hue-cog" data-icons="cog" data-kind="cog">
     <h2 id="problem" class="h-cog">The Problem</h2>
-    <div class="scenario" data-reveal>
-      <p class="scenario-kicker">Think about this scenario:</p>
-      <p>you have been quietly enduring workplace stress,</p>
-      <p>so your baseline heart palpitations go up,</p>
-      <p>so your immune system reads this as physical danger</p>
-      <p>and floods your body with inflammation,</p>
-      <p>as if preparing for a wound that never comes.</p>
-      <p>Do this daily for months, and your body starts attacking itself.</p>
+    <div class="scenario scenario-scroll">
+      <p class="scenario-kicker" data-reveal>Think about this scenario:</p>
+      <p data-reveal>you have been quietly enduring workplace stress,</p>
+      <p data-reveal>so your baseline heart palpitations go up,</p>
+      <p data-reveal>so your immune system reads this as physical danger</p>
+      <p data-reveal>and floods your body with inflammation,</p>
+      <p data-reveal>as if preparing for a wound that never comes.</p>
+      <p data-reveal>Do this daily for months, and your body starts attacking itself.</p>
     </div>
     <p>Resources on stress might tell you to meditate more, exercise, and manage your time better. But when stress comes from social hierarchies or structural inequality, these individual behavior changes are a band-aid on a structural wound. It risks scientifically misrepresenting where chronic stress originates, and lets the systems causing harm off the hook.</p>
     <figure class="bio-loop">
       <div class="kicker">The biological mechanism</div>
-      <ol>
-        <li><span class="node">Stress</span></li>
-        <li><span class="node">Neurological Alarm</span></li>
-        <li><span class="node">Immune Inflammation</span></li>
-        <li><span class="node">Body Miscoordination</span></li>
-      </ol>
+      <div id="bio-graph" class="bio-graph" role="list" aria-label="Biological mechanism feedback cycle">
+        <!-- interactive node-edge graph injected by dive-bio.js -->
+        <noscript>
+          <ol class="bio-fallback">
+            <li>Stress</li>
+            <li>Neurological Alarm</li>
+            <li>Immune Inflammation</li>
+            <li>Body Miscoordination</li>
+            <li>→ feeds back to Stress</li>
+          </ol>
+        </noscript>
+      </div>
     </figure>
     <p>By the time you feel pain, invisible inflammation has been building for years.</p>
     <p>Philosopher Elaine Scarry argues that chronic pain has no referential content, which means you hurt but cannot point to why. Language fails the body in pain… but emotionally resonant narratives don’t. Music, uniquely, triggers physiological chills and makes you perceive the experience.</p>
@@ -337,9 +343,10 @@ Copy your nodes before disconnecting.</pre>
   </section>
 </main>
 
-<script src="dive-hud.js"></script>
-<script src="dive-waves.js"></script>
-<script src="dive-memory.js"></script>
-<script src="dive-player.js"></script>
+<script src="./dive-hud.js?v=7"></script>
+<script src="./dive-waves.js?v=7"></script>
+<script src="./dive-bio.js?v=7"></script>
+<script src="./dive-memory.js?v=7"></script>
+<script src="./dive-player.js?v=7"></script>
 </body>
 </html>
