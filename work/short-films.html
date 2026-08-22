@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Short Films — Chaeyeon Kim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./dive.css?v=13">
+</head>
+<body data-project="Short Films" data-project-id="short-films">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
+  </div>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
+  </div>
+</div>
+
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <div class="hud-track" aria-hidden="true">
+      <div class="hud-fill"></div>
+      <div class="hud-dot"></div>
+    </div>
+    <nav class="hud-nav" id="hud-nav"></nav>
+  </div>
+</aside>
+
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Did you find something about me that you want to take notes of? Add it to your short term memory.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <div class="term-bar">SESSION // CORTEX</div>
+    <pre id="term-warn-msg">WARNING: Session ending. Working memory will be flushed.
+Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes</button>
+      <button type="button" data-term-dismiss>Stay in session</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>Short Films</h1>
+    <p class="subtitle">Sonic Storytelling Through 24-Hour Constraints</p>
+    <p class="meta">Chaeyeon Kim · 2024 – 2026</p>
+    <p class="disciplines">Composition · Sound Design · ML Audio · Direction · Performance</p>
+    <blockquote class="callout">“What music reveals that dialogue cannot.”</blockquote>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede">Four short films, each built to prove the same thesis: <strong>music and sound design are narrative language</strong>. Across all four, the score is the film’s psychology, with instruments assigned to characters, ML models standing in for impossible casting, and structural motifs (Morse rhythm, de Broglie wavelengths) carrying meaning dialogue never states.</p>
+    <p>Two of the four have been recognized at the Minervopolis Film Festival.</p>
+    <div class="award-row">
+      <a class="award award-gold" href="#forget">
+        <span class="award-kicker">Golden Owl Award</span>
+        <span class="award-name">Before You Learned to Forget</span>
+        <span class="award-meta">Minervopolis Film Festival 2026 · top film out of 10+</span>
+      </a>
+      <a class="award" href="#flush">
+        <span class="award-kicker">Best Audio Award</span>
+        <span class="award-name">FLUSH! The Flowers</span>
+        <span class="award-meta">Minervopolis Film Festival 2025 · out of 10+</span>
+      </a>
+    </div>
+    <p class="cta-row">
+      <a class="cta pending-ext" title="URL not provided">Watch the films</a>
+    </p>
+  </section>
+
+  <section class="hue-cog" data-icons="cog" data-kind="cog">
+    <h2 id="philosophy" class="h-cog" data-nav="Philosophy">The Philosophy</h2>
+    <p>These films share one operating principle: composition, performance, and technical innovation are a single practice. Four commitments follow from that:</p>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Composition informs narrative</h4>
+          <p>Leitmotifs are character psychology.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Technical constraints drive creativity</h4>
+          <p>ML models become the solution to problems that are otherwise impossible inside a 24-hour window.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Sound design is storytelling</h4>
+          <p>The mix carries what dialogue withholds.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <h4>Performance is research</h4>
+          <p>Embodying a psychological state is how you come to understand it well enough to score it.</p>
+        </div>
+      </li>
+    </ol>
+    <p>This is the Hyperinstrument philosophy applied past the boundary of the traditional instrument: TTS models, sound-design systems, and biometric tools treated as instruments that “understand” and amplify a human psychological state.</p>
+  </section>
+
+  <section class="hue-music" data-icons="music cog" data-kind="music">
+    <h2 id="forget" class="h-music" data-nav="01 Forget">01 · Before You Learned to Forget</h2>
+    <p class="section-kicker">2026 · Golden Owl Award — Minervopolis Film Festival 2026</p>
+    <p class="disciplines">Composer · Writer · Director</p>
+    <p>A departure from the psychological-horror triptychs that came before it — a healing, warming film in the register of a Pixar short. A woman frozen in time while the world rushes past rediscovers her childlike wonder through a series of “missions” delivered by a mysterious voice on a payphone. The voice turns out to be her own past self, embodied as an animated caterpillar that only she can hear — a being that, in its own eyes, sees butterfly wings already growing from her back.</p>
+
+    <h3>The conceptual spine: physics as emotional language</h3>
+    <p>The narration threads real physics through the emotional arc:</p>
+    <ul class="bullets">
+      <li><strong>de Broglie wavelengths</strong> — every object with mass has its own lambda; the character’s grief is that her wavelength won’t harmonize with the crowd’s.</li>
+      <li><strong>Frequencies beyond perception</strong> — “there are frequencies we can’t hear… until suddenly, one day, we can.” This is the film’s structural hinge: the payphone rings and only she hears it.</li>
+      <li><strong>Resonance</strong> — “when two frequencies match, when wavelengths align” — used as the moment she remembers who she was.</li>
+      <li><strong>Conservation of energy</strong> — Einstein’s “energy only changes form” reframed as: wonder is never lost, only misplaced.</li>
+    </ul>
+
+    <h3>The music</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Meter &amp; tempo</h4>
+          <p>¾ for two bars, then 4/4 at 100bpm. It is a loop of that until the instrumental/dance break scene. Represents the character’s feeling out of place inside a world moving in fast-forward.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Tonality</h4>
+          <p>Locked in D major. Diatonic, bright, and almost stubbornly stable (Krumhansl-Schmuckler profiling returns D major at r = 0.839; the tonic triad F#–A–D accounts for nearly half of all weighted pitch content). The near-total absence of chromatic pitches means the film sounds innocent.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Harmony that floats instead of resolves</h4>
+          <p>The tonic almost never appears as a bare triad, it’s dressed as Dmaj7, Dmaj9, Dadd9. Strong dominant-to-tonic (V–I) motion is deliberately avoided, so the music hovers on tonic prolongation rather than pushing toward resolution. This is the harmonic signature of the whole piece: coloristic, ambient, pastoral, closer to game/film “wonder” scoring than to classical cadence.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <h4>The signature move</h4>
+          <p>A recurring C#augmented / C#sus4 — voicing the leading tone as a shimmering, unresolved sonority that pulls toward D without ever committing.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <div>
+          <h4>The orchestral bed</h4>
+          <p>Cellos anchor the bass (down to G1), violas and violins fill the middle, and flute + glockenspiel + harp occupy the top octaves purely for shimmer. Heavy harp arpeggiation/glissando and glockenspiel sparkle at the very top (up to B6) are hallmarks of the pastoral-fantasy idiom. Tremolo strings (“Romance Strings,” “Violas trem”) are used as a breathing, swelling sustain device — velocities range from a whisper-quiet 13 up to 127, so the score genuinely breathes rather than sitting at a flat mezzo-forte.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="ix" id="ix-tonic">
+      <div class="kicker">The tonic-that-won’t-resolve</div>
+      <div class="chord-stage" tabindex="0" role="img" aria-label="C-sharp augmented pulling toward D but never resolving. Hover to pause on the suspended chord.">
+        <span class="chord chord-from">C♯aug / C♯sus4</span>
+        <span class="chord-arrow" aria-hidden="true">→</span>
+        <span class="chord chord-to">D</span>
+      </div>
+      <p class="ix-ph-audio">[ audio: C♯aug → D pull ]</p>
+      <p class="note">Hover to pause on the suspended chord. The resolution never clicks.</p>
+    </div>
+
+    <div class="ix ix-wide" id="ix-ribbons">
+      <div class="kicker">Flute vs. oboe</div>
+      <div class="viz-row ribbon-row">
+        <figure class="ribbon" data-voice="flute" tabindex="0">
+          <canvas class="ribbon-wave" width="800" height="160" aria-hidden="true"></canvas>
+          <div class="ix-ph-audio">[ flute voice ]</div>
+          <figcaption>flute · conjunct, busy</figcaption>
+        </figure>
+        <figure class="ribbon" data-voice="oboe" tabindex="0">
+          <canvas class="ribbon-wave" width="800" height="160" aria-hidden="true"></canvas>
+          <div class="ix-ph-audio">[ oboe voice ]</div>
+          <figcaption>oboe · leaping, sustained</figcaption>
+        </figure>
+      </div>
+      <p class="note">Hover either ribbon to solo that voice — the songbird over the sigh.</p>
+    </div>
+
+    <h3>The animation-as-past-self device</h3>
+    <p>The past self is an animated caterpillar rendered directly onto live footage: crawling the bridge railing, pixelated on the payphone’s LED panel, riding on the character’s shoulder, then a cocoon, then a butterfly. In the caterpillar’s POV shots, watercolor butterfly wings shimmer on the grown woman’s back — wings she cannot see yet. The reveal that the caterpillar is the younger self is the film’s quiet plot twist, and the score marks it with the resonance motif.</p>
+
+    <figure class="img-ph wings-still" id="ix-wings" tabindex="0">
+      <div class="frame">
+        <span class="wings-label">[ mirror-scene still ]</span>
+        <svg class="wings" viewBox="0 0 320 180" aria-hidden="true">
+          <g class="wing wing-l">
+            <path d="M160 96 C118 88 72 48 54 28 C86 42 118 58 148 90 C132 70 108 42 96 22 C120 40 144 68 160 96 Z" />
+            <path d="M160 98 C120 110 70 128 48 152 C84 132 122 116 152 102 C128 126 96 150 78 168 C110 146 140 120 160 98 Z" />
+          </g>
+          <g class="wing wing-r">
+            <path d="M160 96 C202 88 248 48 266 28 C234 42 202 58 172 90 C188 70 212 42 224 22 C200 40 176 68 160 96 Z" />
+            <path d="M160 98 C200 110 250 128 272 152 C236 132 198 116 168 102 C192 126 224 150 242 168 C210 146 180 120 160 98 Z" />
+          </g>
+        </svg>
+      </div>
+      <figcaption>Hover — the wings bloom. They fade when you leave, because she cannot see them. Yet.</figcaption>
+    </figure>
+  </section>
+
+  <section class="hue-music" data-icons="music" data-kind="music">
+    <h2 id="flush" class="h-music" data-nav="02 FLUSH!">02 · FLUSH! The Flowers</h2>
+    <p class="section-kicker">2025, Buenos Aires · Best Audio Award — Minervopolis Film Festival 2025</p>
+    <p class="disciplines">Writer · Producer · Composer · Actor</p>
+    <p>A character-driven psychological drama built on an instrument-as-identity system — the film’s central sonic idea, and the reason it took the festival’s audio prize. Each character is an instrument family, and their music behaves the way they do:</p>
+    <ul class="bullets">
+      <li><strong>Allison (fragile)</strong> — woodwinds / flute: sharp, delicate, exposed. The line is thin and easily broken, sitting high where it feels vulnerable.</li>
+      <li><strong>Brett (strategic)</strong> — strings: deliberate, controlled, calculating. Measured bowing and held tension; every phrase sounds decided.</li>
+    </ul>
+    <p>The drama plays out not just in what the characters say but in how their instruments interact — when strings crowd out the flute, when the flute is left alone in silence. The mix is the subtext.</p>
+
+    <div class="ix" id="ix-identity">
+      <div class="kicker">Instrument-as-identity</div>
+      <div class="id-cards">
+        <button class="id-card" type="button" data-char="allison" aria-pressed="false">
+          <span class="id-name">Allison</span>
+          <span class="id-role">fragile</span>
+          <span class="id-voice">woodwinds / flute</span>
+          <span class="ix-ph-audio">[ Allison leitmotif ]</span>
+        </button>
+        <button class="id-card" type="button" data-char="brett" aria-pressed="false">
+          <span class="id-name">Brett</span>
+          <span class="id-role">strategic</span>
+          <span class="id-voice">strings</span>
+          <span class="ix-ph-audio">[ Brett leitmotif ]</span>
+        </button>
+      </div>
+      <p class="note">Click a card to isolate that leitmotif. Click both to hear the power dynamic — strings pressing against flute.</p>
+    </div>
+  </section>
+
+  <section class="hue-data" data-icons="data music" data-kind="data">
+    <h2 id="stop" class="h-data" data-nav="03 STOP !">03 · STOP !</h2>
+    <p class="section-kicker">2025, Taipei</p>
+    <p class="disciplines">Co-Director · Writer · Composer · Actor</p>
+    <p>A 24-hour film built around a set of absurd mandatory constraints, each turned into a structural or sonic device rather than a gimmick:</p>
+    <div class="tracks-wrap">
+      <table class="tracks">
+        <thead>
+          <tr>
+            <th>Constraint</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Made in under 24 hours</td>
+            <td>Full write–score–shoot–cut cycle in one day</td>
+          </tr>
+          <tr>
+            <td>Must feature Gordon Ramsay</td>
+            <td>Built Ramsay with a machine-learning TTS voice model</td>
+          </tr>
+          <tr>
+            <td>Must feature a fortune cookie</td>
+            <td>“Dirt” made from crushed cookies, message hidden inside</td>
+          </tr>
+          <tr>
+            <td>Must say “I wish I were on Jupiter”</td>
+            <td>Delivered in the crosswalk sequence — Jupiter = the subconscious</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>The music</h3>
+    <ul class="bullets">
+      <li><strong>Morse code as rhythmic motif.</strong> The title-roll beat literally spells S-T-O-P in Morse — the sound design encodes the title before a word is spoken. The rhythmic grammar of the whole film grows out of dots and dashes.</li>
+      <li><strong>Leitmotifs for cognitive augmentation.</strong> Recurring musical figures represent the film’s theme of the mind being extended/augmented — the score tracks a state of consciousness, not just a scene.</li>
+    </ul>
+
+    <div class="ix" id="ix-morse">
+      <div class="kicker">Decode the title</div>
+      <div class="morse" role="group" aria-label="Morse code spelling S T O P">
+        <button class="morse-cluster" type="button" data-letter="S" data-code="...">
+          <span class="morse-marks" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="morse-letter">S</span>
+        </button>
+        <span class="morse-gap" aria-hidden="true">/</span>
+        <button class="morse-cluster" type="button" data-letter="T" data-code="-">
+          <span class="morse-marks morse-dash" aria-hidden="true"><i class="dash"></i></span>
+          <span class="morse-letter">T</span>
+        </button>
+        <span class="morse-gap" aria-hidden="true">/</span>
+        <button class="morse-cluster" type="button" data-letter="O" data-code="---">
+          <span class="morse-marks morse-dash" aria-hidden="true"><i class="dash"></i><i class="dash"></i><i class="dash"></i></span>
+          <span class="morse-letter">O</span>
+        </button>
+        <span class="morse-gap" aria-hidden="true">/</span>
+        <button class="morse-cluster" type="button" data-letter="P" data-code=".--.">
+          <span class="morse-marks" aria-hidden="true"><i></i><i class="dash"></i><i class="dash"></i><i></i></span>
+          <span class="morse-letter">P</span>
+        </button>
+      </div>
+      <p class="ix-ph-audio">[ title-roll beat ]</p>
+      <p class="note">Hover a cluster to reveal the letter. The loop lights dots and dashes in sync — · · · / — / — — — / · — — ·</p>
+    </div>
+  </section>
+
+  <section class="hue-cog" data-icons="cog music" data-kind="cog">
+    <h2 id="feeling" class="h-cog" data-nav="04 Feeling">04 · How Have You Been Feeling Lately?</h2>
+    <p class="section-kicker">2024, Buenos Aires</p>
+    <p class="disciplines">Writer · Actor · Sound Engineer · Composer</p>
+    <p>The origin point of the psychological-triptych approach: three parallel therapy narratives, each a study in how childhood trauma resurfaces as adult behavior. Sound, space, and performance operate as one integrated system.</p>
+    <ul class="bullets">
+      <li><strong>Sarah</strong> — perfectionism → emotional eating → filling parental voids.</li>
+      <li><strong>Liz</strong> — abandonment → weaponized desirability → attraction worn as armor. (Delivers the mandatory line “Eat the Rich.”)</li>
+      <li><strong>M</strong> — self-dissolution → becoming machinery → humanity traded away for utility.</li>
+    </ul>
+    <p>The 24-hour constraints here also demanded a non-human character — resolved with a final figure who “wants” nothing, and whom you genuinely cannot classify as human or not — and a public-transport setting, resolved with a metro station that becomes the shared space where the three narratives echo.</p>
+
+    <div class="ix ix-wide" id="ix-triptych">
+      <div class="kicker">The triptych</div>
+      <div class="triptych" role="tablist" aria-label="Three character panels">
+        <button class="tri-panel is-fore" type="button" role="tab" aria-selected="true" data-char="sarah">
+          <span class="tri-name">Sarah</span>
+          <span class="tri-arc">perfectionism → emotional eating → filling parental voids</span>
+          <span class="ix-ph-audio">[ Sarah motif ]</span>
+        </button>
+        <button class="tri-panel" type="button" role="tab" aria-selected="false" data-char="liz">
+          <span class="tri-name">Liz</span>
+          <span class="tri-arc">abandonment → weaponized desirability → attraction as armor</span>
+          <span class="ix-ph-audio">[ Liz motif ]</span>
+        </button>
+        <button class="tri-panel" type="button" role="tab" aria-selected="false" data-char="m">
+          <span class="tri-name">M</span>
+          <span class="tri-arc">self-dissolution → becoming machinery → humanity traded for utility</span>
+          <span class="ix-ph-audio">[ M motif ]</span>
+        </button>
+      </div>
+      <p class="note">Foreground one panel at a time. The others drop to a murmur — three psychologies, one mix.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="demonstrates" class="h-strong" data-nav="Demonstrates">What These Projects Demonstrate</h2>
+    <ul class="demo-list">
+      <li>
+        <h3>Music as expressive technology</h3>
+        <p>Hyperinstrument thinking pushed beyond traditional instruments. ML voice models, biometric-adjacent sound systems, and instrument-as-identity frameworks treated as instruments that understand and amplify psychological states.</p>
+      </li>
+      <li>
+        <h3>Rapid prototyping under extreme constraint</h3>
+        <p>Custom tools (a Gordon Ramsay TTS model, character-mapped soundtrack systems, Morse-encoded rhythmic motifs) designed and shipped inside 24-hour and 3-day windows.</p>
+      </li>
+      <li>
+        <h3>Sound design as storytelling</h3>
+        <p>Across four films, the score carries the load dialogue can’t: a chord that refuses to resolve, a fragile flute pressed by strategic strings, a beat that spells the title, three motifs competing for the foreground.</p>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<script src="./dive-hud.js?v=13"></script>
+<script src="./dive-waves.js?v=13"></script>
+<script src="./dive-memory.js?v=13"></script>
+<script src="./dive-player.js?v=13"></script>
+<script src="./dive-films.js?v=13"></script>
+</body>
+</html>
