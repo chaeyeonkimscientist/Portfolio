@@ -25,9 +25,8 @@ html{scroll-behavior:smooth}
 body{
   background:var(--iris);color:var(--bone);
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
-  -webkit-font-smoothing:antialiased;line-height:1.7;
-  font-size:1.05rem;font-weight:500;letter-spacing:0.01em;
-  font-synthesis:weight;
+  -webkit-font-smoothing:antialiased;line-height:1.68;
+  font-size:1.02rem;font-weight:400;letter-spacing:0.002em;
   overflow-x:clip;
 }
 a{color:var(--lav);text-decoration:none}
@@ -156,7 +155,7 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 }
 .subtitle{
   font-family:"Instrument Serif",Georgia,serif;
-  font-size:clamp(1.15rem,2.4vw,1.55rem);font-weight:400;line-height:1.3;
+  font-size:clamp(1.15rem,2.4vw,1.55rem);font-weight:700;line-height:1.3;
   color:var(--lav);margin-bottom:1.4rem;
 }
 .meta,.disciplines{
@@ -175,6 +174,7 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
   max-width:72ch;
   margin-left:auto;margin-right:auto;
 }
+.dive > section > .scenario-pin,
 .dive > section > .scenario,
 .dive > section > .bio-loop,
 .dive > section > .tracks-wrap,
@@ -185,32 +185,27 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 blockquote.callout{
   font-family:"Instrument Serif",Georgia,serif;font-style:italic;
   font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.4;color:var(--lav);
-  font-weight:500;
+  font-weight:400;
   border:none;margin:0;max-width:28ch;
 }
-/* Hero pull-quote: one line. Font scales with viewport so it never wraps. */
 .hero .callout{
   display:block;width:max-content;max-width:100%;
   white-space:nowrap;line-height:1.2;
   font-size:clamp(0.78rem,2.15vw + 0.35rem,1.55rem);
-  font-weight:500;
+  font-weight:400;
 }
 
 section{padding:4.2rem max(8vw,5.5rem);position:relative}
 section:last-of-type{padding-bottom:6rem}
 h2{
-  font-family:"Instrument Serif",Georgia,serif;font-weight:700;
+  font-family:"Instrument Serif",Georgia,serif;font-weight:400;
   font-size:clamp(2.15rem,4.6vw,3.15rem);line-height:1.08;color:var(--bone);
   margin:0 0 1.45rem;scroll-margin-top:8.5rem;
-  -webkit-text-stroke:0.55px currentColor;
 }
-/* PDF readability: section titles larger and heavier, in their discipline hue.
-   Instrument Serif ships at 400 only; a same-color stroke makes the weight read. */
 h2.h-cog,h2.h-data,h2.h-music,h2.h-strong{
-  font-weight:700;
-  font-size:clamp(2.5rem,5.6vw,3.75rem);
+  font-weight:400;
+  font-size:clamp(2.4rem,5.4vw,3.6rem);
   letter-spacing:0.005em;
-  -webkit-text-stroke:0.85px currentColor;
 }
 h2.h-cog{color:var(--lav);text-shadow:0 0 26px rgba(183,167,216,.28)}
 h2.h-data{color:var(--data);text-shadow:0 0 26px rgba(159,224,216,.24)}
@@ -218,15 +213,15 @@ h2.h-music{color:var(--amaranth-lit);text-shadow:0 0 26px rgba(201,67,106,.26)}
 h2.h-strong{color:var(--bone)}
 h3{
   font-family:"Instrument Serif",Georgia,serif;font-weight:700;
-  font-size:1.38rem;line-height:1.25;color:var(--lav);
-  margin:2rem 0 0.9rem;-webkit-text-stroke:0.4px currentColor;
+  font-size:1.32rem;line-height:1.25;color:var(--lav);
+  margin:2rem 0 0.9rem;
 }
-p{margin:0 0 1.05rem;color:var(--bone);font-weight:500}
+p{margin:0 0 1rem;color:var(--bone);font-weight:400}
 p:last-child{margin-bottom:0}
 em{font-style:italic}
 strong,b{font-weight:700}
 
-.lede{color:var(--bone);font-weight:600}
+.lede{color:var(--bone);font-weight:400}
 .note{
   font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;
   text-transform:uppercase;color:var(--bone-dim);margin-top:1.1rem;
@@ -263,8 +258,8 @@ strong,b{font-weight:700}
   color:var(--lav);padding-top:0.2rem;
 }
 .pipeline h4{
-  font-family:"Instrument Serif",Georgia,serif;font-weight:700;font-size:1.22rem;
-  color:var(--bone);margin:0 0 0.4rem;-webkit-text-stroke:0.3px currentColor;
+  font-family:"Instrument Serif",Georgia,serif;font-weight:700;font-size:1.18rem;
+  color:var(--bone);margin:0 0 0.4rem;
 }
 .pipeline ul{margin:0.2rem 0 0;padding-left:1.1rem;color:var(--bone)}
 .pipeline li li{display:list-item;grid-template-columns:none;gap:0;margin:0.25rem 0}
@@ -292,7 +287,7 @@ strong,b{font-weight:700}
 .tracks{width:100%;border-collapse:collapse;font-size:0.88rem}
 .tracks th{
   font-family:"DM Mono",monospace;font-size:0.55rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:var(--bone-dim);font-weight:500;
+  text-transform:uppercase;color:var(--bone-dim);font-weight:700;
   text-align:left;padding:0.55rem 0.7rem 0.55rem 0;
   border-bottom:0.5px solid var(--hair);
 }
@@ -304,9 +299,8 @@ strong,b{font-weight:700}
   font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.12em;color:var(--lav);
 }
 .tracks .tname{
-  font-family:"Instrument Serif",Georgia,serif;font-size:1.72rem;font-weight:700;color:var(--lav);
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.72rem;font-weight:400;color:var(--lav);
   border-bottom:1px solid transparent;transition:color .2s,border-color .2s;
-  -webkit-text-stroke:0.4px currentColor;
 }
 /* once a real href is present the title reads as an active, underlinable link */
 a.tname[href]:hover{color:var(--bone);border-bottom-color:var(--lav)}
@@ -316,7 +310,7 @@ a.tname.pending-ext::before{content:none}
 .toggle{
   display:inline-flex;align-items:center;gap:0.8rem;
   background:rgba(183,167,216,.1);border:1px solid var(--lav);color:var(--bone);
-  font-family:"DM Mono",monospace;font-size:0.92rem;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;
+  font-family:"DM Mono",monospace;font-size:0.92rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;
   padding:1.15rem 1.6rem;cursor:pointer;border-radius:3px;
   box-shadow:0 0 22px rgba(183,167,216,.22);
   transition:border-color .25s,color .25s,box-shadow .25s,background .25s;
@@ -334,18 +328,18 @@ a.tname.pending-ext::before{content:none}
 .act .callout{margin:0 0 0.9rem;font-size:1.2rem}
 .act .closing{
   font-family:"Instrument Serif",Georgia,serif;font-style:italic;color:var(--lav);
-  margin-top:0.8rem;font-size:1.2rem;
+  margin-top:0.8rem;font-size:1.2rem;font-weight:700;
 }
 
 .bullets{margin:0.4rem 0 0;padding-left:1.15rem}
 .bullets li{margin:0.45rem 0}
 .demo-list{list-style:none;padding:0;margin:0.2rem 0 0;display:flex;flex-direction:column;gap:1.1rem}
-.demo-list h3{margin:0 0 0.4rem;font-size:1.3rem;font-weight:700}
+.demo-list h3{margin:0 0 0.4rem;font-size:1.25rem;font-weight:700}
 
 .cta-row{display:flex;flex-wrap:wrap;gap:1.1rem;margin:2.2rem 0 1rem}
 .cta,.cta.pending-ext{
   display:inline-flex;align-items:center;justify-content:center;gap:0.55rem;
-  font-family:"DM Mono",monospace;font-size:1.05rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  font-family:"DM Mono",monospace;font-size:1.05rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
   color:var(--bone);padding:1.35rem 2.2rem;
   border:1.5px solid var(--lav);border-radius:4px;
   background:rgba(183,167,216,.12);
@@ -402,26 +396,39 @@ a.tname.pending-ext::before{content:none}
 .hue-data + .hue-data{padding-top:4.5rem}
 .hue-data + .hue-data::before{top:-14rem}
 
-/* Centered, scroll-driven scenario. Each line is a viewport beat so the next
-   line cannot enter the observer band until the reader scrolls. */
+/* Sticky staircase: the steps sit together, each one indented further down-right.
+   A tall pin gives the scroll runway; the cluster stays on screen while each
+   step fades in as the user scrolls. */
+.scenario-pin{
+  height:240vh;
+  margin:1rem auto 2rem;
+}
 .scenario{
-  margin:2rem auto 2.4rem;text-align:center;max-width:46ch;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:sticky;top:26vh;
+  margin:0 auto;text-align:left;max-width:56ch;
+  display:flex;flex-direction:column;align-items:stretch;
+  gap:0.45rem;
 }
-.scenario-scroll{gap:0;padding:8vh 0 14vh;max-width:50ch}
+.scenario-scroll{padding:0.4rem 0 1.2rem;max-width:56ch}
 .scenario p{
-  font-family:"Instrument Serif",Georgia,serif;font-size:clamp(1.3rem,2.8vw,1.8rem);
-  font-weight:500;line-height:1.45;color:var(--bone);margin:0;
-  width:100%;min-height:64vh;
-  display:flex;align-items:center;justify-content:center;
-  text-align:center;
-  opacity:0;transform:translateY(28px);
-  transition:opacity .7s var(--ease),transform .7s var(--ease);
+  font-family:"Instrument Serif",Georgia,serif;font-size:clamp(1.2rem,2.5vw,1.65rem);
+  font-weight:400;line-height:1.4;color:var(--bone);margin:0;
+  width:100%;min-height:0;
+  display:block;text-align:left;
+  opacity:0;transform:translate3d(-22px,16px,0);
+  transition:opacity .55s var(--ease),transform .55s var(--ease);
 }
+.scenario p:nth-child(1){padding-left:0}
+.scenario p:nth-child(2){padding-left:1.5rem}
+.scenario p:nth-child(3){padding-left:3rem}
+.scenario p:nth-child(4){padding-left:4.5rem}
+.scenario p:nth-child(5){padding-left:6rem}
+.scenario p:nth-child(6){padding-left:7.5rem}
+.scenario p:nth-child(7){padding-left:9rem}
 .scenario .scenario-kicker{
-  font-family:"DM Mono",monospace;font-size:0.72rem;letter-spacing:0.18em;
-  text-transform:uppercase;color:var(--lav);font-weight:500;
-  min-height:46vh;
+  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--lav);font-weight:400;
+  padding-left:0;
 }
 .scenario p.is-in{opacity:1;transform:none}
 
@@ -429,7 +436,7 @@ a.tname.pending-ext::before{content:none}
 .bio-loop{margin:2.4rem auto 2rem;border:none;background:none;padding:0 0 0.4rem}
 .bio-loop .kicker{
   font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.16em;
-  text-transform:uppercase;color:var(--lav);margin-bottom:1.2rem;font-weight:500;
+  text-transform:uppercase;color:var(--lav);margin-bottom:1.2rem;font-weight:700;
   text-align:center;
 }
 .bio-graph{width:100%;min-height:12rem}
@@ -455,7 +462,7 @@ a.tname.pending-ext::before{content:none}
   filter:drop-shadow(0 0 10px rgba(183,167,216,.18));
 }
 .bio-node-label{
-  fill:var(--bone);font-family:"DM Mono",monospace;font-weight:700;
+  fill:var(--bone);font-family:"DM Mono",monospace;font-weight:400;
   font-size:13px;letter-spacing:0.6px;text-transform:uppercase;
   pointer-events:none;
 }
@@ -655,13 +662,21 @@ a.tname.pending-ext::before{content:none}
   .pipeline li{grid-template-columns:1.8rem 1fr}
   .bio-svg{overflow:visible}
   .lp-dock{display:none}
-  .scenario p{min-height:56vh}
-  .scenario .scenario-kicker{min-height:40vh}
+  .scenario-pin{height:200vh}
+  .scenario{top:18vh}
+  .scenario p:nth-child(2){padding-left:0.7rem}
+  .scenario p:nth-child(3){padding-left:1.4rem}
+  .scenario p:nth-child(4){padding-left:2.1rem}
+  .scenario p:nth-child(5){padding-left:2.8rem}
+  .scenario p:nth-child(6){padding-left:3.5rem}
+  .scenario p:nth-child(7){padding-left:4.2rem}
 }
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .mode-icon,.hud-rail,.hud-nav,.hud-back,.toggle .caret,.memory-panel,.lp-card,.scenario p,.lp-disc{transition:none;animation:none}
   .mode-icon.is-lit{transform:none}
+  .scenario-pin{height:auto}
+  .scenario{position:static}
   .scenario p{opacity:1;transform:none}
 }

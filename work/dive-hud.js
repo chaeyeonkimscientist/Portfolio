@@ -83,6 +83,7 @@
       item.link.classList.toggle('is-current', item === cur);
     });
     updateIcons();
+    paintScenario();
   }
 
   let ticking = false;
@@ -132,27 +133,27 @@
     requestPaint();
   });
 
+  const pin = document.querySelector('.scenario-pin');
+  const steps = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-reveal]')) : [];
+
+  function paintScenario() {
+    if (!steps.length) return;
+    if (reduced) {
+      steps.forEach(function (el) { el.classList.add('is-in'); });
+      return;
+    }
+    const rect = pin.getBoundingClientRect();
+    const range = Math.max(pin.offsetHeight - innerHeight, 1);
+    const started = rect.top <= innerHeight * 0.5;
+    const p = Math.min(Math.max(-rect.top / range, 0), 1);
+    steps.forEach(function (el, i) {
+      const enter = i / steps.length;
+      el.classList.toggle('is-in', started && p >= enter);
+    });
+  }
+
   layoutNav();
   paint();
-
-  const reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
-  if (reveals.length) {
-    if (reduced || !('IntersectionObserver' in window)) {
-      reveals.forEach(function (el) { el.classList.add('is-in'); });
-    } else {
-      const io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          const i = reveals.indexOf(entry.target);
-          reveals.forEach(function (el, j) {
-            if (j <= i) el.classList.add('is-in');
-          });
-          io.unobserve(entry.target);
-        });
-      }, { threshold: 0.2, rootMargin: '-18% 0px -42% 0px' });
-      reveals.forEach(function (el) { io.observe(el); });
-    }
-  }
 
   const toggle = document.querySelector('[data-track-toggle]');
   if (toggle) {
