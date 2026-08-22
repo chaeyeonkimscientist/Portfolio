@@ -135,26 +135,30 @@
   layoutNav();
   paint();
 
-  const reveals = document.querySelectorAll('[data-reveal]');
+  const reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
   if (reveals.length) {
-    if (reduced) {
+    if (reduced || !('IntersectionObserver' in window)) {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
-    } else if ('IntersectionObserver' in window) {
-      // Scroll-driven reveal: an element lights only once it rises past a trigger
-      // line ~72% down the viewport. The negative bottom rootMargin pulls that
-      // line up the screen, so stacked lines (the scenario) reveal one at a time
-      // as the user scrolls, rather than all firing when the block first appears.
-      const io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in');
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0, rootMargin: '0px 0px -38% 0px' });
-      reveals.forEach(function (el) { io.observe(el); });
     } else {
-      reveals.forEach(function (el) { el.classList.add('is-in'); });
+      // One line at a time: only the next unrevealed line is observed, and it
+      // must hit the middle band of the viewport. Tall scenario rows keep the
+      // following line out of that band until the reader scrolls.
+      let next = 0;
+      function watchNext() {
+        if (next >= reveals.length) return;
+        const el = reveals[next];
+        const io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            el.classList.add('is-in');
+            io.disconnect();
+            next += 1;
+            watchNext();
+          });
+        }, { threshold: 0.35, rootMargin: '-28% 0px -36% 0px' });
+        io.observe(el);
+      }
+      watchNext();
     }
   }
 
