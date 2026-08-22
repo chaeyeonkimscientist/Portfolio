@@ -49,13 +49,14 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 .mode-icons{
   position:fixed;top:0;left:0;right:0;transform:none;
   z-index:16;display:flex;justify-content:center;gap:2.6rem;pointer-events:none;
-  padding:1.7rem 2rem 3.4rem;
-  background:linear-gradient(180deg,
-    rgba(6,8,10,0.88) 0%,
-    rgba(6,8,10,0.55) 42%,
-    rgba(6,8,10,0.18) 72%,
-    rgba(6,8,10,0) 100%);
-  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  padding:1.85rem 2rem 3.8rem;
+  background:
+    radial-gradient(ellipse 28rem 5.2rem at 50% 1.7rem, rgba(4,6,8,0.82) 0%, rgba(4,6,8,0.35) 55%, rgba(4,6,8,0) 72%),
+    linear-gradient(180deg,
+      rgba(4,6,8,0.78) 0%,
+      rgba(4,6,8,0.42) 48%,
+      rgba(4,6,8,0.12) 78%,
+      rgba(4,6,8,0) 100%);
 }
 .mode-icon{
   display:flex;flex-direction:column;align-items:center;gap:0.5rem;
@@ -364,13 +365,14 @@ a.tname.pending-ext::before{content:none}
   width:100%;
   margin:0;
   padding-top:6.5rem;padding-bottom:6.5rem;
-  isolation:isolate;
+  isolation:auto;
   background:none;
 }
 .hue-cog::before,.hue-data::before,.hue-music::before{
   content:"";position:absolute;left:0;right:0;
-  top:-7rem;bottom:-7rem;z-index:-1;pointer-events:none;
+  top:-11rem;bottom:-11rem;z-index:0;pointer-events:none;
 }
+.hue-cog > *,.hue-data > *,.hue-music > *{position:relative;z-index:1}
 /* Overlapping washes: each section's color fades through its neighbors so there
    is no hard strip where one background ends and the next begins. */
 .hue-cog::before{
@@ -398,7 +400,7 @@ a.tname.pending-ext::before{content:none}
     rgba(201,67,106,0) 100%);
 }
 .hue-data + .hue-data{padding-top:4.5rem}
-.hue-data + .hue-data::before{top:-10rem}
+.hue-data + .hue-data::before{top:-14rem}
 
 /* Centered, scroll-driven scenario. Each line is a viewport beat so the next
    line cannot enter the observer band until the reader scrolls. */
@@ -453,7 +455,7 @@ a.tname.pending-ext::before{content:none}
   filter:drop-shadow(0 0 10px rgba(183,167,216,.18));
 }
 .bio-node-label{
-  fill:var(--bone);font-family:"DM Mono",monospace;font-weight:500;
+  fill:var(--bone);font-family:"DM Mono",monospace;font-weight:700;
   font-size:13px;letter-spacing:0.6px;text-transform:uppercase;
   pointer-events:none;
 }

@@ -140,25 +140,17 @@
     if (reduced || !('IntersectionObserver' in window)) {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
     } else {
-      // One line at a time: only the next unrevealed line is observed, and it
-      // must hit the middle band of the viewport. Tall scenario rows keep the
-      // following line out of that band until the reader scrolls.
-      let next = 0;
-      function watchNext() {
-        if (next >= reveals.length) return;
-        const el = reveals[next];
-        const io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            el.classList.add('is-in');
-            io.disconnect();
-            next += 1;
-            watchNext();
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const i = reveals.indexOf(entry.target);
+          reveals.forEach(function (el, j) {
+            if (j <= i) el.classList.add('is-in');
           });
-        }, { threshold: 0.35, rootMargin: '-28% 0px -36% 0px' });
-        io.observe(el);
-      }
-      watchNext();
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.2, rootMargin: '-18% 0px -42% 0px' });
+      reveals.forEach(function (el) { io.observe(el); });
     }
   }
 
