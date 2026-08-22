@@ -5,8 +5,8 @@
     { key: 'linkedin', label: 'social-eval', color: '#c9436a' }
   ];
   const IRIS = '#101719';
-  const HAIR = 'rgba(183,167,216,0.16)';
-  const DIM = '#9a92a0';
+  const HAIR = 'rgba(183,167,216,0.2)';
+  const DIM = '#c9c0cc';
   const ALPHA = '#B7A7D8';
   const BETA = '#9fe0d8';
 
@@ -22,8 +22,21 @@
     return { ctx: ctx, W: W, H: H };
   }
 
+  function metrics(W) {
+    const fs = Math.max(12, Math.min(16, Math.round(W / 34)));
+    return {
+      fs: fs,
+      pad: {
+        l: Math.round(fs * 4.6),
+        r: Math.round(fs * 1.4),
+        t: Math.round(fs * 2.8),
+        b: Math.round(fs * 3.1)
+      }
+    };
+  }
+
   function setFont(ctx, size) {
-    ctx.font = size + 'px "DM Mono", ui-monospace, monospace';
+    ctx.font = '500 ' + size + 'px "DM Mono", ui-monospace, monospace';
   }
 
   function hexAlpha(hex, a) {
@@ -39,11 +52,12 @@
     const ctx = sized.ctx;
     const W = sized.W;
     const H = sized.H;
+    const m = metrics(W);
+    const pad = m.pad;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = IRIS;
     ctx.fillRect(0, 0, W, H);
 
-    const pad = { l: 44, r: 14, t: 30, b: 30 };
     const plotW = W - pad.l - pad.r;
     const plotH = H - pad.t - pad.b;
     let tMax = 1;
@@ -54,7 +68,7 @@
 
     ctx.strokeStyle = HAIR;
     ctx.lineWidth = 1;
-    setFont(ctx, 10);
+    setFont(ctx, m.fs);
     ctx.fillStyle = DIM;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
@@ -64,7 +78,7 @@
       ctx.moveTo(pad.l, y);
       ctx.lineTo(pad.l + plotW, y);
       ctx.stroke();
-      ctx.fillText((i / 4).toFixed(1), pad.l - 8, y);
+      ctx.fillText((i / 4).toFixed(1), pad.l - Math.round(m.fs * 0.7), y);
     }
 
     ctx.textAlign = 'center';
@@ -77,11 +91,11 @@
       ctx.moveTo(x, pad.t);
       ctx.lineTo(x, pad.t + plotH);
       ctx.stroke();
-      ctx.fillText(String(sec) + 's', x, pad.t + plotH + 8);
+      ctx.fillText(String(sec) + 's', x, pad.t + plotH + Math.round(m.fs * 0.55));
     });
 
     ctx.save();
-    ctx.translate(13, pad.t + plotH / 2);
+    ctx.translate(Math.round(m.fs * 1.05), pad.t + plotH / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -98,23 +112,24 @@
         else ctx.lineTo(x, y);
       });
       ctx.strokeStyle = s.color;
-      ctx.lineWidth = 1.55;
+      ctx.lineWidth = Math.max(2, W / 240);
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
       ctx.stroke();
     });
 
     let lx = pad.l;
-    const ly = 14;
+    const ly = Math.round(m.fs * 1.15);
+    const sw = Math.round(m.fs * 0.85);
     SERIES.forEach(function (s) {
       ctx.fillStyle = s.color;
-      ctx.fillRect(lx, ly - 6, 9, 9);
+      ctx.fillRect(lx, ly - sw / 2, sw, sw);
       ctx.fillStyle = DIM;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      setFont(ctx, 10);
-      ctx.fillText(s.label, lx + 13, ly);
-      lx += ctx.measureText(s.label).width + 28;
+      setFont(ctx, m.fs);
+      ctx.fillText(s.label, lx + sw + 6, ly);
+      lx += ctx.measureText(s.label).width + sw + 22;
     });
   }
 
@@ -123,11 +138,12 @@
     const ctx = sized.ctx;
     const W = sized.W;
     const H = sized.H;
+    const m = metrics(W);
+    const pad = m.pad;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = IRIS;
     ctx.fillRect(0, 0, W, H);
 
-    const pad = { l: 44, r: 12, t: 30, b: 36 };
     const plotW = W - pad.l - pad.r;
     const plotH = H - pad.t - pad.b;
     let yMax = 0.6;
@@ -138,12 +154,12 @@
     yMax = Math.ceil(yMax * 10) / 10;
     const n = SERIES.length;
     const groupW = plotW / n;
-    const barW = Math.min(28, groupW * 0.28);
-    const pairGap = 6;
+    const barW = Math.min(Math.round(m.fs * 2.6), groupW * 0.34);
+    const pairGap = Math.round(m.fs * 0.55);
 
     ctx.strokeStyle = HAIR;
     ctx.lineWidth = 1;
-    setFont(ctx, 10);
+    setFont(ctx, m.fs);
     ctx.fillStyle = DIM;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
@@ -154,11 +170,11 @@
       ctx.moveTo(pad.l, y);
       ctx.lineTo(pad.l + plotW, y);
       ctx.stroke();
-      ctx.fillText(v.toFixed(1), pad.l - 8, y);
+      ctx.fillText(v.toFixed(1), pad.l - Math.round(m.fs * 0.7), y);
     }
 
     ctx.save();
-    ctx.translate(13, pad.t + plotH / 2);
+    ctx.translate(Math.round(m.fs * 1.05), pad.t + plotH / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
     ctx.fillText('rel. power', 0, 0);
@@ -176,21 +192,21 @@
       bars.forEach(function (bar) {
         const h = (bar.v / yMax) * plotH;
         const y = pad.t + plotH - h;
-        ctx.fillStyle = hexAlpha(bar.color, 0.85);
+        ctx.fillStyle = hexAlpha(bar.color, 0.88);
         ctx.fillRect(bar.x, y, barW, h);
         ctx.fillStyle = bar.color;
-        ctx.fillRect(bar.x, y, 2, h);
+        ctx.fillRect(bar.x, y, Math.max(2, Math.round(barW * 0.08)), h);
         ctx.fillStyle = DIM;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        setFont(ctx, 9);
-        ctx.fillText(bar.v.toFixed(2), bar.x + barW / 2, y - 3);
+        setFont(ctx, m.fs);
+        ctx.fillText(bar.v.toFixed(2), bar.x + barW / 2, y - 4);
       });
       ctx.fillStyle = DIM;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      setFont(ctx, 10);
-      ctx.fillText(s.label, cx, pad.t + plotH + 10);
+      setFont(ctx, m.fs);
+      ctx.fillText(s.label, cx, pad.t + plotH + Math.round(m.fs * 0.7));
     });
 
     const legend = [
@@ -198,15 +214,17 @@
       { color: BETA, label: 'beta 12–30 Hz' }
     ];
     let lx = pad.l;
+    const ly = Math.round(m.fs * 1.1);
+    const sw = Math.round(m.fs * 0.85);
     legend.forEach(function (item) {
       ctx.fillStyle = item.color;
-      ctx.fillRect(lx, 8, 9, 9);
+      ctx.fillRect(lx, ly - sw / 2, sw, sw);
       ctx.fillStyle = DIM;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      setFont(ctx, 10);
-      ctx.fillText(item.label, lx + 13, 13);
-      lx += ctx.measureText(item.label).width + 28;
+      setFont(ctx, m.fs);
+      ctx.fillText(item.label, lx + sw + 6, ly);
+      lx += ctx.measureText(item.label).width + sw + 22;
     });
   }
 
@@ -215,7 +233,7 @@
     const ctx = sized.ctx;
     ctx.fillStyle = IRIS;
     ctx.fillRect(0, 0, sized.W, sized.H);
-    setFont(ctx, 11);
+    setFont(ctx, 13);
     ctx.fillStyle = DIM;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
