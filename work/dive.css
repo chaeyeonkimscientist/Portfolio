@@ -478,7 +478,7 @@ a.tname.pending-ext::before{content:none}
 
 /* traveling signal pulse */
 .bio-pulse{
-  fill:var(--data);
+  fill:var(--data);pointer-events:none;
   filter:drop-shadow(0 0 6px var(--data)) drop-shadow(0 0 12px var(--data));
 }
 

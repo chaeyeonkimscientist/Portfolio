@@ -30,12 +30,15 @@
 
   const edgeLayer = document.createElementNS(NS, 'g');
   const nodeLayer = document.createElementNS(NS, 'g');
+  const pulseLayer = document.createElementNS(NS, 'g');
   svg.appendChild(edgeLayer);
   svg.appendChild(nodeLayer);
+  svg.appendChild(pulseLayer);
   mount.appendChild(svg);
 
   let nodeEls = [];
   let edges = [];
+  let orbit = [];
   let pulse = null;
   let raf = 0;
   let layoutMode = '';
@@ -58,8 +61,10 @@
 
     clearLayer(edgeLayer);
     clearLayer(nodeLayer);
+    clearLayer(pulseLayer);
     nodeEls = [];
     edges = [];
+    orbit = [];
     pulse = null;
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
 
@@ -67,38 +72,46 @@
     let VB_W, VB_H, nodeW, nodeH;
 
     if (!narrow) {
-      VB_W = 980; VB_H = 340; nodeW = 176; nodeH = 78;
-      const y = 56;
+      VB_W = 980; VB_H = 360; nodeW = 176; nodeH = 78;
+      const y = 48;
       const gap = (VB_W - NODES.length * nodeW) / (NODES.length + 1);
       NODES.forEach(function (_, i) {
         const x = gap + i * (nodeW + gap);
         pts.push({ x: x, y: y, cx: x + nodeW / 2, cy: y + nodeH / 2, w: nodeW, h: nodeH });
       });
 
+      const PAD = 12;
       for (let i = 0; i < pts.length - 1; i++) {
         const a = pts[i], b = pts[i + 1];
+        const x1 = a.x + a.w + PAD, y1 = a.cy, x2 = b.x - PAD, y2 = b.cy;
         const path = el('path', {
-          d: 'M' + (a.x + a.w + 2) + ',' + a.cy + ' L' + (b.x - 10) + ',' + b.cy,
+          d: 'M' + x1 + ',' + y1 + ' L' + x2 + ',' + y2,
           class: 'bio-edge',
           'marker-end': 'url(#bio-arrow)'
         });
         edgeLayer.appendChild(path);
         edges.push({ el: path, from: i, to: i + 1 });
+        appendLine(orbit, x1, y1, x2, y2);
       }
 
       const first = pts[0], last = pts[pts.length - 1];
-      const fbY = y + nodeH + 88;
+      const fbY = y + nodeH + 96;
+      const fbStart = { x: last.cx, y: last.y + last.h + PAD };
+      const fbC1 = { x: last.cx, y: fbY };
+      const fbC2 = { x: first.cx, y: fbY };
+      const fbEnd = { x: first.cx, y: first.y + first.h + PAD };
       const fb = el('path', {
-        d: 'M' + last.cx + ',' + (y + nodeH + 2) +
-           ' C' + last.cx + ',' + fbY + ' ' + first.cx + ',' + fbY + ' ' + first.cx + ',' + (y + nodeH + 12),
+        d: 'M' + fbStart.x + ',' + fbStart.y +
+           ' C' + fbC1.x + ',' + fbC1.y + ' ' + fbC2.x + ',' + fbC2.y + ' ' + fbEnd.x + ',' + fbEnd.y,
         class: 'bio-edge bio-edge-feedback',
         'marker-end': 'url(#bio-arrow)'
       });
       edgeLayer.appendChild(fb);
       edges.push({ el: fb, from: pts.length - 1, to: 0, feedback: true });
+      appendCubic(orbit, fbStart, fbC1, fbC2, fbEnd);
 
       const fbLabel = el('text', {
-        x: String(VB_W / 2), y: String(fbY + 18),
+        x: String(VB_W / 2), y: String(fbY + 22),
         class: 'bio-fb-label', 'text-anchor': 'middle'
       });
       fbLabel.textContent = 'feeds back';
@@ -113,27 +126,35 @@
         pts.push({ x: x, y: y, cx: x + nodeW / 2, cy: y + nodeH / 2, w: nodeW, h: nodeH });
       });
 
+      const PAD = 12;
       for (let i = 0; i < pts.length - 1; i++) {
         const a = pts[i], b = pts[i + 1];
+        const x1 = a.cx, y1 = a.y + a.h + PAD, x2 = b.cx, y2 = b.y - PAD;
         const path = el('path', {
-          d: 'M' + a.cx + ',' + (a.y + a.h + 2) + ' L' + b.cx + ',' + (b.y - 10),
+          d: 'M' + x1 + ',' + y1 + ' L' + x2 + ',' + y2,
           class: 'bio-edge',
           'marker-end': 'url(#bio-arrow)'
         });
         edgeLayer.appendChild(path);
         edges.push({ el: path, from: i, to: i + 1 });
+        appendLine(orbit, x1, y1, x2, y2);
       }
 
       const first = pts[0], last = pts[pts.length - 1];
-      const leftX = 28;
+      const leftX = 24;
+      const fbStart = { x: last.x - PAD, y: last.cy };
+      const fbC1 = { x: leftX, y: last.cy };
+      const fbC2 = { x: leftX, y: first.cy };
+      const fbEnd = { x: first.x - PAD, y: first.cy };
       const fb = el('path', {
-        d: 'M' + last.x + ',' + last.cy +
-           ' C' + leftX + ',' + last.cy + ' ' + leftX + ',' + first.cy + ' ' + (first.x - 8) + ',' + first.cy,
+        d: 'M' + fbStart.x + ',' + fbStart.y +
+           ' C' + fbC1.x + ',' + fbC1.y + ' ' + fbC2.x + ',' + fbC2.y + ' ' + fbEnd.x + ',' + fbEnd.y,
         class: 'bio-edge bio-edge-feedback',
         'marker-end': 'url(#bio-arrow)'
       });
       edgeLayer.appendChild(fb);
       edges.push({ el: fb, from: pts.length - 1, to: 0, feedback: true });
+      appendCubic(orbit, fbStart, fbC1, fbC2, fbEnd);
 
       const fbLabel = el('text', {
         x: '22', y: String((first.cy + last.cy) / 2),
@@ -189,23 +210,36 @@
     if (!reduced) startPulse();
   }
 
+  function appendLine(arr, x1, y1, x2, y2) {
+    const n = Math.max(8, Math.round(Math.hypot(x2 - x1, y2 - y1) / 3));
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      arr.push({ x: x1 + (x2 - x1) * t, y: y1 + (y2 - y1) * t });
+    }
+  }
+
+  function appendCubic(arr, p0, p1, p2, p3) {
+    const n = 48;
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      const u = 1 - t;
+      arr.push({
+        x: u*u*u*p0.x + 3*u*u*t*p1.x + 3*u*t*t*p2.x + t*t*t*p3.x,
+        y: u*u*u*p0.y + 3*u*u*t*p1.y + 3*u*t*t*p2.y + t*t*t*p3.y
+      });
+    }
+  }
+
   function startPulse() {
-    pulse = el('circle', { r: '5', class: 'bio-pulse' });
-    edgeLayer.appendChild(pulse);
-    const ordered = edges.slice();
-    const lengths = ordered.map(function (e) {
-      try { return Math.max(e.el.getTotalLength(), 1); } catch (err) { return 120; }
-    });
-    let ei = 0, t = 0;
+    if (!orbit.length) return;
+    pulse = el('circle', { r: '4.5', class: 'bio-pulse' });
+    pulseLayer.appendChild(pulse);
+    let i = 0;
     function step() {
-      t += 2.4;
-      if (t >= lengths[ei]) {
-        t = 0;
-        ei = (ei + 1) % ordered.length;
-      }
-      const pt = ordered[ei].el.getPointAtLength(Math.min(t, lengths[ei]));
-      pulse.setAttribute('cx', pt.x);
-      pulse.setAttribute('cy', pt.y);
+      const pt = orbit[i];
+      pulse.setAttribute('cx', pt.x.toFixed(2));
+      pulse.setAttribute('cy', pt.y.toFixed(2));
+      i = (i + 1) % orbit.length;
       raf = requestAnimationFrame(step);
     }
     function kick() {
