@@ -278,9 +278,47 @@ strong,b{font-weight:700}
   font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.1em;
   text-transform:uppercase;color:rgba(239,231,239,0.45);text-align:center;
 }
-.viz-ph figcaption{
+.viz-ph figcaption,
+.viz-chart figcaption,
+.viz-record figcaption{
   font-family:"DM Mono",monospace;font-size:0.55rem;letter-spacing:0.12em;
   text-transform:uppercase;color:var(--bone-dim);margin-top:0.6rem;
+}
+.viz-chart{
+  border:0.5px solid var(--hair);background:var(--iris);
+  padding:0.55rem 0.55rem 0.35rem;
+  display:flex;flex-direction:column;min-width:0;
+}
+.viz-chart canvas{
+  display:block;width:100%;height:auto;aspect-ratio:16/9;
+  background:var(--iris);
+}
+.viz-record{
+  border:0.5px solid var(--hair);background:var(--iris-soft);
+  padding:0.85rem;display:flex;flex-direction:column;align-items:center;
+  min-width:0;
+}
+.record-platter{
+  position:relative;width:100%;max-width:18rem;aspect-ratio:1;
+  border-radius:50%;overflow:hidden;
+  background:#000;
+  box-shadow:
+    0 0 0 1px rgba(183,167,216,.28),
+    0 0 0 10px rgba(16,23,25,.55),
+    0 18px 40px rgba(0,0,0,.5);
+}
+.record-platter img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  transform-origin:50% 50%;
+  animation:lp-spin 16s linear infinite;
+}
+.record-spindle{
+  position:absolute;top:50%;left:50%;z-index:1;
+  width:11%;height:11%;transform:translate(-50%,-50%);
+  border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 50%,#0b0e10 0 28%,var(--grape) 32% 68%,#0b0e10 72%);
+  box-shadow:0 0 0 2px rgba(16,23,25,.7),0 0 12px rgba(0,0,0,.45);
 }
 
 .tracks-wrap{overflow-x:auto;margin:1.2rem 0 1.4rem}
@@ -502,6 +540,15 @@ a.tname.pending-ext::before{content:none}
   font-family:"DM Mono",monospace;font-size:0.55rem;letter-spacing:0.12em;
   text-transform:uppercase;color:var(--bone-dim);margin-top:0.6rem;
 }
+.img-ph.img-real{
+  padding:0;min-height:0;overflow:hidden;background:#000;
+}
+.img-ph.img-real img{
+  display:block;width:100%;height:auto;
+}
+.img-ph.img-real figcaption{
+  margin:0;padding:0.7rem 0.85rem 0.85rem;
+}
 
 .rail{position:fixed;top:0;right:0;bottom:0;z-index:18;pointer-events:none}
 .lp-dock{
@@ -674,7 +721,7 @@ a.tname.pending-ext::before{content:none}
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .mode-icon,.hud-rail,.hud-nav,.hud-back,.toggle .caret,.memory-panel,.lp-card,.scenario p,.lp-disc{transition:none;animation:none}
+  .mode-icon,.hud-rail,.hud-nav,.hud-back,.toggle .caret,.memory-panel,.lp-card,.scenario p,.lp-disc,.record-platter img{transition:none;animation:none}
   .mode-icon.is-lit{transform:none}
   .scenario-pin{height:auto}
   .scenario{position:static}
