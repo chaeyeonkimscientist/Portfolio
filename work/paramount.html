@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Paramount — Chaeyeon Kim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./dive.css?v=12">
+</head>
+<body data-project="Paramount" data-project-id="paramount">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
+  </div>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
+  </div>
+</div>
+
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <div class="hud-track" aria-hidden="true">
+      <div class="hud-fill"></div>
+      <div class="hud-dot"></div>
+    </div>
+    <nav class="hud-nav" id="hud-nav"></nav>
+  </div>
+</aside>
+
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Did you find something about me that you want to take notes of? Add it to your short term memory.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <div class="term-bar">SESSION // CORTEX</div>
+    <pre id="term-warn-msg">WARNING: Session ending. Working memory will be flushed.
+Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes</button>
+      <button type="button" data-term-dismiss>Stay in session</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>Paramount</h1>
+    <p class="subtitle">Paramount Global Contents Distribution Research Internship</p>
+    <p class="meta">Chaeyeon Kim · [ dates ]</p>
+    <p class="disciplines">AI prompting &amp; agent design · Statistical analysis · Data visualization · Workflow automation</p>
+    <blockquote class="callout">“[ quote ]”</blockquote>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede"><strong>Paramount / GCDR.</strong> Research infrastructure that <strong>cut pre-release analysis time by 65%.</strong> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</p>
+    <p><strong>65% time reduction</strong> on pre-release research, 150+ sales decks produced, 25 territories analyzed weekly, 20+ global offices supported.</p>
+    <p class="cta-row">
+      <a class="cta pending-ext" title="URL not provided">Internship presentation</a>
+      <a class="cta pending-ext" title="URL not provided">Case study</a>
+    </p>
+    <p class="note">STAKEHOLDERS · Paramount Global Content Distribution Research (GCDR), Home Entertainment Division, International Sales Offices (25 territories) · ROLE · Research Intern, Data Analyst, AI Automation Developer, Insights Strategist</p>
+  </section>
+
+  <section class="hue-data" data-icons="data" data-kind="data">
+    <h2 id="problem" class="h-data">The Problem</h2>
+    <p>Global content distribution operates on compressed timelines—by the time a show gains momentum, sales teams need performance data immediately to capitalize on international buyer interest. But research workflows at GCDR were manual, repetitive, and slow: pre-release performance sheets required 2-3 hours of manual research per title; weekly trend analysis across 150+ titles in 25 territories generated overwhelming data without clear patterns; and home entertainment audience insights existed in fragmented surveys with no unified profile to guide targeting strategy. The team needed infrastructure to surface insights faster without sacrificing quality.</p>
+    <h3>Goals</h3>
+    <ul class="bullets">
+      <li>Automate repetitive research workflows to reduce time spent on manual data retrieval and formatting.</li>
+      <li>Analyze weekly viewership trends across 150+ titles in 25 territories to support licensing negotiations.</li>
+      <li>Build data-backed audience profiles for Home Entertainment to inform targeting and marketing strategy.</li>
+      <li>Translate complex performance metrics into compelling visual narratives for sales teams in 20+ global offices.</li>
+    </ul>
+    <p>Global Content Distribution Research (GCDR) at Paramount Skydance sits at the intersection of data and dealmaking. The team supports international and domestic content licensing across 20+ global sales offices, translating viewership data from linear TV and streaming platforms into insights that inform licensing negotiations, marketing campaigns, and Home Entertainment strategy.</p>
+    <figure class="img-ph">
+      <div class="frame">[ slate still ]</div>
+      <figcaption>image placeholder</figcaption>
+    </figure>
+  </section>
+
+  <section class="hue-data" data-icons="data" data-kind="data">
+    <h2 id="solution" class="h-data">The Solution</h2>
+    <p>TOOLS · Microsoft CoPilot Agent (AI automation), GWI Platform (audience research), Nielsen Data, Excel, PowerPoint, Python, Internal Paramount databases.</p>
+
+    <h3>AI Automation of Pre-Release Performance Sheets</h3>
+    <p>Before a title goes to market, the research team creates “pre-release performance comparison” (PRPC) sheets: standardized documents with cast details, IP background, comparable titles, and historical performance data. Creating one sheet manually took 2-3 hours of research, formatting, and quality control. While content licensing operates on compressed timelines, research workflows were too manual, repetitive, and slow.</p>
+    <p>I built a Microsoft CoPilot Agent to automate the most time-consuming parts:</p>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Scoping the Automation</h4>
+          <p>Rather than trying to automate everything, I identified what AI could reliably handle:</p>
+          <ul>
+            <li>Retrieving actor filmographies from internal databases + IMDb</li>
+            <li>Pulling IP history (book series, franchise timelines)</li>
+            <li>Formatting data according to PRPC template</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Agent Design</h4>
+          <ul>
+            <li>Configured CoPilot Agent to query internal Paramount databases first (higher accuracy)</li>
+            <li>Built fallback logic: if internal data missing → search credible external sources (IMDb, Wikipedia)</li>
+            <li>Created formatting rules matching existing PRPC standards (avoiding team retraining)</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Iteration &amp; Refinement</h4>
+          <ul>
+            <li>Tested on 10 recent titles, compared AI output to manually created sheets</li>
+            <li>Identified hallucination patterns (AI inventing award nominations that didn’t exist)</li>
+            <li>Added verification layer: Agent flags any claim it’s &lt;80% confident about for human review</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+    <p><strong>Tools:</strong> Microsoft CoPilot Agent, internal Paramount API, prompting strategies. <strong>Key Skill:</strong> Understanding AI limitations: knowing when to automate vs. when human judgment is essential. <strong>Iteration cycles:</strong> 15+ prompt refinements to reduce hallucinations and improve formatting consistency.</p>
+    <figure class="img-ph">
+      <div class="frame">[ PRPC sheet ]</div>
+      <figcaption>image placeholder</figcaption>
+    </figure>
+
+    <h3>Home Entertainment Audience Profiling</h3>
+    <p>Paramount’s Home Entertainment division needed to understand <em>who</em> buys digital content (movies/shows for download or rental). Marketing assumptions existed, but no data-backed audience profile to guide targeting strategy or promotional spend.</p>
+    <p>What demographic and psychographic traits define digital transactors, and how can we use that data to refine HE marketing?</p>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Research Design</h4>
+          <p>Using GWI (Global Web Index), I designed queries to compare digital transactors against general population across:</p>
+          <ul>
+            <li>Demographics (age, income, education, location)</li>
+            <li>Media consumption habits (streaming platform usage, genre preferences)</li>
+            <li>Psychographics (early adopter tendencies, media spending patterns)</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Data Analysis</h4>
+          <p>For each variable, I ran:</p>
+          <ul>
+            <li>Correlation analysis: Which traits most strongly predicted digital transaction behavior?</li>
+            <li>Statistical significance testing: Which patterns were real vs. noise?</li>
+            <li>Hypothesis testing: Validated or challenged existing marketing assumptions</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Synthesis &amp; Presentation</h4>
+          <ul>
+            <li>Built database organizing all findings by demographic category</li>
+            <li>Created presentation deck translating statistical insights into actionable marketing recommendations</li>
+            <li>Presented findings to Home Entertainment team (my first stakeholder presentation at Paramount)</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+    <p><strong>Tools:</strong> GWI platform, Excel (correlation matrices, significance testing), PowerPoint (data visualization). <strong>Statistical Methods:</strong> Correlation analysis, chi-square tests for categorical variables, confidence interval calculations.</p>
+    <figure class="img-ph">
+      <div class="frame">[ audience profile deck ]</div>
+      <figcaption>image placeholder</figcaption>
+    </figure>
+  </section>
+
+  <section class="hue-data" data-icons="data" data-kind="data">
+    <h2 id="signal" class="h-data">The Signal</h2>
+    <p>[ signal copy ]</p>
+    <div class="viz-row">
+      <figure class="viz-ph">
+        <div class="frame">[ weekly trend analysis ]</div>
+        <figcaption>weekly trend analysis</figcaption>
+      </figure>
+      <figure class="viz-ph">
+        <div class="frame">[ correlation matrix ]</div>
+        <figcaption>correlation matrix</figcaption>
+      </figure>
+      <figure class="viz-ph">
+        <div class="frame">[ audience profile ]</div>
+        <figcaption>audience profile</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="result" class="h-strong">The Result</h2>
+    <ul class="bullets">
+      <li><strong>65% reduction</strong> in time spent on PRPC creation (from 2-3 hours → 45 minutes per sheet)</li>
+      <li>Team successfully integrated tool into weekly workflow</li>
+      <li>Agent now handles <strong>80% of data retrieval</strong>; humans focus on analysis and strategic comparisons</li>
+      <li>Successfully presented data-backed audience profile to HE leadership team</li>
+      <li>Findings validated some existing assumptions (younger skew) but challenged others (income was less predictive than media consumption patterns)</li>
+      <li>Opened <strong>funding for deeper audience research</strong>: team allocated budget for follow-up studies on specific HE demographics</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="demonstrates" class="h-strong">What This Project Demonstrates</h2>
+    <ul class="demo-list">
+      <li>
+        <h3>[ capability ]</h3>
+        <p>[ copy ]</p>
+      </li>
+      <li>
+        <h3>[ capability ]</h3>
+        <p>[ copy ]</p>
+      </li>
+      <li>
+        <h3>[ capability ]</h3>
+        <p>[ copy ]</p>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<script src="./dive-hud.js?v=12"></script>
+<script src="./dive-waves.js?v=12"></script>
+<script src="./dive-memory.js?v=12"></script>
+<script src="./dive-player.js?v=12"></script>
+</body>
+</html>
