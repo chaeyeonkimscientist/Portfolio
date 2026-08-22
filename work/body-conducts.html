@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./dive.css?v=8">
+<link rel="stylesheet" href="./dive.css?v=11">
 </head>
 <body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
@@ -107,8 +107,8 @@ Copy your nodes before disconnecting.</pre>
     <p class="lede"><strong>The Body Conducts</strong> is a five-track music film that <strong>translates EEG data to music</strong> through a Python-based biometric-to-audio pipeline. I recorded my own EEG under controlled stress, processed the raw signal in Python, and drove the score’s sound directly from that data. The invisible physiology of chronic stress becomes audible.</p>
     <p>Drawing on Prokofiev’s <em>Peter and the Wolf</em>, each instrument represents a distinct stress response. The score spans orchestral adagio, dialogic oboe-synth arrangements, a capella, and a full noir jazz brass breakdown, with the composer’s own brainwave (EEG) data embedded directly as rhythm and texture. The result makes invisible inflammation audible and inescapable.</p>
     <p class="cta-row">
-      <a class="cta pending-ext" title="URL not provided">Project playlist</a>
-      <a class="cta pending-ext" title="URL not provided">Code</a>
+      <a class="cta" href="https://www.youtube.com/playlist?list=PL9Udy3u2RxRoQunrXq5o5Q5JHNatzFvhW" target="_blank" rel="noopener noreferrer">Project playlist</a>
+      <a class="cta" href="https://github.com/chaeyeonkimscientist/The-Body-Conducts-EEG" target="_blank" rel="noopener noreferrer">Code</a>
     </p>
     <p class="note">The Body Conducts uses spatial audio. Recommended with headphones.</p>
   </section>
@@ -203,9 +203,9 @@ Copy your nodes before disconnecting.</pre>
         <h3>Spatial Audio Rendering</h3>
         <p>The completed score was mastered in <strong>Dolby Atmos</strong> using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
       </div>
-      <figure class="img-ph">
-        <div class="frame">[ spatial audio still ]</div>
-        <figcaption>image placeholder</figcaption>
+      <figure class="img-ph img-real">
+        <img src="./Spatial%20Audio.png" alt="Dolby Atmos renderer: binaural objects placed around a listener in a 3D room" loading="lazy">
+        <figcaption>Dolby Atmos · binaural renderer</figcaption>
       </figure>
     </div>
   </section>
@@ -214,17 +214,20 @@ Copy your nodes before disconnecting.</pre>
     <h2 id="signal" class="h-data">The Signal</h2>
     <p>The pipeline reads a <strong>continuous stress index</strong> (derived from alpha suppression) that drives the spectral filter, alongside the spectral shift between a calm baseline and an active stressor (alpha power drops, beta power rises).</p>
     <div class="viz-row">
-      <figure class="viz-ph">
-        <div class="frame">[ stress-index curve ]</div>
-        <figcaption>stress-index curve</figcaption>
+      <figure class="viz-chart">
+        <canvas id="viz-stress" width="640" height="360" aria-label="Stress-index curves for baseline, n-back, and social-evaluative sessions"></canvas>
+        <figcaption>stress-index curve · alpha suppression vs baseline</figcaption>
       </figure>
-      <figure class="viz-ph">
-        <div class="frame">[ band-power comparison ]</div>
-        <figcaption>band-power comparison</figcaption>
+      <figure class="viz-chart">
+        <canvas id="viz-bands" width="640" height="360" aria-label="Relative alpha and beta band power for baseline, n-back, and social-evaluative sessions"></canvas>
+        <figcaption>band-power comparison · relative 4–40 Hz</figcaption>
       </figure>
-      <figure class="viz-ph">
-        <div class="frame">[ STFT spectrogram ]</div>
-        <figcaption>STFT spectrogram</figcaption>
+      <figure class="viz-record">
+        <div class="record-platter">
+          <img src="./CapBriefrecovery.gif" alt="Circular STFT heatmap of recovery EEG, shown as a record" loading="lazy">
+          <span class="record-spindle" aria-hidden="true"></span>
+        </div>
+        <figcaption>STFT heatmap · recovery, as a record</figcaption>
       </figure>
     </div>
   </section>
@@ -245,35 +248,35 @@ Copy your nodes before disconnecting.</pre>
         <tbody>
           <tr>
             <td>I</td>
-            <td><a class="tname pending-ext" title="YouTube URL not provided">Overture</a></td>
+            <td><a class="tname" href="https://youtu.be/VzvyKnx6asY" target="_blank" rel="noopener noreferrer">Overture</a></td>
             <td>Distorted orchestral</td>
             <td>Wolf (all, merging)</td>
             <td>distorted Wolf theme</td>
           </tr>
           <tr>
             <td>II</td>
-            <td><a class="tname pending-ext" title="YouTube URL not provided">A440</a></td>
+            <td><a class="tname" href="https://youtu.be/7LZ5vyhgUP8" target="_blank" rel="noopener noreferrer">A440</a></td>
             <td>Oboe ↔ synth-pop</td>
             <td>Duck &amp; Cat</td>
             <td>dialogic recording</td>
           </tr>
           <tr>
             <td>III</td>
-            <td><a class="tname pending-ext" title="YouTube URL not provided">Prima</a></td>
+            <td><a class="tname" href="https://youtu.be/lcwZkrZU5XM" target="_blank" rel="noopener noreferrer">Prima</a></td>
             <td>A capella</td>
             <td>Bird (pre-trauma)</td>
             <td>baseline · pre-stress</td>
           </tr>
           <tr>
             <td>IV</td>
-            <td><a class="tname pending-ext" title="YouTube URL not provided">Rot</a></td>
+            <td><a class="tname" href="https://youtu.be/h5aoHs7DhSk" target="_blank" rel="noopener noreferrer">Rot</a></td>
             <td>Noir jazz brass</td>
             <td>Wolf (stress)</td>
             <td>composite stress avg.</td>
           </tr>
           <tr>
             <td>V</td>
-            <td><a class="tname pending-ext" title="YouTube URL not provided">Finale</a></td>
+            <td><a class="tname" href="https://youtu.be/OH0-8w61BoA" target="_blank" rel="noopener noreferrer">Finale</a></td>
             <td>Adagio → jazz</td>
             <td>Full orchestra + Wolf</td>
             <td>average of all data</td>
@@ -345,10 +348,11 @@ Copy your nodes before disconnecting.</pre>
   </section>
 </main>
 
-<script src="./dive-hud.js?v=8"></script>
-<script src="./dive-waves.js?v=8"></script>
-<script src="./dive-bio.js?v=8"></script>
-<script src="./dive-memory.js?v=8"></script>
-<script src="./dive-player.js?v=8"></script>
+<script src="./dive-hud.js?v=11"></script>
+<script src="./dive-waves.js?v=11"></script>
+<script src="./dive-bio.js?v=11"></script>
+<script src="./dive-memory.js?v=11"></script>
+<script src="./dive-player.js?v=11"></script>
+<script src="./dive-signal.js?v=11"></script>
 </body>
 </html>
