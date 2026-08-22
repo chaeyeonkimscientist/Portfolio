@@ -1,1366 +1,350 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaeyeon Kim</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Body Conducts — Chaeyeon Kim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<style>
-@font-face{
-  font-family:"Dreamer TM";
-  src:url("DreamerTM.woff2") format("woff2"),
-      url("DreamerTM-Regular.woff") format("woff"),
-      url("DreamerTM-Regular.ttf") format("truetype");
-  font-weight:normal;font-style:normal;font-display:swap;
-}
-:root{
-  --iris:#101719;
-  --iris-soft:#1a2226;
-  --grape:#6767A2;
-  --grape-lit:#8f8fd0;
-  --amaranth:#8C183E;
-  --amaranth-lit:#c9436a;
-  --lav:#B7A7D8;
-  --bone:#EFE7EF;
-  --bone-dim:#9a92a0;
-  --hair:rgba(183,167,216,0.18);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .4s ease;cursor:default;overflow-x:clip}
-
-.pin-zone{position:relative;z-index:2;height:400vh}
-.pin-stage{position:sticky;top:0;height:100vh;overflow:hidden}
-
-#wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .3s linear}
-.grain{position:fixed;inset:0;z-index:1;opacity:0.05;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-
-nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
-  padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
-  background:transparent;border:none;backdrop-filter:none}
-nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
-nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
-
-.hero{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8vw;pointer-events:none;cursor:crosshair}
-.eyebrow{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
-
-.panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
-.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .25s ease,transform .35s cubic-bezier(.2,.8,.3,1);transform-origin:left center}
-.mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .25s,border-color .25s,box-shadow .25s,width .3s,height .3s;image-rendering:pixelated}
-.mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
-.mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
-.mode.active{color:var(--bone);transform:scale(1.12);transform-origin:left center}
-@media(max-width:860px){.mode.active{transform-origin:center}}
-.mode.active .ind{width:14px;height:14px;flex:0 0 14px}
-.mode.active .ind,.mode:hover .ind,.mode:focus-visible .ind{background:var(--acc);border-color:var(--acc);box-shadow:0 0 10px var(--acc)}
-.mode.m-music{--acc:#c9436a}
-.mode.m-cog{--acc:#8f8fd0}
-.mode.m-data{--acc:#9fe0d8}
-.mode .soon-tag{font-size:0.55rem;letter-spacing:0.1em;color:var(--bone-dim);margin-left:0.3rem}
-@media(max-width:860px){
-  .panel{position:absolute;left:0;right:0;top:auto;bottom:5.5rem;transform:none;flex-direction:row;justify-content:center;gap:1.2rem;flex-wrap:wrap;padding:0 6vw}
-}
-.name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
-
-.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
-.readout b{color:var(--bone)}.readout .state{transition:color .25s}
-.readout.mute{opacity:0;visibility:hidden}
-.readout .hpa{transition:color .3s ease,text-shadow .3s ease;font-weight:500}
-
-.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
-.hero-fade{opacity:0 !important}
-
-.armprompt{position:absolute;bottom:4.6rem;left:50%;transform:translateX(-50%);z-index:4;
-  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--lav);pointer-events:none;white-space:nowrap;
-  animation:armpulse 2.4s ease-in-out infinite;
-  transition:opacity .6s ease}
-.armprompt.gone{opacity:0}
-@keyframes armpulse{0%,100%{opacity:0.45}50%{opacity:0.95}}
-@media(prefers-reduced-motion:reduce){.armprompt{animation:none;opacity:0.7}}
-
-.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
-
-.hl{font-style:normal;color:var(--lav)}
-.statement-zone{position:relative;z-index:5;background:var(--iris);height:340vh}
-
-@keyframes zoom-in{
-  0%{transform:translateZ(-1000px);opacity:0;filter:blur(4px)}
-  50%{transform:translateZ(0px);opacity:0.45;filter:blur(0px)}
-  100%{transform:translateZ(1000px);opacity:0;filter:blur(4px)}
-}
-@keyframes zoom-in-center{
-  0%{transform:translateZ(-1400px);opacity:0;filter:blur(12px)}
-  22%{opacity:1;filter:blur(0px)}
-  30%{transform:translateZ(0px);opacity:1;filter:blur(0px)}
-  60%{transform:translateZ(0px);opacity:1;filter:blur(0px)}
-  78%{opacity:1;filter:blur(0px)}
-  100%{transform:translateZ(900px);opacity:0;filter:blur(10px)}
-}
-
-.stuck-grid{
-  block-size:100svh;perspective:1000px;transform-style:preserve-3d;
-  display:grid;grid:repeat(4,25dvh) / repeat(4,25dvw);place-items:center;
-  position:sticky;top:0;overflow:clip;
-}
-.stuck-grid > .grid-item{
-  transform-style:preserve-3d;
-  font-family:"DM Mono",monospace;
-  font-size:clamp(0.9rem,2.6vmin,1.6rem);font-weight:400;
-  text-wrap:nowrap;color:var(--lav);opacity:0.45;
-}
-.stuck-grid > .statement{
-  grid-row:2 / span 2;grid-column:2 / span 2;
-  place-self:center;max-inline-size:22ch;
-  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size:clamp(1.5rem,4vmin,3rem);font-weight:400;line-height:1.25;
-  text-align:center;text-wrap:balance;white-space:normal;
-  color:var(--bone);opacity:1;z-index:2;
-}
-@supports (animation-timeline:view()){
- @media (prefers-reduced-motion:no-preference){
-  .stuck-grid > .grid-item{
-    animation:zoom-in linear both;animation-timeline:view(block);
-    will-change:transform,opacity,filter;
-  }
-  .stuck-grid > .statement{
-    animation:zoom-in-center linear both;animation-timeline:view(block);
-    will-change:transform,opacity,filter;
-  }
-  .stuck-grid > .statement.s1{animation-range:contain 0%  contain 35%}
-  .stuck-grid > .statement.s2{animation-range:contain 35% contain 70%}
-  .stuck-grid > .statement.s3{animation-range:contain 70% contain 100%}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(1){animation-range:contain 40% contain 50%;grid-area:1/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(2){animation-range:contain 20% contain 30%;grid-area:1/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(3){animation-range:contain 52% contain 62%;grid-area:1/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(4){animation-range:contain 50% contain 60%;grid-area:1/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(5){animation-range:contain 45% contain 55%;grid-area:2/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(6){animation-range:contain 10% contain 20%;grid-area:2/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(7){animation-range:contain 90% contain 100%;grid-area:2/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(8){animation-range:contain 30% contain 40%;grid-area:2/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(9){animation-range:contain 80% contain 90%;grid-area:3/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(10){animation-range:contain 70% contain 80%;grid-area:3/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(11){animation-range:contain 0% contain 50%;grid-area:3/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(12){animation-range:contain 52% contain 62%;grid-area:3/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(13){animation-range:contain 15% contain 25%;grid-area:4/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(14){animation-range:contain 7% contain 17%;grid-area:4/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(15){animation-range:contain 75% contain 85%;grid-area:4/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(16){animation-range:contain 3% contain 13%;grid-area:4/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(17){animation-range:contain 87% contain 97%;grid-area:2/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(18){animation-range:contain 42% contain 52%;grid-area:2/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(19){animation-range:contain 57% contain 67%;grid-area:2/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(20){animation-range:contain 37% contain 47%;grid-area:2/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(21){animation-range:contain 12% contain 22%;grid-area:3/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(22){animation-range:contain 8% contain 18%;grid-area:3/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(23){animation-range:contain 84% contain 94%;grid-area:3/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(24){animation-range:contain 33% contain 43%;grid-area:3/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(25){animation-range:contain 48% contain 58%;grid-area:1/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(26){animation-range:contain 13% contain 23%;grid-area:1/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(27){animation-range:contain 78% contain 88%;grid-area:1/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(28){animation-range:contain 62% contain 72%;grid-area:1/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(29){animation-range:contain 31% contain 41%;grid-area:4/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(30){animation-range:contain 8% contain 18%;grid-area:4/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(31){animation-range:contain 4% contain 14%;grid-area:4/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(32){animation-range:contain 74% contain 84%;grid-area:4/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(33){animation-range:contain 61% contain 71%;grid-area:2/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(34){animation-range:contain 26% contain 36%;grid-area:2/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(35){animation-range:contain 63% contain 73%;grid-area:2/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(36){animation-range:contain 11% contain 21%;grid-area:2/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(37){animation-range:contain 89% contain 99%;grid-area:3/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(38){animation-range:contain 33% contain 43%;grid-area:3/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(39){animation-range:contain 88% contain 98%;grid-area:3/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(40){animation-range:contain 22% contain 32%;grid-area:3/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(41){animation-range:contain 16% contain 26%;grid-area:1/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(42){animation-range:contain 26% contain 36%;grid-area:1/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(43){animation-range:contain 66% contain 76%;grid-area:1/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(44){animation-range:contain 3% contain 13%;grid-area:1/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(45){animation-range:contain 44% contain 54%;grid-area:4/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(46){animation-range:contain 11% contain 21%;grid-area:4/2}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(47){animation-range:contain 23% contain 33%;grid-area:4/3}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(48){animation-range:contain 39% contain 49%;grid-area:4/4}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(49){animation-range:contain 59% contain 69%;grid-area:3/1}
-  .stuck-grid > .grid-item:not(.statement):nth-of-type(50){animation-range:contain 6% contain 16%;grid-area:3/2}
- }
-}
-@supports not (animation-timeline:view()){
-  .statement-zone{height:auto;padding:8rem 8vw}
-  .stuck-grid{display:flex;flex-direction:column;gap:4rem;position:static;block-size:auto;perspective:none;align-items:center}
-  .stuck-grid > .grid-item:not(.statement){display:none}
-  .stuck-grid > .statement{max-inline-size:30ch}
-}
-@media(prefers-reduced-motion:reduce){
-  .statement-zone{height:auto;padding:8rem 8vw}
-  .stuck-grid{display:flex;flex-direction:column;gap:4rem;position:static;block-size:auto;perspective:none;align-items:center}
-  .stuck-grid > .grid-item:not(.statement){display:none}
-}
-
-.work{
-  --work-n:4;
-  --work-hold:80vh;
-  --work-slide:36vh;
-  position:relative;z-index:5;background:var(--iris);
-  width:100%;margin:0;padding:0;overflow-x:clip;
-  height:calc(100vh + (var(--work-n) * var(--work-hold)) + ((var(--work-n) - 1) * var(--work-slide)));
-}
-.work-stage{
-  position:sticky;top:0;height:100vh;width:100%;
-  overflow:hidden;display:flex;flex-direction:column;
-  background:var(--iris);
-}
-.sec-head{
-  flex:0 0 auto;display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--hair);padding:5.6rem 8vw 1.2rem;margin:0;width:100%;
-}
-.sec-head h2{font-family:"Instrument Serif",Georgia,serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
-.sec-head .count{font-family:"DM Mono",monospace;font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.1em}
-
-.work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative}
-.work-track{
-  display:flex;height:100%;width:calc(var(--work-n) * 100%);
-  will-change:transform;
-}
-.release{
-  flex:0 0 calc(100% / var(--work-n));width:calc(100% / var(--work-n));
-  height:100%;box-sizing:border-box;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;text-decoration:none;color:inherit;
-  padding:1.5rem 8vw 3rem;
-}
-
-.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
-.disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
-  box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
-  transition:transform .45s cubic-bezier(.2,.7,.3,1)}
-.disc::after{content:"";position:absolute;inset:0;border-radius:50%;
-  background:repeating-radial-gradient(circle at 50% 50%,transparent 0 2px,rgba(255,255,255,0.025) 2.5px 3px)}
-.disc .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.disc .hole{width:8%;height:8%;min-width:5px;min-height:5px;border-radius:50%;background:var(--iris)}
-.sleeve{position:absolute;top:0;left:0;width:64%;height:100%;border-radius:2px;overflow:hidden;z-index:2;
-  display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
-.sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
-.sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
-.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
-.release:hover .disc{transform:translateX(26%)}
-
-.sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
-.sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
-.sl-para{background:linear-gradient(160deg,#222630 0%,#191c24 55%,#142a2f 100%)}
-.sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
-.lbl-grape{background:var(--grape)}.lbl-amar{background:var(--amaranth-lit)}.lbl-lav{background:var(--lav)}
-
-.disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
-.disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
-.disc.slate .label,.disc.slate .hole{display:none}
-.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.5rem;color:var(--grape-lit)}
-.disc.fig{border-radius:3px;background:linear-gradient(135deg,#1f1820,#120b10);overflow:hidden}
-.disc.fig::after{background:radial-gradient(circle at 35% 40%,rgba(168,50,66,0.35) 0 3%,transparent 3.5%),radial-gradient(circle at 60% 30%,rgba(183,167,216,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 55% 65%,rgba(95,155,148,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 40% 70%,rgba(168,50,66,0.25) 0 2%,transparent 2.5%)}
-.disc.fig .label,.disc.fig .hole{display:none}
-.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.4rem;color:var(--amaranth-lit)}
-
-.meta{max-width:34ch}
-.idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
-.ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
-.hook{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
-.hook .hl{color:var(--lav)}
-.demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
-.demo::before{content:"\25B8 "}
-.tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
-.tag{font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
-.tag.t-mus{color:var(--lav);border-color:rgba(183,167,216,0.4)}
-.tag.t-cog{color:var(--grape-lit);border-color:rgba(143,143,208,0.45)}
-.tag.t-dat{color:var(--bone);border-color:rgba(236,232,242,0.28)}
-.tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
-.tag.t-ind{color:var(--bone-dim)}
-
-@media(max-width:760px){
-  .hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}
-  .stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}
-  .sec-head{padding:5.2rem 6vw 1rem}
-  .release{padding:1rem 6vw 2.4rem}
-  .rig{width:min(78vmin,88vw);margin-bottom:1.2rem}
-}
-@media(max-height:720px){
-  .rig{width:min(48vmin,420px);margin-bottom:1rem}
-  .ptitle{font-size:1.4rem}
-  .hook{font-size:0.82rem;margin-bottom:10px}
-}
-@media(prefers-reduced-motion:reduce){
-  .cue,.scrolldown{display:none}
-  .work{height:auto}
-  .work-stage{position:static;height:auto;overflow:visible}
-  .work-viewport{overflow:visible}
-  .work-track{width:100%;flex-direction:column;transform:none !important;will-change:auto}
-  .release{flex:none;width:100%;min-height:100vh;height:auto}
-}
-
-:root{
-  --tt-slide: 400ms;
-  --tt-spin: 500ms;
-  --tt-wipe: 300ms;
-  --tt-ease: cubic-bezier(.22,.7,.25,1);
-  --tt-disc-size: 46vmin;
-  --tt-ink: #101719;
-  --tt-lav: #B7A7D8;
-  --tt-bone: #EFE7EF;
-}
-
-#turntable-overlay{
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  pointer-events: none;
-  display: none;
-  will-change: transform, opacity;
-  transform: translate3d(0,0,0);
-}
-
-#turntable-overlay.tt-exit{
-  transition: transform var(--tt-wipe) cubic-bezier(.6,0,.85,.3),
-              opacity   var(--tt-wipe) linear;
-  transform: translate3d(0, 110vh, 0);
-  opacity: .35;
-}
-
-.tt-platter{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: var(--tt-disc-size);
-  height: var(--tt-disc-size);
-  margin: 0;
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate3d(-50%,-50%,0) scale(.86);
-  transition: opacity var(--tt-slide) linear,
-              transform var(--tt-slide) var(--tt-ease);
-  will-change: transform, opacity;
-
-  background:
-    radial-gradient(circle at 50% 50%,
-      rgba(183,167,216,.30) 0 1.4%,
-      rgba(16,23,25,0)      1.6% 100%),
-    repeating-radial-gradient(circle at 50% 50%,
-      rgba(183,167,216,.05) 0 6px,
-      rgba(183,167,216,.00) 6px 12px),
-    radial-gradient(circle at 50% 45%, #23202b 0%, #14121a 70%, #0b0a0e 100%);
-  box-shadow:
-    0 0 0 1px rgba(183,167,216,.18),
-    0 40px 120px rgba(0,0,0,.6);
-}
-.tt-platter.tt-in{
-  opacity: 1;
-  transform: translate3d(-50%,-50%,0) scale(1.14);
-}
-
-.tt-arm{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--tt-disc-size) * 0.78);
-  height: 2px;
-  transform-origin: right center;
-  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-42deg);
-  background: linear-gradient(90deg, var(--tt-lav), rgba(183,167,216,.35));
-  opacity: 0;
-  border-radius: 2px;
-  transition: opacity 180ms linear,
-              transform var(--tt-spin) var(--tt-ease);
-  will-change: transform, opacity;
-}
-.tt-arm::before{
-  content:"";
-  position:absolute; left:-6px; top:-4px;
-  width:12px; height:10px; border-radius:2px;
-  background: var(--tt-bone);
-}
-.tt-arm.tt-drop{
-  opacity: .9;
-  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-14deg);
-}
-
-.tt-disc-clone{
-  position: fixed;
-  margin: 0;
-  transform-origin: 50% 50%;
-  will-change: transform, opacity;
-  transition: transform var(--tt-slide) var(--tt-ease);
-}
-
-.tt-disc-spinner{
-  width: 100%;
-  height: 100%;
-  transform-origin: 50% 50%;
-  will-change: transform;
-}
-.tt-disc-spinner.tt-spinning{
-  animation: tt-rotate 900ms linear infinite;
-}
-@keyframes tt-rotate{
-  from{ transform: rotate(0deg); }
-  to  { transform: rotate(360deg); }
-}
-
-.release .disc.tt-hidden{ opacity: 0; transition: opacity 120ms linear; }
-
-@media (prefers-reduced-motion: reduce){
-  #turntable-overlay{ display:none !important; }
-}
-
-
-#tt-debug{position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;
-  font-family:"DM Mono",monospace;font-size:11px;line-height:1.5;
-  color:#9fe0d8;background:rgba(10,12,16,.88);border:1px solid rgba(159,224,216,.4);
-  border-radius:6px;padding:8px 10px;white-space:pre-wrap;pointer-events:none;display:none}
-#tt-debug.on{display:block}
-</style>
-  
-<!-- PASTE #2 -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
-    "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js"
-  }
-}
-</script>
-<style>
-  #baton-gate{
-    position:fixed; inset:0; z-index:10000;
-    background:radial-gradient(120% 90% at 50% 30%, #101719 0%, #0b0c14 55%, #08090f 100%);
-    overflow:hidden; cursor:default;
-    transition:opacity .6s cubic-bezier(.4,0,.2,1), visibility .6s;
-  }
-  #baton-gate.unlocked{ opacity:0; visibility:hidden; pointer-events:none; }
-  #gate-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
- 
-  /* the pulse ring is positioned every frame by JS onto the baton tip */
-  #baton-pulse{
-    position:absolute; top:0; left:0; width:46px; height:46px;
-    transform:translate(-50%,-50%); border-radius:50%; pointer-events:none; z-index:3;
-    border:2px solid var(--lav);
-    box-shadow:0 0 16px var(--lav), inset 0 0 8px rgba(183,167,216,.6);
-  }
-  #baton-pulse::after{
-    content:""; position:absolute; inset:-2px; border-radius:50%;
-    border:2px solid var(--lav);
-    animation:gate-pulse 2.2s cubic-bezier(.215,.61,.355,1) infinite;
-  }
-  @keyframes gate-pulse{
-    0%{ transform:scale(.5); opacity:.95; }
-    80%,100%{ transform:scale(2.6); opacity:0; }
-  }
- 
-  /* invisible full-tip button for keyboard / screen-reader users */
-  #baton-trigger{
-    position:absolute; top:0; left:0; width:1px; height:1px;
-    opacity:0; border:none; background:transparent; z-index:4;
-  }
-  #baton-trigger:focus-visible{
-    width:70px; height:70px; opacity:1; border-radius:50%;
-    outline:2px solid var(--lav); outline-offset:6px;
-    left:50%; top:50%; transform:translate(-50%,-50%);
-  }
- 
-  .gate-copy{
-    position:absolute; left:0; right:0; bottom:8vh; z-index:5;
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-    pointer-events:none; transition:opacity .5s ease;
-  }
-  .gate-title{
-    font-family:"Dreamer TM","Pixelify Sans",monospace; font-weight:400;
-    font-size:clamp(1.6rem,4.5vw,3rem); color:var(--bone); opacity:.94;
-    margin-bottom:1rem; text-shadow:0 2px 30px rgba(0,0,0,.8);
-  }
-  .instruction-text{
-    font-family:"DM Mono",monospace; font-size:.72rem; letter-spacing:.34em;
-    color:var(--bone); opacity:.75; text-transform:uppercase;
-    animation:text-glow 3s ease-in-out infinite alternate;
-  }
-  @keyframes text-glow{
-    from{ text-shadow:0 0 4px rgba(255,255,255,.1); opacity:.55; }
-    to{ text-shadow:0 0 12px var(--lav); opacity:.95; }
-  }
-  #gate-load{
-    position:absolute; left:50%; bottom:3.5vh; transform:translateX(-50%); z-index:5;
-    font-family:"DM Mono",monospace; font-size:.62rem; letter-spacing:.2em;
-    color:var(--bone-dim); text-transform:uppercase; transition:opacity .4s;
-  }
-  #gate-load.gone{ opacity:0; }
- 
-  @media (prefers-reduced-motion:reduce){
-    #baton-pulse::after{ animation:none; }
-    .instruction-text{ animation:none; opacity:.8; }
-  }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-<script>
-if (typeof Tone === 'undefined') {
-  document.write('<scr'+'ipt src="https://unpkg.com/tone@14.8.49/build/Tone.js"></scr'+'ipt>');
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dive.css">
 </head>
-<body>
+<body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
 
-<!-- ============================================================
-     PASTE #3 — the gate markup. Replace your ENTIRE old
-     <div id="baton-gate">…</div> block (and the old
-     <div id="custom-baton"> / <canvas id="gate-particles">)
-     with just this:
-     ============================================================ -->
-<div id="baton-gate">
-  <canvas id="gate-canvas"></canvas>
-  <div id="baton-pulse"></div>
-  <button id="baton-trigger" aria-label="Take the baton to begin"></button>
-  <div class="gate-copy">
-    <div class="gate-title">Chaeyeon&nbsp;Kim</div>
-    <div class="instruction-text">take the baton</div>
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
   </div>
-  <div id="gate-load">loading the hall</div>
-</div>
-
-<div id="tt-debug" aria-hidden="true"></div>
-<script>
-(function(){
-  var on = location.hash.indexOf('debug')>=0;
-  var el = document.getElementById('tt-debug');
-  if(on && el) el.classList.add('on');
-  var lines=[];
-  window.ttlog=function(msg){
-    lines.push(msg);
-    if(lines.length>12) lines.shift();
-    if(el) el.textContent=lines.join('\n');
-    try{console.log('[tt]',msg);}catch(e){}
-  };
-  window.addEventListener('error',function(e){
-    ttlog('JS ERROR: '+(e.message||e.type)+(e.filename?' @'+e.filename.split('/').pop()+':'+e.lineno:''));
-  });
-  ttlog('boot \u00b7 Tone='+(typeof Tone!=='undefined'?Tone.version||'yes':'MISSING'));
-})();
-</script>
-
-
-<div class="grain"></div>
-
-<nav id="nav">
-  <a href="#work">Work</a><a href="#about">About</a><a href="mailto:chaeyeonkimwork@gmail.com">Contact</a>
-</nav>
-
-<!-- ===== PIN ZONE: 400vh scroll track, sticky 100vh stage ===== -->
-<div class="pin-zone" id="pinzone">
-  <div class="pin-stage" id="pinstage">
-    <canvas id="wave"></canvas>
-
-    <header class="hero" id="top">
-      <div class="panel" id="panel">
-        <button class="mode m-music" data-mode="music" aria-label="Music mode"><span class="ind"></span>Music</button>
-        <button class="mode m-cog active" data-mode="cog" aria-label="Cognitive science mode"><span class="ind"></span>Cognitive Science</button>
-        <button class="mode m-data" data-mode="data" aria-label="Data mode"><span class="ind"></span>Data</button>
-      </div>
-
-      <h1 class="name">Chaeyeon&nbsp;Kim</h1>
-
-      <div class="readout" id="readout" aria-hidden="true">EEG &middot; <span id="band">alpha</span> &middot; HPA axis: <span id="hpa">inactive</span> &middot; stress index: <b id="idx">0.08</b> &middot; <span class="state" id="state">baseline</span></div>
-
-      <div class="armprompt" id="armprompt" aria-hidden="true">click anywhere to begin &middot; then move to conduct</div>
-      <div class="cue" id="cue" aria-hidden="true">move to conduct &rarr;</div>
-      <div class="scrolldown" id="scrolldown">scroll &darr;</div>
-    </header>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
   </div>
 </div>
 
-<!-- ===== STATEMENT ZONE: scroll-driven 3D zoom grid ===== -->
-<section class="statement-zone" id="about">
-  <div class="stuck-grid">
-    <div class="grid-item">EEG</div>
-    <div class="grid-item">Tone.js</div>
-    <div class="grid-item">Signal Processing</div>
-    <div class="grid-item">Biometrics</div>
-    <div class="grid-item">Neuroscience</div>
-    <div class="grid-item">Data Visualization</div>
-    <div class="grid-item">D3.js</div>
-    <div class="grid-item">Machine Learning</div>
-    <div class="grid-item">Psychoacoustics</div>
-    <div class="grid-item">Fourier Transform</div>
-    <div class="grid-item">HPA Axis</div>
-    <div class="grid-item">Alpha Waves</div>
-    <div class="grid-item">Beta Spikes</div>
-    <div class="grid-item">HRV Tracking</div>
-    <div class="grid-item">Interaction Design</div>
-    <div class="grid-item">Generative Art</div>
-    <div class="grid-item">Web Audio API</div>
-    <div class="grid-item">Creative Coding</div>
-    <div class="grid-item">Sonification</div>
-    <div class="grid-item">Data Mapping</div>
-    <div class="grid-item">Neural Networks</div>
-    <div class="grid-item">Cognitive Load</div>
-    <div class="grid-item">Attention Mapping</div>
-    <div class="grid-item">Bio-sensors</div>
-    <div class="grid-item">UX Research</div>
-    <div class="grid-item">Oscilloscope</div>
-    <div class="grid-item">Algorithmic Composition</div>
-    <div class="grid-item">Synthesizer</div>
-    <div class="grid-item">FMSynth</div>
-    <div class="grid-item">Digital Signal Processing</div>
-    <div class="grid-item">Brain-Computer Interface</div>
-    <div class="grid-item">Cross-modal</div>
-    <div class="grid-item">Synesthesia</div>
-    <div class="grid-item">Spectral Analysis</div>
-    <div class="grid-item">Time-Series Data</div>
-    <div class="grid-item">Neuro-design</div>
-    <div class="grid-item">Waveform Architecture</div>
-    <div class="grid-item">Fast Fourier</div>
-    <div class="grid-item">Galvanic Skin Response</div>
-    <div class="grid-item">Cortisol Rhythm</div>
-    <div class="grid-item">Vector Fields</div>
-    <div class="grid-item">Ambient Computing</div>
-    <div class="grid-item">Audio Synthesis</div>
-    <div class="grid-item">Empirical Aesthetics</div>
-    <div class="grid-item">Perceptual Mapping</div>
-    <div class="grid-item">Somatosensory</div>
-    <div class="grid-item">Neuromodulation</div>
-    <div class="grid-item">Human-Computer Interaction</div>
-    <div class="grid-item">Affective Computing</div>
-    <div class="grid-item">Data Wrangling</div>
-
-    <div class="grid-item statement s1">I make invisible internal states perceptible.</div>
-    <div class="grid-item statement s2">Translating stress, insomnia, and attention into patterns, sound, and interactive systems.</div>
-    <div class="grid-item statement s3">I specialize in solving problems that sit between disciplines.</div>
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <div class="hud-track" aria-hidden="true">
+      <div class="hud-fill"></div>
+      <div class="hud-dot"></div>
+    </div>
+    <nav class="hud-nav" id="hud-nav"></nav>
   </div>
-</section>
+</aside>
 
-<section class="work" id="work">
-  <div class="work-stage">
-  <div class="sec-head"><h2>Selected Work</h2><span class="count">04 &nbsp;/&nbsp; index</span></div>
-  <div class="work-viewport">
-  <div class="work-track" id="work-track">
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
 
-    <a class="release" href="work/body-conducts.html">
-      <div class="rig">
-        <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
-        <div class="sleeve sl-body">
-          <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
-          <div class="inote">[ film still ]</div>
-          <div class="stitle">The Body<br>Conducts</div>
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Did you find something about me that you want to take notes of? Add it to your short term memory.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <div class="term-bar">SESSION // CORTEX</div>
+    <pre id="term-warn-msg">WARNING: Session ending. Working memory will be flushed.
+Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes</button>
+      <button type="button" data-term-dismiss>Stay in session</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>The Body Conducts</h1>
+    <p class="subtitle">Translating Chronic Stress into Music</p>
+    <p class="meta">Chaeyeon Kim · Sep 2025 – Apr 2026</p>
+    <p class="disciplines">Composition · EEG signal processing · Python · Spatial Audio</p>
+    <blockquote class="callout">“When the body tells truths language cannot.”</blockquote>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede">The Body Conducts is a five-track music film that translates EEG data to music through a Python-based biometric-to-audio pipeline. I recorded my own EEG under controlled stress, processed the raw signal in Python, and drove the score’s sound directly from that data. The invisible physiology of chronic stress becomes audible.</p>
+    <p>Drawing on Prokofiev’s <em>Peter and the Wolf</em>, each instrument represents a distinct stress response. The score spans orchestral adagio, dialogic oboe-synth arrangements, a capella, and a full noir jazz brass breakdown, with the composer’s own brainwave (EEG) data embedded directly as rhythm and texture. The result makes invisible inflammation audible and inescapable.</p>
+    <p class="cta-row">
+      <a class="cta pending-ext" title="URL not provided">Project playlist</a>
+      <a class="cta pending-ext" title="URL not provided">Code</a>
+    </p>
+    <p class="note">The Body Conducts uses spatial audio. Recommended with headphones.</p>
+  </section>
+
+  <section class="hue-cog" data-icons="cog" data-kind="cog">
+    <h2 id="problem" class="h-cog">The Problem</h2>
+    <div class="scenario">
+      <p class="scenario-kicker" data-reveal>Think about this scenario:</p>
+      <p data-reveal>you have been quietly enduring workplace stress,</p>
+      <p data-reveal>so your baseline heart palpitations go up,</p>
+      <p data-reveal>so your immune system reads this as physical danger</p>
+      <p data-reveal>and floods your body with inflammation,</p>
+      <p data-reveal>as if preparing for a wound that never comes.</p>
+      <p data-reveal>Do this daily for months, and your body starts attacking itself.</p>
+    </div>
+    <p>Resources on stress might tell you to meditate more, exercise, and manage your time better. But when stress comes from social hierarchies or structural inequality, these individual behavior changes are a band-aid on a structural wound. It risks scientifically misrepresenting where chronic stress originates, and lets the systems causing harm off the hook.</p>
+    <figure class="bio-loop">
+      <div class="kicker">The biological mechanism</div>
+      <div class="bio-flow">
+        <ol class="bio-nodes">
+          <li><span class="node">Stress</span></li>
+          <li><span class="node">Neurological Alarm</span></li>
+          <li><span class="node">Immune Inflammation</span></li>
+          <li><span class="node">Body Miscoordination</span></li>
+        </ol>
+        <div class="bio-feedback" aria-hidden="true">
+          <span class="bio-feedback-label">feeds back</span>
         </div>
       </div>
-      <div class="meta">
-        <div class="idx">01</div>
-        <div class="ptitle">The Body Conducts</div>
-        <div class="hook">Stress symphony scored from the brain. A 5-track music film that turns <span class="hl">invisible inflammation audible.</span> EEG data embedded as genre, rhythm, and texture.</div>
-        <div class="tags"><span class="tag t-mus">Music</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-dat">Data</span></div>
-      </div>
-    </a>
+    </figure>
+    <p>By the time you feel pain, invisible inflammation has been building for years.</p>
+    <p>Philosopher Elaine Scarry argues that chronic pain has no referential content, which means you hurt but cannot point to why. Language fails the body in pain… but emotionally resonant narratives don’t. Music, uniquely, triggers physiological chills and makes you perceive the experience.</p>
+    <p>In short, to communicate a threat no one can see, you make them hear it.</p>
+  </section>
 
-    <a class="release" href="#">
-      <div class="rig">
-        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
-        <div class="sleeve sl-syn">
-          <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
-          <div class="inote">[ app capture ]</div>
-          <div class="stitle">Synthetic<br>Synesthesia</div>
+  <section class="hue-data" data-icons="cog data" data-kind="data">
+    <h2 id="solution" class="h-data">The Solution</h2>
+    <p>I built a full biometric-to-audio pipeline and used it to produce a finished five-track music film.</p>
+
+    <h3>Biometric Integration Pipeline</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Data collection</h4>
+          <ul>
+            <li>Wore a 4-channel OpenBCI EEG headset (200 Hz) during stress-inducing scenarios (N-back tasks, social-evaluative stress) to capture neural activity.</li>
+            <li>Alpha waves (8–12 Hz) during baseline, Beta waves (12–30 Hz) during stress.</li>
+            <li>40+ hours of recording across sessions.</li>
+          </ul>
         </div>
-      </div>
-      <div class="meta">
-        <div class="idx">02</div>
-        <div class="ptitle">Synthetic Synesthesia</div>
-        <div class="hook">A neurological experience <span class="hl">96% of people can't access,</span> made playable in a browser. Sound becomes color, color becomes sound &mdash; grounded in peer-reviewed research.</div>
-        <div class="demo">live demo</div>
-        <div class="tags"><span class="tag t-tec">Technology</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-mus">Music</span></div>
-      </div>
-    </a>
-
-    <a class="release" href="#">
-      <div class="rig">
-        <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
-        <div class="sleeve sl-para">
-          <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
-          <div class="inote">[ slate still ]</div>
-          <div class="stitle">Paramount</div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Signal processing &amp; feature extraction</h4>
+          <ul>
+            <li>Using Python (MNE, SciPy, NumPy), preprocessed the raw signals and extracted time-series features: frequency-band power and amplitude variation.</li>
+            <li>Applied 4th-order Butterworth bandpass filtering and sliding-window log band-power extraction on the alpha band, then derived a continuous neural index from band-power dynamics relative to a baseline condition.</li>
+            <li>Also engineered STFT spectrogram analysis across recording conditions to visualize spectral shifts over time.</li>
+          </ul>
         </div>
-      </div>
-      <div class="meta">
-        <div class="idx">03</div>
-        <div class="ptitle">Paramount&nbsp;/&nbsp;GCDR</div>
-        <div class="hook">Research infrastructure that <span class="hl">cut pre-release analysis time by 65%.</span> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</div>
-        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-ind">Industry</span></div>
-      </div>
-    </a>
-
-    <a class="release" href="#">
-      <div class="rig">
-        <div class="disc fig"><div class="figbig">+7pp</div></div>
-        <div class="sleeve sl-eng">
-          <div class="scode"><span>PE&middot;004</span><span>FIG.5/AUC</span></div>
-          <div class="inote">[ network figure ]</div>
-          <div class="stitle">Predicting<br>Engagement</div>
+      </li>
+      <li>
+        <span class="num">03-A</span>
+        <div>
+          <h4>Spectral filter mapping</h4>
+          <ul>
+            <li>Mapped data to a parameter that correlates to sound.</li>
+            <li>The stress signal (a continuous 0–1 value derived from alpha suppression) was exported as MIDI CC data using the Mido library and imported into Logic Pro as an automation lane controlling a dynamic spectral EQ filter.</li>
+            <li>As stress rises, the filter sweeps toward brighter frequencies, increased dissonance, and denser texture; as it falls, the sound becomes warmer, more consonant, and more open.</li>
+          </ul>
         </div>
+      </li>
+      <li>
+        <span class="num">03-B</span>
+        <div>
+          <h4>Direct wavelength translation</h4>
+          <ul>
+            <li>Mapped data directly to notes.</li>
+            <li>I transposed the beta-wave patterns directly into the jazz piano lick in <em>Rot</em>, creating a transcription of brain state into musical phrase.</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <div class="split">
+      <div>
+        <h3>Spatial Audio Rendering</h3>
+        <p>The completed score was mastered in Dolby Atmos using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
       </div>
-      <div class="meta">
-        <div class="idx">04</div>
-        <div class="ptitle">Predicting Engagement</div>
-        <div class="hook">What <span class="hl">&ldquo;engagement&rdquo; actually is,</span> grounded in brain networks. Replicated and extended a study mapping behavioral predictors to attention, reward, and default-mode systems.</div>
-        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-cog">Cognitive Science</span></div>
-      </div>
-    </a>
-
-  </div>
-  </div>
-  </div>
-</section>
-
-<script>
-(function(){
-  const work=document.getElementById('work');
-  const track=document.getElementById('work-track');
-  if(!work||!track) return;
-  const n=track.children.length;
-  if(!n) return;
-  work.style.setProperty('--work-n', String(n));
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const HOLD=80, SLIDE=36;
-  let ticking=false;
-
-  function easeInOutCubic(t){
-    return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
-  }
-  function albumAt(p){
-    const nTrans=n-1;
-    let u=p*(n*HOLD+nTrans*SLIDE);
-    for(let i=0;i<n;i++){
-      if(u<=HOLD || i===nTrans) return i;
-      u-=HOLD;
-      if(u<=SLIDE) return i+easeInOutCubic(Math.min(Math.max(u/SLIDE,0),1));
-      u-=SLIDE;
-    }
-    return nTrans;
-  }
-  function progress(){
-    const total=Math.max(work.offsetHeight-innerHeight,1);
-    return Math.min(Math.max(-work.getBoundingClientRect().top/total,0),1);
-  }
-  function paint(){
-    ticking=false;
-    const pos=albumAt(progress());
-    track.style.transform='translate3d('+(-(pos*(100/n))).toFixed(4)+'%,0,0)';
-  }
-  function requestPaint(){
-    if(!ticking){ ticking=true; requestAnimationFrame(paint); }
-  }
-  addEventListener('scroll',requestPaint,{passive:true});
-  addEventListener('resize',requestPaint);
-  paint();
-})();
-</script>
-
-<script>
-(function(){
-const c=document.getElementById('wave'),x=c.getContext('2d');
-const rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const cue=document.getElementById('cue'),readout=document.getElementById('readout'),scrolldown=document.getElementById('scrolldown'),nav=document.getElementById('nav'),wave=document.getElementById('wave');
-const pinzone=document.getElementById('pinzone');
-let W,H,dpr;
-function rs(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}
-rs();addEventListener('resize',()=>{rs();onScroll()});
-
-let ar=0.08,tar=0.08,lx=null,ly=null,lm=0,done=false;
-const ORDER=['music','cog','data'];
-let MODE='music';
-let SCROLL_MODE='music';
-let HOVER=null;
-
-const SAMPLE_HOSTS=[
-  'https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/master/samples/',
-  'https://cdn.jsdelivr.net/gh/nbrosowsky/tonejs-instruments@master/samples/'
-];
-let SAMPLE_BASE=SAMPLE_HOSTS[0];
-const AUDIO={on:false,ready:false,loading:false,meter:null,level:0,lastNote:0,vel:0,loaded:0,total:0};
-let MUTED=false;
-
-const KITS={
-  violin:{A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',G5:'G5.mp3',A5:'A5.mp3',C6:'C6.mp3'},
-  cello:{C2:'C2.mp3',E2:'E2.mp3',G2:'G2.mp3',A2:'A2.mp3',C3:'C3.mp3',E3:'E3.mp3',G3:'G3.mp3',A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3',G4:'G4.mp3'},
-  contrabass:{C2:'C2.mp3',D2:'D2.mp3',E2:'E2.mp3',G1:'G1.mp3',A2:'A2.mp3','F#1':'Fs1.mp3','G#2':'Gs2.mp3'},
-  flute:{C4:'C4.mp3',E4:'E4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',A5:'A5.mp3',C6:'C6.mp3'},
-  clarinet:{D3:'D3.mp3',F3:'F3.mp3','A#3':'As3.mp3',D4:'D4.mp3',F4:'F4.mp3','A#4':'As4.mp3',D5:'D5.mp3',F5:'F5.mp3'},
-  bassoon:{G2:'G2.mp3',A2:'A2.mp3',C3:'C3.mp3',G3:'G3.mp3',A3:'A3.mp3',C4:'C4.mp3',E4:'E4.mp3'},
-  'french-horn':{A1:'A1.mp3',C2:'C2.mp3',G2:'G2.mp3',D3:'D3.mp3',F3:'F3.mp3',A3:'A3.mp3',C4:'C4.mp3'},
-  harp:{E1:'E1.mp3',G1:'G1.mp3',B1:'B1.mp3',D2:'D2.mp3',F2:'F2.mp3',A2:'A2.mp3',C3:'C3.mp3',E3:'E3.mp3',G3:'G3.mp3',B3:'B3.mp3',D4:'D4.mp3',F4:'F4.mp3',A4:'A4.mp3',C5:'C5.mp3',E5:'E5.mp3',G5:'G5.mp3'},
-  piano:{C3:'C3.mp3','D#3':'Ds3.mp3','F#3':'Fs3.mp3',A3:'A3.mp3',C4:'C4.mp3','D#4':'Ds4.mp3','F#4':'Fs4.mp3',A4:'A4.mp3',C5:'C5.mp3','D#5':'Ds5.mp3','F#5':'Fs5.mp3',A5:'A5.mp3'}
-};
-
-function makeSampler(name,vol,rel,dest){
-  try{
-    const smp=new Tone.Sampler({
-      urls:KITS[name],
-      baseUrl:SAMPLE_BASE+name+'/',
-      release:rel,
-      volume:vol,
-      onload:()=>{AUDIO.loaded++;updateLoad();}
-    }).connect(dest);
-    return smp;
-  }catch(err){
-    console.warn('[orchestra] '+name+' failed to build:',err);
-    AUDIO.loaded++; updateLoad();
-    return silentStub();
-  }
-}
-function silentStub(){
-  return {triggerAttackRelease(){},triggerAttack(){},triggerRelease(){},releaseAll(){},loaded:false};
-}
-function updateLoad(){
-  (typeof ttlog==="function"?ttlog:function(){})('sample loaded '+AUDIO.loaded+'/'+AUDIO.total);
-  const el=document.getElementById('armprompt');
-  if(!el)return;
-  if(AUDIO.loaded>=AUDIO.total){
-    el.classList.add('gone');
-  } else {
-    el.textContent='tuning the orchestra \u00b7 '+AUDIO.loaded+'/'+AUDIO.total;
-  }
-}
-
-function wireScore(){
-  AUDIO.chords=[
-    ['D3','F3','A3','C4'],
-    ['Bb2','D3','F3','A3'],
-    ['F3','A3','C4','E4'],
-    ['G2','Bb2','D3','F3'],
-    ['A2','C3','E3','G3']
-  ];
-  AUDIO.roots=['D2','Bb1','F2','G2','A2'];
-  AUDIO.melody=['D4','E4','F4','G4','A4','Bb4','C5','D5','E5','F5','A5'];
-  AUDIO.chordIdx=0;
-  AUDIO.loop=new Tone.Loop(t=>{
-    if(!AUDIO.synthMode && AUDIO.loaded===0) return;
-    const ch=AUDIO.chords[AUDIO.chordIdx%5];
-    const root=AUDIO.roots[AUDIO.chordIdx%5];
-    const dyn=0.22+AUDIO.vel*0.6;
-    AUDIO.violin.triggerAttackRelease(ch.slice(2),'1m',t,dyn*0.42);
-    AUDIO.cello.triggerAttackRelease([ch[0],ch[1]],'1m',t,dyn*0.5);
-    AUDIO.bass.triggerAttackRelease([root],'1m',t,dyn*0.55);
-    if(Math.random()<0.4) AUDIO.horn.triggerAttackRelease([ch[1]],'2n',t,dyn*0.35);
-    if(Math.random()<0.45){
-      const off=t+Tone.Time('2n').toSeconds();
-      (Math.random()<0.5?AUDIO.clarinet:AUDIO.bassoon).triggerAttackRelease([ch[2]],'2n',off,dyn*0.4);
-    }
-    if(Math.random()<0.65) AUDIO.piano.triggerAttackRelease([ch[0],ch[2]],'2n',t,0.22+AUDIO.vel*0.35);
-    AUDIO.chordIdx++;
-  },'1m');
-}
-
-function buildSynthOrchestra(){
-  const hall=new Tone.Reverb({decay:5,wet:0.32}).toDestination();
-  const bus=new Tone.Gain(0.9).connect(hall); bus.connect(Tone.Destination);
-  AUDIO.meter=new Tone.Meter({smoothing:0.82}); bus.connect(AUDIO.meter);
-  const strF=new Tone.Filter({frequency:2200,type:'lowpass'}).connect(bus);
-  AUDIO.violin=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'fatsawtooth',count:4,spread:28},envelope:{attack:0.7,decay:0.4,sustain:0.85,release:2.8}}).connect(strF); AUDIO.violin.volume.value=-17;
-  AUDIO.cello=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'fatsawtooth',count:3,spread:16},envelope:{attack:1,decay:0.4,sustain:0.9,release:3.4}}).connect(new Tone.Filter({frequency:900,type:'lowpass'}).connect(bus)); AUDIO.cello.volume.value=-17;
-  AUDIO.bass=AUDIO.cello;
-  AUDIO.flute=new Tone.PolySynth(Tone.AMSynth,{harmonicity:2,oscillator:{type:'triangle'},envelope:{attack:0.25,decay:0.2,sustain:0.7,release:1.4}}).connect(new Tone.Filter({frequency:3200,type:'lowpass'}).connect(bus)); AUDIO.flute.volume.value=-18;
-  AUDIO.clarinet=AUDIO.flute; AUDIO.bassoon=AUDIO.cello; AUDIO.horn=AUDIO.cello;
-  AUDIO.piano=new Tone.PolySynth(Tone.FMSynth,{harmonicity:3,modulationIndex:8,oscillator:{type:'triangle'},envelope:{attack:0.004,decay:1.6,sustain:0.04,release:1.3}}).connect(bus); AUDIO.piano.volume.value=-14;
-  AUDIO.harp=new Tone.PolySynth(Tone.Synth,{oscillator:{type:'triangle'},envelope:{attack:0.005,decay:1.5,sustain:0,release:1.6}}).connect(bus); AUDIO.harp.volume.value=-20;
-  wireScore();
-}
-
-let PRELOADED=false;
-function preloadSamples(){
-  if(PRELOADED) return;
-  PRELOADED=true;
-  try{
-    (typeof ttlog==="function"?ttlog:function(){})('preloadSamples \u00b7 building');
-    const hall=new Tone.Reverb({decay:5.5,preDelay:0.025,wet:0.34}).toDestination();
-    const bus=new Tone.Gain(0.9).connect(hall);
-    bus.connect(Tone.Destination);
-    AUDIO.meter=new Tone.Meter({smoothing:0.82});
-    bus.connect(AUDIO.meter);
-    let wide;
-    try{ wide=new Tone.StereoWidener(0.65).connect(bus); }
-    catch(err){ wide=bus; }
-
-    AUDIO.total=Object.keys(KITS).length;
-    AUDIO.loaded=0;
-
-    AUDIO.violin  = makeSampler('violin',      -14, 1.8, wide);
-    AUDIO.cello   = makeSampler('cello',       -12, 2.2, wide);
-    AUDIO.bass    = makeSampler('contrabass',  -13, 2.4, bus);
-    AUDIO.flute   = makeSampler('flute',       -16, 1.4, wide);
-    AUDIO.clarinet= makeSampler('clarinet',    -15, 1.4, wide);
-    AUDIO.bassoon = makeSampler('bassoon',     -15, 1.6, wide);
-    AUDIO.horn    = makeSampler('french-horn', -14, 2.0, wide);
-    AUDIO.harp    = makeSampler('harp',        -13, 2.6, wide);
-    AUDIO.piano   = makeSampler('piano',        -9, 1.6, bus);
-
-    wireScore();
-    Tone.Transport.bpm.value=56;
-  }catch(err){
-    console.error('[orchestra] preload error:',err);
-    PRELOADED=false;
-  }
-}
-window.__preloadSamples=preloadSamples;
-
-async function audioInit(){
-  if(AUDIO.ready||AUDIO.loading) return;
-  AUDIO.loading=true;
-  try{
-  (typeof ttlog==="function"?ttlog:function(){})('audioInit \u00b7 ctx='+Tone.context.state);
-  await Tone.start();
-  (typeof ttlog==="function"?ttlog:function(){})('Tone.start ok \u00b7 ctx='+Tone.context.state);
-
-  if(!PRELOADED) preloadSamples();
-
-  const ok = await waitForSamples(12000);
-  (typeof ttlog==="function"?ttlog:function(){})('waitForSamples='+ok+' loaded='+AUDIO.loaded+'/'+AUDIO.total);
-  if(!ok){
-    console.warn('[orchestra] samples did not load in time — synth fallback');
-    teardownSamplers();
-    buildSynthOrchestra();
-    AUDIO.synthMode=true;
-    Tone.Transport.bpm.value=56;
-  }
-  AUDIO.ready=true;
-  }catch(err){
-    console.error('[orchestra] audioInit error:',err);
-    try{ if(!AUDIO.ready){ buildSynthOrchestra(); AUDIO.synthMode=true; AUDIO.ready=true; } }
-    catch(e2){ console.error('[orchestra] synth fallback also failed:',e2); }
-  }finally{
-    AUDIO.loading=false;
-  }
-}
-
-function waitForSamples(timeoutMs){
-  return new Promise(resolve=>{
-    const t0=Date.now();
-    const need=Math.ceil(AUDIO.total*0.6);
-    (function poll(){
-      if(AUDIO.loaded>=need) return resolve(true);
-      if(Date.now()-t0>timeoutMs) return resolve(AUDIO.loaded>0);
-      setTimeout(poll,100);
-    })();
-  });
-}
-function teardownSamplers(){
-  ['violin','cello','bass','flute','clarinet','bassoon','horn','harp','piano']
-    .forEach(k=>{try{AUDIO[k]&&AUDIO[k].dispose&&AUDIO[k].dispose();}catch(e){}});
-  try{AUDIO.loop&&AUDIO.loop.dispose();}catch(e){}
-}
-
-function audioStart(){
-  if(AUDIO.on) return;
-  if(!AUDIO.ready||!AUDIO.loop){(typeof ttlog==="function"?ttlog:function(){})('audioStart SKIP ready='+AUDIO.ready+' loop='+!!AUDIO.loop);return;}
-  try{ Tone.Transport.start(); AUDIO.loop.start(0); AUDIO.on=true; (typeof ttlog==="function"?ttlog:function(){})('audioStart \u00b7 transport running'); }
-  catch(err){ console.error('[orchestra] start failed:',err); }
-}
-window.__audioStart=audioStart;
-function audioStop(){
-  if(!AUDIO.ready)return;
-  AUDIO.loop.stop(); Tone.Transport.stop();
-  ['violin','cello','bass','flute','clarinet','bassoon','horn','harp','piano']
-    .forEach(k=>{try{AUDIO[k].releaseAll();}catch(e){}});
-  AUDIO.on=false; AUDIO.level=0;
-}
-
-let lastCx=null,lastCy=null,lastCt=0;
-function audioNoteFromCursor(cx,cy){
-  if(!AUDIO.on)return;
-  const now=performance.now();
-
-  if(lastCx!==null){
-    const d=Math.hypot(cx-lastCx,cy-lastCy);
-    const dt=Math.max(now-lastCt,1);
-    AUDIO.vel+=(Math.min((d/dt)/1.8,1)-AUDIO.vel)*0.18;
-  }
-  const rising = lastCy!==null && (lastCy-cy)>20;
-  lastCx=cx;lastCy=cy;lastCt=now;
-
-  const gap = 300 - AUDIO.vel*170;
-  if(now-AUDIO.lastNote<gap)return;
-  AUDIO.lastNote=now;
-
-  const hf=1-Math.min(Math.max(cy/innerHeight,0),1);
-  const dyn=0.16+AUDIO.vel*0.68;
-  const ch=AUDIO.chords[AUDIO.chordIdx%5];
-
-  try{
-    if(hf>0.66){
-      const i=Math.floor((hf-0.66)/0.34*(AUDIO.melody.length-5))+5;
-      const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
-      AUDIO.flute.triggerAttackRelease(n,'2n',undefined,dyn);
-      if(AUDIO.vel>0.25)
-        AUDIO.violin.triggerAttackRelease(n,'2n',undefined,dyn*0.6);
-      if(rising&&AUDIO.vel>0.35){
-        ch.forEach((nn,k)=>AUDIO.harp.triggerAttackRelease(
-          Tone.Frequency(nn).transpose(12),'4n',Tone.now()+k*0.05,0.45));
-      }
-    } else if(hf>0.3){
-      const i=Math.floor(hf/0.66*(AUDIO.melody.length-2));
-      const n=AUDIO.melody[Math.min(i,AUDIO.melody.length-1)];
-      AUDIO.piano.triggerAttackRelease(n,'4n',undefined,dyn);
-      if(AUDIO.vel>0.4)
-        AUDIO.clarinet.triggerAttackRelease(n,'4n',undefined,dyn*0.5);
-    } else {
-      AUDIO.cello.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.8);
-      if(AUDIO.vel>0.45){
-        AUDIO.bassoon.triggerAttackRelease([ch[0]],'2n',undefined,dyn*0.6);
-        AUDIO.horn.triggerAttackRelease([AUDIO.roots[AUDIO.chordIdx%5]],'2n',undefined,dyn*0.5);
-      }
-    }
-  }catch(e){}
-}
-
-let ARMED=false;
-let ARMING=false;
-const TT=(typeof ttlog==="function"?ttlog:function(){});
-
-async function armAudio(){
-  if(ARMED||ARMING) return;
-  ARMING=true;
-  TT('armAudio \u00b7 ctx='+((typeof Tone!=='undefined')?Tone.context.state:'noTone'));
-  const prompt=document.getElementById('armprompt');
-  if(prompt)prompt.textContent='tuning the orchestra\u2026';
-  try{
-    if(typeof Tone!=='undefined'){
-      try{ await Tone.start(); }catch(e){}
-      try{ await Tone.context.resume(); }catch(e){}
-    }
-    TT('after start \u00b7 ctx='+Tone.context.state);
-    if(Tone.context.state!=='running'){
-      ARMING=false;
-      return;
-    }
-    await audioInit();
-    TT('ready \u00b7 '+(AUDIO.synthMode?'SYNTH':'samples')+' '+AUDIO.loaded+'/'+AUDIO.total);
-    ARMED=true;
-    detachArm();
-    if(prompt)prompt.classList.add('gone');
-    if(!window.__gateDrivingEntry && (SCROLL_MODE==='music'||MODE==='music')) audioStart();
-  }catch(err){
-    console.error('[orchestra] init failed:',err);
-    TT('init FAILED: '+(err&&err.message||err));
-    if(prompt)prompt.classList.add('gone');
-    ARMING=false;
-  }
-}
-
-const ARM_EVENTS=['pointerdown','mousedown','touchstart','keydown','click'];
-function detachArm(){ ARM_EVENTS.forEach(ev=>removeEventListener(ev,armAudio)); }
-if(!document.getElementById('baton-gate')){
-  ARM_EVENTS.forEach(ev=>addEventListener(ev,armAudio));
-}
-window.__armAudio=armAudio;
-
-const panel=document.getElementById('panel');
-const modeBtns=panel?panel.querySelectorAll('.mode'):[];
-function paintButtons(m){modeBtns.forEach(b=>b.classList.toggle('active',b.dataset.mode===m));}
-
-function scrollTargetFor(m){
-  const top=pinzone.offsetTop, track=pinzone.offsetHeight-innerHeight;
-  const centers={music:0.16,cog:0.50,data:0.84};
-  return top+track*centers[m];
-}
-
-modeBtns.forEach(btn=>{
-  const m=btn.dataset.mode;
-  btn.addEventListener('pointerenter',()=>{HOVER=m;MODE=m;paintButtons(m);});
-  btn.addEventListener('pointerleave',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
-  btn.addEventListener('focus',()=>{HOVER=m;MODE=m;paintButtons(m);});
-  btn.addEventListener('blur',()=>{HOVER=null;MODE=SCROLL_MODE;paintButtons(SCROLL_MODE);});
-  btn.addEventListener('click',async()=>{
-    if(m==='music'){
-      if(!AUDIO.on){ await audioInit(); audioStart(); MUTED=false; }
-      else { audioStop(); MUTED=true; }
-    } else if(AUDIO.on){ audioStop(); }
-    HOVER=null;
-    MODE=m; SCROLL_MODE=m; paintButtons(m);
-    window.scrollTo({top:scrollTargetFor(m),behavior:'smooth'});
-  });
-});
-
-const IRIS=[16,23,25],GRAPE=[103,103,162],AMAR=[140,24,62],BONE=[239,231,239];
-function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
-
-let curX=-1,curY=-1;
-const SAMPLES=[];const SAMPLE_MAX=60;
-addEventListener('pointermove',e=>{curX=e.clientX;curY=e.clientY; if(MODE==='music'&&e.clientY<innerHeight) audioNoteFromCursor(e.clientX,e.clientY);});
-addEventListener('pointerleave',()=>{curX=-1;curY=-1;});
-
-let pinned=true;
-if(!rm){
- addEventListener('pointermove',e=>{
-   if(!pinned||e.clientY>H)return;
-   const n=performance.now();
-   if(lx!==null){const dx=e.clientX-lx,dy=e.clientY-ly,d=Math.hypot(dx,dy),dt=Math.max(n-lm,1),sp=d/dt;const hf=1-e.clientY/H,sf=Math.min(sp/2.2,1);tar=Math.min(0.04+hf*0.55+sf*0.55,1)}
-   lx=e.clientX;ly=e.clientY;lm=n;
-   if(!done){done=true;cue.style.opacity='0';}
- });
- addEventListener('pointerleave',()=>tar=0.08);
-}
-
-function onScroll(){
- const top=pinzone.offsetTop;
- const track=Math.max(pinzone.offsetHeight-innerHeight,1);
- const p=Math.min(Math.max((scrollY-top)/track,0),1);
- pinned=(scrollY-top)<track;
-
- let m;
- if(p<0.33) m='music';
- else if(p<0.66) m='cog';
- else m='data';
- if(m!==SCROLL_MODE){
-   SCROLL_MODE=m;
-   if(HOVER===null){ MODE=m; paintButtons(m); }
- }
- if(m==='music'){
-   if(ARMED&&AUDIO.ready&&!AUDIO.on&&!MUTED) audioStart();
- } else if(AUDIO.on){ audioStop(); }
-
- const fade=Math.min(Math.max((p-0.86)/0.14,0),1);
- wave.style.opacity=(1-fade*0.95).toFixed(3);
- readout.classList.toggle('hero-fade',fade>0.5);
- cue.classList.toggle('hero-fade',p>0.05);
- scrolldown.classList.toggle('hero-fade',p>0.02);
-
- if(!pinned)tar=0.08;
- document.body.style.backgroundColor=(p>=1||scrollY>top+track)
-   ? `rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})` : document.body.style.backgroundColor;
-}
-addEventListener('scroll',onScroll,{passive:true});
-
-let ph=0;
-let FPS=60,lastF=performance.now();
-function fr(){
- const nowF=performance.now();
- FPS+=((1000/Math.max(nowF-lastF,1))-FPS)*0.08; lastF=nowF;
- if(performance.now()-lm>600&&!rm)tar+=(0.08-tar)*0.02;
- ar+=(tar-ar)*0.06;
- let amp=26+ar*14,fq=0.004+ar*0.012,sp=0.015+ar*0.05,jt=ar*ar*22;ph+=sp;
- if(MODE==='music'&&AUDIO.on&&AUDIO.meter){
-   let db=AUDIO.meter.getValue(); if(typeof db!=='number')db=-60;
-   const lin=Math.max(0,Math.min(1,(db+60)/60));
-   AUDIO.level+=(lin-AUDIO.level)*0.25;
-   amp=26+AUDIO.level*90;
-   sp=0.015+AUDIO.level*0.06;
-   ph+=AUDIO.level*0.04;
- } else if(MODE==='music'){
-   amp=30+ar*40; fq=0.010+ar*0.014; ph+=0.012;
- }
- const la=0.34+ar*0.30;
- const heroBg=lerp(GRAPE,AMAR,ar).map(v=>Math.round(v*0.82));
- if(pinned)document.body.style.backgroundColor=`rgb(${heroBg[0]},${heroBg[1]},${heroBg[2]})`;
- else document.body.style.backgroundColor=`rgb(${IRIS[0]},${IRIS[1]},${IRIS[2]})`;
- x.clearRect(0,0,W,H);
- const ch=7;const chY=[];
- for(let k=0;k<ch;k++){const yb=H/(ch+1)*(k+1),of=k*1.7,ca=amp*(0.55+(k%3)*0.28);chY.push(yb);
-  x.beginPath();
-  let prevYY=null;
-  for(let px=0;px<=W;px+=6){
-    let nz=Math.sin(px*fq+ph+of)+0.5*Math.sin(px*fq*2.3+ph*1.4+of)+(jt?Math.sin(px*0.09+ph*7+k)*(jt/30):0);
-    let yy=yb+nz*ca;
-    if(MODE==='data'){
-      const band=22;
-      yy=Math.round(yy/band)*band;
-      if(prevYY!==null){x.lineTo(px,prevYY);}
-      px===0?x.moveTo(px,yy):x.lineTo(px,yy);
-      prevYY=yy;
-    } else {
-      px===0?x.moveTo(px,yy):x.lineTo(px,yy);
-    }
-  }
-  x.strokeStyle=`rgba(${BONE[0]},${BONE[1]},${BONE[2]},${la*(0.5+k/ch*0.6)})`;x.lineWidth=2.6;x.stroke()}
- const i=ar;
- if(MODE==='music'){
-   readout.classList.add('mute');
-   readout.innerHTML='';
- } else if(MODE==='data'){
-   readout.classList.remove('mute');
-   const px=curX>=0?curX:W*0.5;
-   const rawNz=Math.sin(px*fq+ph)+0.5*Math.sin(px*fq*2.3+ph*1.4);
-   const val=(rawNz+1.5)/3;
-   SAMPLES.push(val); if(SAMPLES.length>SAMPLE_MAX)SAMPLES.shift();
-   const mean=SAMPLES.reduce((a,b)=>a+b,0)/SAMPLES.length;
-   const variance=SAMPLES.reduce((a,b)=>a+(b-mean)*(b-mean),0)/SAMPLES.length;
-   const cycles=(fq*W)/(2*Math.PI);
-   const sigP=1+0.25;
-   const noiP=Math.max((jt/30)*(jt/30)*0.5,1e-6);
-   const snr=10*Math.log10(sigP/noiP);
-   const lag=Math.abs(tar-ar);
-   readout.innerHTML='f: <b>'+cycles.toFixed(2)+'</b> cyc/vw &middot; A: <b>'+amp.toFixed(1)+
-     '</b> px &middot; &sigma;&sup2;: <b>'+variance.toFixed(3)+'</b> &middot; SNR: <b style="color:'+
-     (snr<12?'#e8425f':snr<24?'#e0b45c':'#9fe0d8')+'">'+snr.toFixed(1)+
-     '</b> dB &middot; &Delta;: '+lag.toFixed(3)+' &middot; '+FPS.toFixed(0)+' fps';
- } else {
-   readout.classList.remove('mute');
-   if(SAMPLES.length)SAMPLES.length=0;
-   let band,hpa,state,col,hcol,hglow;
-   if(i<0.33){
-     band='alpha';hpa='inactive';state='baseline';col='#8f8fd0';
-     hcol='#5fb89b';hglow='rgba(95,184,155,0.55)';
-   } else if(i<0.66){
-     band='alpha\u2192beta';hpa='activating';state='arousal rising';col='#b7a7d8';
-     hcol='#e0b45c';hglow='rgba(224,180,92,0.55)';
-   } else {
-     band='beta';hpa='active';state='stress response';col='#c9436a';
-     hcol='#e8425f';hglow='rgba(232,66,95,0.7)';
-   }
-   readout.innerHTML='EEG &middot; '+band+' &middot; HPA axis: <span class="hpa" style="color:'+hcol+
-     ';text-shadow:0 0 8px '+hglow+'">'+hpa+'</span> &middot; stress index: <b>'+i.toFixed(2)+
-     '</b> &middot; <span style="color:'+col+'">'+state+'</span>';
- }
- requestAnimationFrame(fr)}
-requestAnimationFrame(fr);
-paintButtons('music');
-onScroll();
-})();
-</script>
-<div id="turntable-overlay" style="position:fixed;inset:0;z-index:999;pointer-events:none;display:none;"></div>
-
- <script>
-(function () {
-  'use strict';
-
-  const SLIDE = 400, SPIN = 500, WIPE = 300;
-  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const overlay = document.getElementById('turntable-overlay');
-  if (!overlay) return;
-
-  let busy = false;
-
-  function cue() {
-    if (typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
-    try {
-      const now = Tone.now();
-
-      const crackle = new Tone.NoiseSynth({
-        noise: { type: 'pink' },
-        envelope: { attack: 0.004, decay: 0.28, sustain: 0 }
-      }).connect(new Tone.Filter(2200, 'lowpass').toDestination());
-      crackle.volume.value = -22;
-      crackle.triggerAttackRelease('8n', now);
-
-      const chord = new Tone.PolySynth(Tone.FMSynth, {
-        harmonicity: 2.2, modulationIndex: 6,
-        oscillator: { type: 'sine' },
-        envelope: { attack: 0.02, decay: 0.6, sustain: 0.25, release: 1.6 }
-      }).connect(new Tone.Reverb({ decay: 3.2, wet: 0.4 }).toDestination());
-      chord.volume.value = -14;
-      chord.triggerAttackRelease(['D3', 'F3', 'A3', 'C4', 'E4'], '2n', now + 0.06);
-
-      setTimeout(() => { crackle.dispose(); chord.dispose(); }, 3000);
-    } catch (e) { }
-  }
-
-  function buildStage() {
-    const platter = document.createElement('div');
-    platter.className = 'tt-platter';
-
-    const arm = document.createElement('div');
-    arm.className = 'tt-arm';
-
-    overlay.append(platter, arm);
-    return { platter, arm };
-  }
-
-  function cloneDisc(disc) {
-    const r = disc.getBoundingClientRect();
-
-    const outer = document.createElement('div');
-    outer.className = 'tt-disc-clone';
-    Object.assign(outer.style, {
-      left:   r.left + 'px',
-      top:    r.top  + 'px',
-      width:  r.width  + 'px',
-      height: r.height + 'px'
-    });
-
-    const spinner = document.createElement('div');
-    spinner.className = 'tt-disc-spinner';
-    spinner.appendChild(disc.cloneNode(true));
-    const inner = spinner.firstElementChild;
-    Object.assign(inner.style, {
-      position: 'absolute', inset: '0',
-      width: '100%', height: '100%',
-      top: '0', right: 'auto', transform: 'none', opacity: '1'
-    });
-
-    outer.appendChild(spinner);
-    return { outer, spinner, rect: r };
-  }
-
-  function centreTransform(rect) {
-    const size = Math.min(innerWidth, innerHeight) * 0.46;
-    const scale = size / Math.max(rect.width, rect.height);
-
-    const dx = (innerWidth  / 2) - (rect.left + rect.width  / 2);
-    const dy = (innerHeight / 2) - (rect.top  + rect.height / 2);
-
-    return `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
-  }
-
-  function run(link, disc, url) {
-    busy = true;
-
-    const { outer, spinner, rect } = cloneDisc(disc);
-    const { platter, arm } = buildStage();
-
-    disc.classList.add('tt-hidden');
-    overlay.appendChild(outer);
-    overlay.style.display = 'block';
-
-    void overlay.offsetWidth;
-
-    requestAnimationFrame(() => {
-      outer.style.transform = centreTransform(rect);
-      platter.classList.add('tt-in');
-    });
-
-    setTimeout(() => {
-      spinner.classList.add('tt-spinning');
-      arm.classList.add('tt-drop');
-      cue();
-    }, SLIDE);
-
-    setTimeout(() => {
-      overlay.classList.add('tt-exit');
-    }, SLIDE + SPIN);
-
-    let gone = false;
-    const go = () => {
-      if (gone) return;
-      gone = true;
-      window.location.href = url;
-    };
-    overlay.addEventListener('transitionend', (e) => {
-      if (e.target === overlay && e.propertyName === 'transform') go();
-    }, { once: true });
-    setTimeout(go, SLIDE + SPIN + WIPE + 200);
-  }
-
-   document.addEventListener('click', (e) => {
-    const link = e.target.closest('a.release');
-    if (!link) return;
-
-    const url = link.getAttribute('href');
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
-
-    const disc = link.querySelector('.disc');
-    if (!disc || busy || REDUCED) return;
-
-    e.preventDefault();
-    run(link, disc, link.href);
-  });
-})();
- </script>
-  
-<!-- ============================================================
-     PASTE #4 — load the controller as a module.
-     Put this near the END of <body>, AFTER your existing
-     wave-engine <script> (so window.__armAudio etc. exist).
-     ============================================================ -->
-<script type="module" src="baton-gate-3d.js"></script>
-
-</body></html>
+      <figure class="img-ph">
+        <div class="frame">[ spatial audio still ]</div>
+        <figcaption>image placeholder</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="hue-data" data-icons="data" data-kind="data">
+    <h2 id="signal" class="h-data">The Signal</h2>
+    <p>The pipeline reads a continuous stress index (derived from alpha suppression) that drives the spectral filter, alongside the spectral shift between a calm baseline and an active stressor (alpha power drops, beta power rises).</p>
+    <div class="viz-row">
+      <figure class="viz-ph">
+        <div class="frame">[ stress-index curve ]</div>
+        <figcaption>stress-index curve</figcaption>
+      </figure>
+      <figure class="viz-ph">
+        <div class="frame">[ band-power comparison ]</div>
+        <figcaption>band-power comparison</figcaption>
+      </figure>
+      <figure class="viz-ph">
+        <div class="frame">[ STFT spectrogram ]</div>
+        <figcaption>STFT spectrogram</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="hue-music" data-icons="music" data-kind="music">
+    <h2 id="tracklist" class="h-music">The Tracklist</h2>
+    <div class="tracks-wrap">
+      <table class="tracks">
+        <thead>
+          <tr>
+            <th>Act</th>
+            <th>Track</th>
+            <th>Genre / instrumentation</th>
+            <th>Character</th>
+            <th>EEG condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>I</td>
+            <td><a class="tname pending-ext" title="YouTube URL not provided">Overture</a></td>
+            <td>Distorted orchestral</td>
+            <td>Wolf (all, merging)</td>
+            <td>distorted Wolf theme</td>
+          </tr>
+          <tr>
+            <td>II</td>
+            <td><a class="tname pending-ext" title="YouTube URL not provided">A440</a></td>
+            <td>Oboe ↔ synth-pop</td>
+            <td>Duck &amp; Cat</td>
+            <td>dialogic recording</td>
+          </tr>
+          <tr>
+            <td>III</td>
+            <td><a class="tname pending-ext" title="YouTube URL not provided">Prima</a></td>
+            <td>A capella</td>
+            <td>Bird (pre-trauma)</td>
+            <td>baseline · pre-stress</td>
+          </tr>
+          <tr>
+            <td>IV</td>
+            <td><a class="tname pending-ext" title="YouTube URL not provided">Rot</a></td>
+            <td>Noir jazz brass</td>
+            <td>Wolf (stress)</td>
+            <td>composite stress avg.</td>
+          </tr>
+          <tr>
+            <td>V</td>
+            <td><a class="tname pending-ext" title="YouTube URL not provided">Finale</a></td>
+            <td>Adagio → jazz</td>
+            <td>Full orchestra + Wolf</td>
+            <td>average of all data</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Each track is a movement in the conductor’s arc, and each carries EEG data from a specific recording condition.</p>
+    <button class="toggle" type="button" data-track-toggle aria-expanded="false" aria-controls="track-notes">
+      <span class="caret">▸</span> Detailed explanation of each track
+    </button>
+    <div class="track-notes" id="track-notes" hidden>
+      <article class="act">
+        <h3>I. Overture</h3>
+        <p>The album’s opening track establishes the central metaphor: a conductor trying to lead an orchestra that won’t synchronize. Built on a distorted recomposition of Prokofiev’s Wolf theme, the piece unfolds without structure, regulation, or harmony. The Bird, Duck, and Cat themes are each briefly audible before being swallowed whole into the Wolf’s texture, their individual voices absorbed into the dominant stress state. The piece ends unresolved, its harmonic tension passed directly to the tracks that follow.</p>
+      </article>
+      <article class="act">
+        <h3>II. A440</h3>
+        <p>A440 is structured as a dialogue between two distinct voices: Duck, represented by the oboe’s penetrating timbre, and Cat, through an electric guitar sequence with synth-pop drums. A440 refers to the standard tuning pitch in orchestral performance, the oboe’s A that every instrument must match before a concert begins. The track uses this convention as a metaphor for structural constraint. Duck argues that hope is self-delusion; Cat counters with analysis; and finger snaps on every beat mark time passing through the whole argument. The outro performs dissolution rather than resolution.</p>
+      </article>
+      <article class="act">
+        <h3>III. Prima</h3>
+        <p>The album’s only fully acapella track, Prima carries no lyrics but only the unaccompanied voice, representing the Bird, or pre-trauma state: hope before experience, innocence before hierarchy. The song uses baseline EEG data, before any stressor has been introduced. The track is deliberately fragile: without the scaffolding of rhythm, harmony, or arrangement, the voice has nowhere to hide. It represents the state the body cannot sustain once chronic social stress begins, and its placement at the center of the tracklist makes it the album’s quiet axis: the thing the Overture has already begun to lose, and the thing the Finale is reaching back toward.</p>
+      </article>
+      <article class="act">
+        <h3>IV. Rot</h3>
+        <blockquote class="callout">“Why conduct what’s already dead?”</blockquote>
+        <p>Rot is the only piece to completely abandon orchestral instrumentation, replacing it with a brass-and-percussion jazz configuration. The song represents the Wolf, or stress. Written in a scat-influenced noir jazz style, the piece incorporates the composer’s EEG data averaged from both the cognitive stress and social-evaluative stress sessions as a jazz piano lick, making the composite physiological load audible. Rot addresses the listener directly in the second person, immersing the listener in the position of the conductor, experiencing stress chronically.</p>
+      </article>
+      <article class="act">
+        <h3>V. Finale</h3>
+        <blockquote class="callout">Integration, not elimination.</blockquote>
+        <p>The closing track is formally the inverse of Overture. Where Overture absorbed individual voices into the Wolf’s texture, Finale builds them back one at a time. Bird, now in chords rather than a solo line, enters first, signalling hope that has survived contact with Duck’s learned helplessness and Cat’s analytical paralysis. Oboe follows with the A440 tuning note, but blended into the flute’s harmonics rather than announced. Violins take an original melody, the first moment the conductor’s agency produces new musical material rather than reacting to others’ themes.</p>
+        <p>The piece reaches its central argument in its final section: the orchestral adagio gives way to jazz as Wolf re-enters, but this time the conductor does not try to silence it. The tension between the orchestral and jazz vocabularies is not resolved; the two are held together. Finale is mastered with the average of all EEG data, as it is the integration of both stress and recovery.</p>
+        <p>Unlike Prokofiev’s triumphant ending where Peter captures the wolf, Finale subverts resolution. The conductor learns to embrace miscoordination rather than impose perfect order. The resolution isn’t conducting success by overpowering Wolf, but conducting success by letting Wolf conduct too.</p>
+        <p class="closing">Dissonance becomes part of the symphony.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="result" class="h-strong">The Result</h2>
+    <ul class="bullets">
+      <li>Screened in 5 venues, 200–300 audience per venue.</li>
+      <li>Highest grade in the cohort (120 students), from a committee including a former Metropolitan Museum art critic and a Stanford immunologist, who called it “a triumph of interdisciplinary research and creativity.”</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="demonstrates" class="h-strong">What This Project Demonstrates</h2>
+    <ul class="demo-list">
+      <li>
+        <h3>Creative-technical systems design</h3>
+        <p>A continuous 0–1 biometric index driving real-time spectral automation across a full score, architecturally equivalent to game-audio RTPC, plus a second, distinct data-to-notes transcription path.</p>
+      </li>
+      <li>
+        <h3>Signal processing &amp; data engineering</h3>
+        <p>End-to-end Python pipeline over 40+ hours of 4-channel EEG (OpenBCI, 200 Hz): acquisition, artifact handling, Butterworth filtering, band-power feature extraction, STFT analysis, and a reproducible normalization framework. Built with MNE, SciPy, NumPy, and Mido.</p>
+      </li>
+      <li>
+        <h3>Composition &amp; production</h3>
+        <p>Original five-track score across four genres, mastered in Dolby Atmos with intentional spatial grammar.</p>
+      </li>
+      <li>
+        <h3>Interdisciplinary communication</h3>
+        <p>A neuroscience claim about chronic social stress made perceptible through narrative and music, validated by both a scientist and an art historian.</p>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<script src="dive-hud.js"></script>
+<script src="dive-waves.js"></script>
+<script src="dive-memory.js"></script>
+<script src="dive-player.js"></script>
+</body>
+</html>

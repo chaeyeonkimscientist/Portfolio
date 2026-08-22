@@ -140,6 +140,10 @@
     if (reduced) {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
     } else if ('IntersectionObserver' in window) {
+      // Scroll-driven reveal: an element lights only once it rises past a trigger
+      // line ~72% down the viewport. The negative bottom rootMargin pulls that
+      // line up the screen, so stacked lines (the scenario) reveal one at a time
+      // as the user scrolls, rather than all firing when the block first appears.
       const io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
@@ -147,7 +151,7 @@
             io.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.28 });
+      }, { threshold: 0, rootMargin: '0px 0px -38% 0px' });
       reveals.forEach(function (el) { io.observe(el); });
     } else {
       reveals.forEach(function (el) { el.classList.add('is-in'); });
