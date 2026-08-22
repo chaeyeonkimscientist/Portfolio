@@ -850,9 +850,12 @@ a.tname.pending-ext::before{content:none}
   transition:opacity .9s var(--ease),transform 1.15s var(--ease);
 }
 .wings path{
-  fill:rgba(183,167,216,.22);stroke:rgba(239,231,239,.45);stroke-width:0.6;
+  stroke:rgba(239,231,239,.4);stroke-width:0.7;
   mix-blend-mode:screen;
 }
+.wings-still:hover .wings-label,
+.wings-still:focus-visible .wings-label,
+.wings-still.is-open .wings-label{opacity:0.28}
 .wings-still:hover .wings,
 .wings-still:focus-visible .wings,
 .wings-still.is-open .wings{

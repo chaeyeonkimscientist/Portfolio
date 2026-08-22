@@ -247,14 +247,21 @@ Copy your nodes before disconnecting.</pre>
     <figure class="img-ph wings-still" id="ix-wings" tabindex="0">
       <div class="frame">
         <span class="wings-label">[ mirror-scene still ]</span>
-        <svg class="wings" viewBox="0 0 320 180" aria-hidden="true">
+        <svg class="wings" viewBox="0 0 400 240" aria-hidden="true">
+          <defs>
+            <radialGradient id="wingWash" cx="50%" cy="40%" r="70%">
+              <stop offset="0%" stop-color="#efe7ef" stop-opacity="0.35"/>
+              <stop offset="55%" stop-color="#b7a7d8" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#b7a7d8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
           <g class="wing wing-l">
-            <path d="M160 96 C118 88 72 48 54 28 C86 42 118 58 148 90 C132 70 108 42 96 22 C120 40 144 68 160 96 Z" />
-            <path d="M160 98 C120 110 70 128 48 152 C84 132 122 116 152 102 C128 126 96 150 78 168 C110 146 140 120 160 98 Z" />
+            <path fill="url(#wingWash)" d="M198 118 C168 108 96 54 62 28 C78 72 118 108 186 126 C140 96 92 58 70 22 C108 58 160 96 198 118 Z"/>
+            <path fill="url(#wingWash)" d="M198 122 C160 138 92 168 58 206 C96 176 148 148 190 128 C128 168 86 204 64 228 C112 192 162 148 198 122 Z"/>
           </g>
           <g class="wing wing-r">
-            <path d="M160 96 C202 88 248 48 266 28 C234 42 202 58 172 90 C188 70 212 42 224 22 C200 40 176 68 160 96 Z" />
-            <path d="M160 98 C200 110 250 128 272 152 C236 132 198 116 168 102 C192 126 224 150 242 168 C210 146 180 120 160 98 Z" />
+            <path fill="url(#wingWash)" d="M202 118 C232 108 304 54 338 28 C322 72 282 108 214 126 C260 96 308 58 330 22 C292 58 240 96 202 118 Z"/>
+            <path fill="url(#wingWash)" d="M202 122 C240 138 308 168 342 206 C304 176 252 148 210 128 C272 168 314 204 336 228 C288 192 238 148 202 122 Z"/>
           </g>
         </svg>
       </div>
