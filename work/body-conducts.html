@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./dive.css?v=11">
+<link rel="stylesheet" href="./dive.css?v=12">
 </head>
 <body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
@@ -198,11 +198,9 @@ Copy your nodes before disconnecting.</pre>
       </li>
     </ol>
 
-    <div class="split">
-      <div>
-        <h3>Spatial Audio Rendering</h3>
-        <p>The completed score was mastered in <strong>Dolby Atmos</strong> using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
-      </div>
+    <div class="split spatial">
+      <h3>Spatial Audio Rendering</h3>
+      <p>The completed score was mastered in <strong>Dolby Atmos</strong> using Logic Pro’s 3D audio engine, placing individual sound sources independently across left, right, above, behind, and below the listener. For a project about chronic social stress, which is atmospheric, ambient, and arrives from no single locatable source, this was a deliberate decision: the spatial grammar of the audio format itself encodes the phenomenology of the stress the film depicts.</p>
       <figure class="img-ph img-real">
         <img src="./Spatial%20Audio.png" alt="Dolby Atmos renderer: binaural objects placed around a listener in a 3D room" loading="lazy">
         <figcaption>Dolby Atmos · binaural renderer</figcaption>
@@ -215,11 +213,11 @@ Copy your nodes before disconnecting.</pre>
     <p>The pipeline reads a <strong>continuous stress index</strong> (derived from alpha suppression) that drives the spectral filter, alongside the spectral shift between a calm baseline and an active stressor (alpha power drops, beta power rises).</p>
     <div class="viz-row">
       <figure class="viz-chart">
-        <canvas id="viz-stress" width="640" height="360" aria-label="Stress-index curves for baseline, n-back, and social-evaluative sessions"></canvas>
+        <canvas id="viz-stress" width="800" height="500" aria-label="Stress-index curves for baseline, n-back, and social-evaluative sessions"></canvas>
         <figcaption>stress-index curve · alpha suppression vs baseline</figcaption>
       </figure>
       <figure class="viz-chart">
-        <canvas id="viz-bands" width="640" height="360" aria-label="Relative alpha and beta band power for baseline, n-back, and social-evaluative sessions"></canvas>
+        <canvas id="viz-bands" width="800" height="500" aria-label="Relative alpha and beta band power for baseline, n-back, and social-evaluative sessions"></canvas>
         <figcaption>band-power comparison · relative 4–40 Hz</figcaption>
       </figure>
       <figure class="viz-record">
@@ -348,11 +346,11 @@ Copy your nodes before disconnecting.</pre>
   </section>
 </main>
 
-<script src="./dive-hud.js?v=11"></script>
-<script src="./dive-waves.js?v=11"></script>
-<script src="./dive-bio.js?v=11"></script>
-<script src="./dive-memory.js?v=11"></script>
-<script src="./dive-player.js?v=11"></script>
-<script src="./dive-signal.js?v=11"></script>
+<script src="./dive-hud.js?v=12"></script>
+<script src="./dive-waves.js?v=12"></script>
+<script src="./dive-bio.js?v=12"></script>
+<script src="./dive-memory.js?v=12"></script>
+<script src="./dive-player.js?v=12"></script>
+<script src="./dive-signal.js?v=12"></script>
 </body>
 </html>
