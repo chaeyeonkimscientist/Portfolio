@@ -177,12 +177,32 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 .dive > section > .scenario-pin,
 .dive > section > .scenario,
 .dive > section > .bio-loop,
-.dive > section > .tracks-wrap{
+.dive > section > .tracks-wrap,
+.dive > section > .award-row,
+.dive > section > .ix{
   max-width:78ch;width:100%;
 }
 .dive > section > .viz-row,
-.dive > section > .split{
+.dive > section > .split,
+.dive > section > .ix-wide{
   max-width:100%;width:100%;
+}
+.dive > section > .wings-still{
+  max-width:min(42rem,100%);width:100%;
+}
+.section-kicker{
+  font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--lav);margin:0 0 0.45rem;font-weight:700;
+}
+.ix .kicker{
+  font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--lav);margin-bottom:0.85rem;font-weight:700;
+}
+.ix{margin:2rem auto 1.6rem}
+.ix-ph-audio{
+  font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:rgba(239,231,239,0.45);text-align:center;
+  margin:0.55rem 0 0;
 }
 blockquote.callout{
   font-family:"Instrument Serif",Georgia,serif;font-style:italic;
@@ -264,6 +284,7 @@ strong,b{font-weight:700}
   color:var(--bone);margin:0 0 0.4rem;
 }
 .pipeline ul{margin:0.2rem 0 0;padding-left:1.1rem;color:var(--bone)}
+.pipeline p{margin:0;color:var(--bone)}
 .pipeline li li{display:list-item;grid-template-columns:none;gap:0;margin:0.25rem 0}
 
 .viz-row{
@@ -440,8 +461,10 @@ a.tname.pending-ext::before{content:none}
     rgba(201,67,106,.15) 72%,
     rgba(201,67,106,0) 100%);
 }
-.hue-data + .hue-data{padding-top:4.5rem}
-.hue-data + .hue-data::before{top:-14rem}
+.hue-data + .hue-data,
+.hue-music + .hue-music{padding-top:4.5rem}
+.hue-data + .hue-data::before,
+.hue-music + .hue-music::before{top:-14rem}
 
 /* Sticky staircase: the steps sit together, each one indented further down-right.
    A tall pin gives the scroll runway; the cluster stays on screen while each
@@ -721,6 +744,228 @@ a.tname.pending-ext::before{content:none}
   padding:0.7rem 0.85rem;max-width:22rem;
 }
 
+/* ===== short films interactives ===== */
+.award-row{
+  display:grid;grid-template-columns:1fr;gap:0.9rem;
+  margin:1.6rem auto 0.4rem;
+}
+@media(min-width:720px){
+  .award-row{grid-template-columns:1fr 1fr}
+}
+.award{
+  position:relative;overflow:hidden;display:flex;flex-direction:column;gap:0.35rem;
+  text-decoration:none;color:inherit;
+  border:0.5px solid rgba(224,180,92,.42);background:rgba(26,22,16,.72);
+  padding:1rem 1.05rem 1.05rem;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;
+}
+.award::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,220,140,.38) 50%,transparent 62%);
+  transform:translateX(-120%);
+}
+.award:hover,.award:focus-visible{
+  transform:translateY(-4px);
+  border-color:rgba(255,220,140,.75);
+  box-shadow:0 10px 28px rgba(224,180,92,.22),0 0 18px rgba(255,220,140,.12);
+  outline:none;color:inherit;
+}
+.award:hover::after,.award:focus-visible::after{
+  transform:translateX(120%);
+  transition:transform .85s ease;
+}
+.award-kicker{
+  font-family:"DM Mono",monospace;font-size:0.55rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:#e0b45c;
+}
+.award-name{
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.22rem;line-height:1.2;color:var(--bone);
+}
+.award-meta{
+  font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--bone-dim);
+}
+.award-gold{animation:award-pulse 1.8s ease-out 1}
+@keyframes award-pulse{
+  0%{box-shadow:0 0 0 0 rgba(224,180,92,.0)}
+  35%{box-shadow:0 0 28px rgba(255,220,140,.55),0 0 8px rgba(224,180,92,.8)}
+  100%{box-shadow:0 0 0 0 rgba(224,180,92,0)}
+}
+
+.chord-stage{
+  display:flex;align-items:baseline;justify-content:center;gap:0.7rem;flex-wrap:wrap;
+  border:0.5px solid var(--hair);background:var(--iris-soft);
+  min-height:7.5rem;padding:1.4rem 1rem;cursor:pointer;
+}
+.chord{
+  font-family:"Instrument Serif",Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);
+  line-height:1;color:var(--lav);
+}
+.chord-from{text-shadow:0 0 0 transparent;transition:text-shadow .4s,color .4s,opacity .4s}
+.chord-to{color:var(--bone);opacity:0.18;transition:opacity .25s,text-shadow .25s,color .25s}
+.chord-arrow{font-family:"DM Mono",monospace;color:var(--bone-dim);opacity:0.5}
+.chord-stage.is-pull .chord-from{
+  color:#fff;
+  text-shadow:0 0 18px rgba(183,167,216,.9),0 0 36px rgba(183,167,216,.45);
+}
+.chord-stage.is-almost .chord-to{
+  opacity:0.55;color:var(--lav);
+  text-shadow:0 0 12px rgba(183,167,216,.35);
+}
+.chord-stage.is-paused .chord-from{
+  color:#fff;
+  text-shadow:0 0 22px rgba(183,167,216,1),0 0 40px rgba(183,167,216,.5);
+}
+.chord-stage.is-paused .chord-to{opacity:0.12}
+
+.ribbon-row{margin-top:0}
+.ribbon{
+  border:0.5px solid var(--hair);background:var(--iris-soft);
+  padding:0.7rem 0.7rem 0.45rem;cursor:pointer;
+  transition:opacity .3s var(--ease),border-color .3s;
+}
+.ribbon canvas{display:block;width:100%;height:auto;aspect-ratio:5/1;min-height:6.5rem}
+.ribbon figcaption{
+  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--bone-dim);margin-top:0.55rem;
+}
+.ribbon-row.is-solo .ribbon{opacity:0.28}
+.ribbon-row.is-solo .ribbon.is-hot{
+  opacity:1;border-color:var(--lav);
+  box-shadow:0 0 18px rgba(183,167,216,.16);
+}
+
+.wings-still{margin:1.6rem auto 0;max-width:min(42rem,100%);cursor:pointer}
+.wings-still .frame{
+  position:relative;min-height:18rem;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(183,167,216,.12) 0%,transparent 55%),
+    var(--iris-soft);
+}
+.wings-label{position:relative;z-index:1}
+.wings{
+  position:absolute;inset:8% 6% 6%;width:88%;height:84%;
+  opacity:0;transform:scale(.72);transform-origin:50% 58%;
+  pointer-events:none;
+  transition:opacity .9s var(--ease),transform 1.15s var(--ease);
+}
+.wings path{
+  stroke:rgba(239,231,239,.4);stroke-width:0.7;
+  mix-blend-mode:screen;
+}
+.wings-still:hover .wings-label,
+.wings-still:focus-visible .wings-label,
+.wings-still.is-open .wings-label{opacity:0.28}
+.wings-still:hover .wings,
+.wings-still:focus-visible .wings,
+.wings-still.is-open .wings{
+  opacity:1;transform:scale(1);
+  animation:wings-breathe 3.6s ease-in-out infinite;
+}
+@keyframes wings-breathe{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.045)}
+}
+
+.id-cards{
+  display:grid;grid-template-columns:1fr;gap:0.85rem;
+}
+@media(min-width:640px){
+  .id-cards{grid-template-columns:1fr 1fr}
+}
+.id-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:0.25rem;
+  text-align:left;cursor:pointer;
+  background:rgba(16,23,25,.72);border:1px solid var(--hair);color:inherit;
+  padding:1.1rem 1.05rem 1.15rem;
+  transition:border-color .25s,box-shadow .25s,transform .25s;
+}
+.id-card:hover,.id-card:focus-visible{
+  border-color:var(--lav);outline:none;transform:translateY(-2px);
+}
+.id-card[aria-pressed="true"]{
+  border-color:var(--amaranth-lit);
+  box-shadow:0 0 18px rgba(201,67,106,.28);
+  animation:id-pulse 1.35s ease-in-out infinite;
+}
+.id-name{
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.45rem;color:var(--bone);
+}
+.id-role{
+  font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--lav);
+}
+.id-voice{font-size:0.9rem;color:var(--bone-dim);margin-top:0.15rem}
+@keyframes id-pulse{
+  0%,100%{box-shadow:0 0 10px rgba(201,67,106,.18)}
+  50%{box-shadow:0 0 22px rgba(201,67,106,.42)}
+}
+
+.morse{
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;
+  gap:0.55rem 0.7rem;
+  border:0.5px solid var(--hair);background:var(--iris-soft);
+  padding:1.3rem 1rem 1.1rem;
+}
+.morse-cluster{
+  display:flex;flex-direction:column;align-items:center;gap:0.55rem;
+  background:none;border:none;color:inherit;cursor:pointer;padding:0.2rem 0.35rem;
+}
+.morse-marks{display:flex;align-items:center;gap:0.28rem;min-height:1.1rem}
+.morse-marks i{
+  display:block;width:0.42rem;height:0.42rem;border-radius:50%;
+  background:var(--bone-dim);opacity:0.28;
+  box-shadow:none;transition:opacity .2s,background .2s,box-shadow .2s;
+}
+.morse-marks i.dash{
+  width:1.15rem;height:0.28rem;border-radius:2px;
+}
+.morse-cluster.is-lit i,
+.morse-marks i.is-on{
+  opacity:1;background:var(--data);
+  box-shadow:0 0 10px var(--data);
+}
+.morse-letter{
+  font-family:"DM Mono",monospace;font-size:0.72rem;letter-spacing:0.18em;
+  color:var(--data);opacity:0;transform:translateY(4px);
+  transition:opacity .25s,transform .25s;
+}
+.morse-cluster:hover .morse-letter,
+.morse-cluster:focus-visible .morse-letter,
+.morse-cluster.is-show .morse-letter{
+  opacity:1;transform:none;
+}
+.morse-gap{
+  font-family:"DM Mono",monospace;color:var(--bone-dim);opacity:0.4;
+  padding-bottom:1.35rem;
+}
+
+.triptych{
+  display:grid;grid-template-columns:1fr;gap:0.75rem;
+}
+@media(min-width:860px){
+  .triptych{grid-template-columns:1fr 1fr 1fr}
+}
+.tri-panel{
+  display:flex;flex-direction:column;align-items:flex-start;gap:0.45rem;
+  text-align:left;cursor:pointer;
+  background:rgba(16,23,25,.72);border:0.5px solid var(--hair);color:inherit;
+  padding:1.15rem 1.05rem 1.2rem;
+  opacity:0.38;transform:scale(.98);
+  transition:opacity .4s var(--ease),transform .4s var(--ease),border-color .3s,box-shadow .3s;
+}
+.tri-panel.is-fore{
+  opacity:1;transform:none;
+  border-color:var(--lav);
+  box-shadow:0 0 22px rgba(183,167,216,.18);
+}
+.tri-name{
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.45rem;color:var(--bone);
+}
+.tri-arc{font-size:0.92rem;line-height:1.45;color:var(--bone-dim)}
+.tri-panel:hover,.tri-panel:focus-visible{outline:none;border-color:var(--lav)}
+
+
 @media(max-width:760px){
   .mode-icons{gap:1.4rem;padding:1.3rem 1rem 2.6rem}
   .dive{padding:1.6rem 0 5rem}
@@ -741,6 +986,8 @@ a.tname.pending-ext::before{content:none}
   .scenario p:nth-child(5){padding-left:2.8rem}
   .scenario p:nth-child(6){padding-left:3.5rem}
   .scenario p:nth-child(7){padding-left:4.2rem}
+  .award-row,.id-cards,.triptych{grid-template-columns:1fr}
+  .wings-still .frame{min-height:14rem}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -750,4 +997,6 @@ a.tname.pending-ext::before{content:none}
   .scenario-pin{height:auto}
   .scenario{position:static}
   .scenario p{opacity:1;transform:none}
+  .award,.award-gold,.id-card[aria-pressed="true"],.wings,.wings-still:hover .wings{animation:none;transition:none}
+  .wings{opacity:0.55;transform:none}
 }

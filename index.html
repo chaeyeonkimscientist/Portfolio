@@ -195,7 +195,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 
 .work{
-  --work-n:4;
+  --work-n:5;
   --work-hold:80vh;
   --work-slide:36vh;
   position:relative;z-index:5;background:var(--iris);
@@ -247,7 +247,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
 .sl-para{background:linear-gradient(160deg,#222630 0%,#191c24 55%,#142a2f 100%)}
 .sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
+.sl-films{background:linear-gradient(155deg,#33242c 0%,#1c1820 52%,#1a2430 100%)}
 .lbl-grape{background:var(--grape)}.lbl-amar{background:var(--amaranth-lit)}.lbl-lav{background:var(--lav)}
+.lbl-gold{background:#c9a14a}
 
 .disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
 .disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
@@ -632,7 +634,7 @@ if (typeof Tone === 'undefined') {
 
 <section class="work" id="work">
   <div class="work-stage">
-  <div class="sec-head"><h2>Selected Work</h2><span class="count">04 &nbsp;/&nbsp; index</span></div>
+  <div class="sec-head"><h2>Selected Work</h2><span class="count">05 &nbsp;/&nbsp; index</span></div>
   <div class="work-viewport">
   <div class="work-track" id="work-track">
 
@@ -653,24 +655,6 @@ if (typeof Tone === 'undefined') {
       </div>
     </a>
 
-    <a class="release" href="#">
-      <div class="rig">
-        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
-        <div class="sleeve sl-syn">
-          <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
-          <div class="inote">[ app capture ]</div>
-          <div class="stitle">Synthetic<br>Synesthesia</div>
-        </div>
-      </div>
-      <div class="meta">
-        <div class="idx">02</div>
-        <div class="ptitle">Synthetic Synesthesia</div>
-        <div class="hook">A neurological experience <span class="hl">96% of people can't access,</span> made playable in a browser. Sound becomes color, color becomes sound &mdash; grounded in peer-reviewed research.</div>
-        <div class="demo">live demo</div>
-        <div class="tags"><span class="tag t-tec">Technology</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-mus">Music</span></div>
-      </div>
-    </a>
-
     <a class="release" href="work/paramount.html">
       <div class="rig">
         <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
@@ -681,10 +665,46 @@ if (typeof Tone === 'undefined') {
         </div>
       </div>
       <div class="meta">
-        <div class="idx">03</div>
+        <div class="idx">02</div>
         <div class="ptitle">Paramount&nbsp;/&nbsp;GCDR</div>
         <div class="hook">Research infrastructure that <span class="hl">cut pre-release analysis time by 65%.</span> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</div>
         <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-ind">Industry</span></div>
+      </div>
+    </a>
+    
+    <a class="release" href="work/short-films.html">
+      <div class="rig">
+        <div class="disc"><div class="label lbl-gold"><div class="hole"></div></div></div>
+        <div class="sleeve sl-films">
+          <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
+          <div class="inote">[ film still ]</div>
+          <div class="stitle">Short<br>Films</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">03</div>
+        <div class="ptitle">Short Films</div>
+        <div class="hook">Four 24-hour films where <span class="hl">the score is the film’s psychology.</span> Instruments as characters, ML as impossible casting, motifs that carry what dialogue never states.</div>
+        <div class="demo">Golden Owl · Best Audio</div>
+        <div class="tags"><span class="tag t-mus">Music</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-tec">Technology</span></div>
+      </div>
+    </a>
+
+    <a class="release" href="#">
+      <div class="rig">
+        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
+        <div class="sleeve sl-syn">
+          <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
+          <div class="inote">[ app capture ]</div>
+          <div class="stitle">Synthetic<br>Synesthesia</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="idx">04</div>
+        <div class="ptitle">Synthetic Synesthesia</div>
+        <div class="hook">A neurological experience <span class="hl">96% of people can't access,</span> made playable in a browser. Sound becomes color, color becomes sound &mdash; grounded in peer-reviewed research.</div>
+        <div class="demo">live demo</div>
+        <div class="tags"><span class="tag t-tec">Technology</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-mus">Music</span></div>
       </div>
     </a>
 
@@ -698,13 +718,13 @@ if (typeof Tone === 'undefined') {
         </div>
       </div>
       <div class="meta">
-        <div class="idx">04</div>
+        <div class="idx">05</div>
         <div class="ptitle">Predicting Engagement</div>
         <div class="hook">What <span class="hl">&ldquo;engagement&rdquo; actually is,</span> grounded in brain networks. Replicated and extended a study mapping behavioral predictors to attention, reward, and default-mode systems.</div>
         <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-cog">Cognitive Science</span></div>
       </div>
     </a>
-
+    
   </div>
   </div>
   </div>
