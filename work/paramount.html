@@ -8,6 +8,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./dive.css?v=12">
+<style>
+.embed-yt{
+  display:block;width:100%;max-width:100%;
+  aspect-ratio:16/9;position:relative;
+  border:0.5px solid var(--hair);background:#000;overflow:hidden;
+}
+.embed-yt iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;
+}
+.cta-row .embed-yt{flex:1 1 100%}
+.problem-split{
+  display:grid;grid-template-columns:1fr;gap:1.6rem;
+  margin-top:0.4rem;align-items:start;
+  width:100%;max-width:100%;
+}
+.problem-split .problem-copy p:last-child{margin-bottom:0}
+.problem-split .problem-goals h3{margin-top:0}
+@media(min-width:860px){
+  .problem-split{
+    grid-template-columns:1fr 1fr;
+    column-gap:2.4rem;
+    min-height:calc(100vh - 13rem);
+  }
+}
+</style>
 </head>
 <body data-project="Paramount" data-project-id="paramount">
 <a class="skip" href="#content">Skip to content</a>
@@ -105,26 +130,30 @@ Copy your nodes before disconnecting.</pre>
     <h2 id="tldr">TL;DR</h2>
     <p class="lede"><strong>Paramount / Global Content Distribution Research team.</strong> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</p>
     <p><strong>65% time reduction</strong> on pre-release research, <strong>150+ sales decks</strong> produced, <strong>25 territories</strong> analyzed weekly, <strong>20+ global offices</strong> supported.</p>
-    <p class="cta-row">
-      <a class="cta pending-ext" title="URL not provided">Internship presentation</a>
-    </p>
+    <div class="cta-row">
+      <div class="embed-yt">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/vdQClixXg9Y?si=xJENVbLa_5eJUX1c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </div>
   </section>
 
   <section class="hue-data" data-icons="data" data-kind="data">
     <h2 id="problem" class="h-data">The Problem</h2>
-    <p>Global Content Distribution Research (GCDR) at Paramount sits at the intersection of data and dealmaking. The team supports international and domestic content licensing across 20+ global sales offices, translating viewership data from linear TV and streaming platforms into insights that inform licensing negotiations, marketing campaigns, and Home Entertainment strategy.</p>
-    <p>GCDR operates on compressed timelines. When a show gains momentum, sales teams need performance data immediately to capitalize on international buyer interest. But research workflows at GCDR were manual, repetitive, and slow: pre-release performance sheets required 2-3 hours of manual research per title. The team needed infrastructure to surface insights faster without sacrificing quality.</p>
-    <h3>Goals</h3>
-    <ul class="bullets">
-      <li><stong>Automate repetitive research workflows</stong> to reduce time spent on manual data retrieval and formatting.</li>
-      <li>Analyze weekly viewership trends across <strong>150+ titles in 25 territories</strong> to support licensing negotiations.</li>
-      <li>Build <strong>data-backed audience profiles</strong> for Home Entertainment to inform targeting and marketing strategy.</li>
-      <li>Translate complex performance metrics into compelling visual narratives for sales teams in 20+ global offices.</li>
-    </ul>
-    <figure class="img-ph">
-      <div class="frame">[ slate still ]</div>
-      <figcaption>image placeholder</figcaption>
-    </figure>
+    <div class="split problem-split">
+      <div class="problem-copy">
+        <p>Global Content Distribution Research (GCDR) at Paramount sits at the intersection of data and dealmaking. The team supports international and domestic content licensing across 20+ global sales offices, translating viewership data from linear TV and streaming platforms into insights that inform licensing negotiations, marketing campaigns, and Home Entertainment strategy.</p>
+        <p>GCDR operates on compressed timelines. When a show gains momentum, sales teams need performance data immediately to capitalize on international buyer interest. But research workflows at GCDR were manual, repetitive, and slow: pre-release performance sheets required 2-3 hours of manual research per title. The team needed infrastructure to surface insights faster without sacrificing quality.</p>
+      </div>
+      <div class="problem-goals">
+        <h3>Goals</h3>
+        <ul class="bullets">
+          <li><stong>Automate repetitive research workflows</stong> to reduce time spent on manual data retrieval and formatting.</li>
+          <li>Analyze weekly viewership trends across <strong>150+ titles in 25 territories</strong> to support licensing negotiations.</li>
+          <li>Build <strong>data-backed audience profiles</strong> for Home Entertainment to inform targeting and marketing strategy.</li>
+          <li>Translate complex performance metrics into compelling visual narratives for sales teams in 20+ global offices.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <section class="hue-data" data-icons="data" data-kind="data">
@@ -172,10 +201,6 @@ Copy your nodes before disconnecting.</pre>
     <p><strong>Tools:</strong> Microsoft CoPilot Agent, internal Paramount API, prompting strategies.</p>
     <p><strong>Key Skill:</strong> Understanding AI limitations: knowing when to automate vs. when human judgment is essential.</p>
     <p><strong>Iteration cycles:</strong> 15+ prompt refinements to reduce hallucinations and improve formatting consistency.</p>
-    <figure class="img-ph">
-      <div class="frame">[ PRPC sheet ]</div>
-      <figcaption>image placeholder</figcaption>
-    </figure>
 
     <h3>Home Entertainment Audience Profiling</h3>
     <p>Paramount’s Home Entertainment division needed to understand <em>who</em> buys digital content (movies/shows for download or rental). Marketing assumptions existed, but no data-backed audience profile to guide targeting strategy or promotional spend.</p>
@@ -218,29 +243,6 @@ Copy your nodes before disconnecting.</pre>
     </ol>
     <p><strong>Tools:</strong> GWI platform, Excel (correlation matrices, significance testing), PowerPoint (data visualization).</p>
     <p><strong>Statistical Methods:</strong> Correlation analysis, chi-square tests for categorical variables, confidence interval calculations.</p>
-    <figure class="img-ph">
-      <div class="frame">[ audience profile deck ]</div>
-      <figcaption>image placeholder</figcaption>
-    </figure>
-  </section>
-
-  <section class="hue-data" data-icons="data" data-kind="data">
-    <h2 id="signal" class="h-data">The Signal</h2>
-    <p>[ signal copy ]</p>
-    <div class="viz-row">
-      <figure class="viz-ph">
-        <div class="frame">[ weekly trend analysis ]</div>
-        <figcaption>weekly trend analysis</figcaption>
-      </figure>
-      <figure class="viz-ph">
-        <div class="frame">[ correlation matrix ]</div>
-        <figcaption>correlation matrix</figcaption>
-      </figure>
-      <figure class="viz-ph">
-        <div class="frame">[ audience profile ]</div>
-        <figcaption>audience profile</figcaption>
-      </figure>
-    </div>
   </section>
 
   <section>
