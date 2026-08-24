@@ -196,8 +196,8 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 .work{
   --work-n:5;
-  --work-hold:80vh;
-  --work-slide:36vh;
+  --work-hold:140vh;
+  --work-slide:80vh;
   position:relative;z-index:5;background:var(--iris);
   width:100%;margin:0;padding:0;overflow-x:clip;
   height:calc(100vh + (var(--work-n) * var(--work-hold)) + ((var(--work-n) - 1) * var(--work-slide)));
@@ -740,11 +740,17 @@ if (typeof Tone === 'undefined') {
   work.style.setProperty('--work-n', String(n));
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const HOLD=80, SLIDE=36;
-  let ticking=false;
+  const HOLD=140, SLIDE=80;
+  const LERP=0.08;
+  const SETTLE=0.0007;
+  let current=0;
+  let primed=false;
+  let raf=0;
 
-  function easeInOutCubic(t){
-    return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  /* Flatter at the ends than cubic: linger on a sleeve, then ease away. */
+  function magneticEase(t){
+    t=Math.min(Math.max(t,0),1);
+    return t*t*t*(t*(t*6-15)+10);
   }
   function albumAt(p){
     const nTrans=n-1;
@@ -752,7 +758,7 @@ if (typeof Tone === 'undefined') {
     for(let i=0;i<n;i++){
       if(u<=HOLD || i===nTrans) return i;
       u-=HOLD;
-      if(u<=SLIDE) return i+easeInOutCubic(Math.min(Math.max(u/SLIDE,0),1));
+      if(u<=SLIDE) return i+magneticEase(u/SLIDE);
       u-=SLIDE;
     }
     return nTrans;
@@ -761,17 +767,29 @@ if (typeof Tone === 'undefined') {
     const total=Math.max(work.offsetHeight-innerHeight,1);
     return Math.min(Math.max(-work.getBoundingClientRect().top/total,0),1);
   }
-  function paint(){
-    ticking=false;
-    const pos=albumAt(progress());
+  function apply(pos){
     track.style.transform='translate3d('+(-(pos*(100/n))).toFixed(4)+'%,0,0)';
   }
+  function tick(){
+    raf=0;
+    const target=albumAt(progress());
+    if(!primed){ current=target; primed=true; }
+    const d=target-current;
+    if(Math.abs(d)<SETTLE){
+      current=target;
+      apply(current);
+      return;
+    }
+    current+=d*LERP;
+    apply(current);
+    raf=requestAnimationFrame(tick);
+  }
   function requestPaint(){
-    if(!ticking){ ticking=true; requestAnimationFrame(paint); }
+    if(!raf) raf=requestAnimationFrame(tick);
   }
   addEventListener('scroll',requestPaint,{passive:true});
   addEventListener('resize',requestPaint);
-  paint();
+  tick();
 })();
 </script>
 
