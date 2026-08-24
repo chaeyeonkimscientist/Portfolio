@@ -34,8 +34,8 @@
     if (!ctx) return null;
     const src = ctx.createMediaElementSource(el);
     const analyser = ctx.createAnalyser();
-    analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.65;
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.7;
     src.connect(analyser);
     analyser.connect(ctx.destination);
     const node = { analyser: analyser, time: new Uint8Array(analyser.fftSize) };
@@ -47,7 +47,6 @@
     const el = new Audio(src);
     el.preload = 'auto';
     el.loop = !!loop;
-    el.crossOrigin = 'anonymous';
     return el;
   }
 
@@ -127,28 +126,33 @@
       ctx.lineTo(csX, H - 10);
       ctx.stroke();
 
-      pitches.forEach(function (p) {
+      const ordered = pitches.slice().sort(function (a, b) {
+        const ac = a % 12 === 1 ? 1 : 0;
+        const bc = b % 12 === 1 ? 1 : 0;
+        return ac - bc;
+      });
+      ordered.forEach(function (p) {
         const x = pcX(p) * W;
         const y = H - 16 - ((p - minP) / (maxP - minP)) * (H - 32);
         const isCs = p % 12 === 1;
         const lone = name === 'beginning' && isCs;
-        let glow = 0.45;
+        let glow = name === 'beginning' ? 0.72 : 0.5;
         if (playing) {
           if (name === 'beginning') {
-            glow = lone ? 0.55 + 0.4 * (0.5 + 0.5 * Math.sin(state.t * 1.15)) : 0.55;
+            glow = lone ? 0.62 + 0.35 * (0.5 + 0.5 * Math.sin(state.t * 1.15)) : 0.8;
           } else {
             glow = 0.55 + 0.4 * (0.5 + 0.5 * Math.sin(state.t * 2.4 + p * 0.08));
           }
         } else if (lone) {
-          glow = 0.28 + 0.18 * (0.5 + 0.5 * Math.sin(state.t * 0.7));
+          glow = 0.42 + 0.28 * (0.5 + 0.5 * Math.sin(state.t * 0.7));
         }
-        const r = name === 'climax' ? 3.1 : (lone ? 5.2 : 4.2);
+        const r = name === 'climax' ? 3.1 : (lone ? 5.4 : 4.6);
         const col = isCs ? LAV : (name === 'climax' ? DATA : LAV);
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + glow + ')';
-        ctx.shadowColor = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (playing ? 0.85 : 0.35) + ')';
-        ctx.shadowBlur = playing || lone ? 14 : 4;
+        ctx.shadowColor = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (playing || lone ? 0.85 : 0.45) + ')';
+        ctx.shadowBlur = playing || lone ? 16 : 6;
         ctx.fill();
         ctx.shadowBlur = 0;
       });
@@ -198,53 +202,120 @@
       allison: root.querySelector('[data-char="allison"]'),
       brett: root.querySelector('[data-char="brett"]')
     };
-    const audio = {
-      allison: clip('./Flutes.mp3', true),
-      brett: clip('./Cellos-BBC.mp3', true)
-    };
+    const urls = { allison: './Flutes.mp3', brett: './Cellos-BBC.mp3' };
     const mix = document.getElementById('mix-state');
     const on = { allison: false, brett: false };
+    const buffers = {};
+    const sources = { allison: null, brett: null };
+    const analysers = {};
+    const times = {};
+    let clockStart = 0;
+    let loaded = null;
     let corrSmooth = 0;
+    const envA = [];
+    const envB = [];
+
+    function rms(buf) {
+      let s = 0;
+      for (let i = 0; i < buf.length; i++) {
+        const v = (buf[i] - 128) / 128;
+        s += v * v;
+      }
+      return Math.sqrt(s / Math.max(buf.length, 1));
+    }
+
+    function ensureNodes() {
+      const ctx = context();
+      if (!ctx) return null;
+      ['allison', 'brett'].forEach(function (name) {
+        if (analysers[name]) return;
+        const a = ctx.createAnalyser();
+        a.fftSize = 1024;
+        a.smoothingTimeConstant = 0.7;
+        a.connect(ctx.destination);
+        analysers[name] = a;
+        times[name] = new Uint8Array(a.fftSize);
+      });
+      return ctx;
+    }
+
+    function loadAll() {
+      if (loaded) return loaded;
+      const ctx = ensureNodes();
+      if (!ctx) {
+        loaded = Promise.reject(new Error('no audio context'));
+        return loaded;
+      }
+      loaded = Promise.all(Object.keys(urls).map(function (name) {
+        return fetch(urls[name]).then(function (res) { return res.arrayBuffer(); }).then(function (buf) {
+          return ctx.decodeAudioData(buf);
+        }).then(function (decoded) {
+          buffers[name] = decoded;
+        });
+      }));
+      return loaded;
+    }
+
+    function offsetFor(name) {
+      const ctx = audioCtx;
+      const buf = buffers[name];
+      if (!ctx || !buf) return 0;
+      if (!on.allison && !on.brett) return 0;
+      const dur = buf.duration;
+      const elapsed = ctx.currentTime - clockStart;
+      return ((elapsed % dur) + dur) % dur;
+    }
+
+    function stopVoice(name) {
+      if (sources[name]) {
+        try { sources[name].stop(); } catch (err) {}
+        try { sources[name].disconnect(); } catch (err) {}
+        sources[name] = null;
+      }
+    }
+
+    function startVoice(name) {
+      const ctx = ensureNodes();
+      const buf = buffers[name];
+      if (!ctx || !buf || !analysers[name]) return;
+      stopVoice(name);
+      const otherOn = name === 'allison' ? on.brett : on.allison;
+      if (!otherOn) clockStart = ctx.currentTime;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      src.connect(analysers[name]);
+      src.start(0, offsetFor(name));
+      sources[name] = src;
+    }
 
     function setVoice(name, want) {
-      const el = audio[name];
       const btn = cards[name];
-      on[name] = want;
       if (btn) setPressed(btn, want);
       if (want) {
-        tap(el);
-        const other = name === 'allison' ? audio.brett : audio.allison;
-        const otherOn = name === 'allison' ? on.brett : on.allison;
-        if (otherOn && !other.paused) {
-          el.currentTime = other.currentTime;
-        } else if (!otherOn) {
-          el.currentTime = 0;
-        }
-        const play = el.play();
-        if (play && play.catch) play.catch(function () {});
+        on[name] = true;
+        startVoice(name);
       } else {
-        el.pause();
+        on[name] = false;
+        stopVoice(name);
+        if (!on.allison && !on.brett) clockStart = 0;
       }
     }
 
     function bothOn() { return on.allison && on.brett; }
 
     function corr() {
-      const a = taps.get(audio.allison);
-      const b = taps.get(audio.brett);
-      if (!a || !b) return 0;
-      a.analyser.getByteTimeDomainData(a.time);
-      b.analyser.getByteTimeDomainData(b.time);
-      const n = Math.min(a.time.length, b.time.length);
+      if (envA.length < 8 || envB.length < 8) return 0;
+      const n = Math.min(envA.length, envB.length);
       let sa = 0, sb = 0, sap = 0, sbp = 0, sab = 0;
       for (let i = 0; i < n; i++) {
-        const va = (a.time[i] - 128) / 128;
-        const vb = (b.time[i] - 128) / 128;
+        const va = envA[i];
+        const vb = envB[i];
         sa += va; sb += vb; sap += va * va; sbp += vb * vb; sab += va * vb;
       }
       const ma = sa / n, mb = sb / n;
-      const den = Math.sqrt((sap / n - ma * ma) * (sbp / n - mb * mb));
-      if (den < 1e-6) return 0;
+      const den = Math.sqrt(Math.max(sap / n - ma * ma, 0) * Math.max(sbp / n - mb * mb, 0));
+      if (den < 1e-8) return 0;
       return (sab / n - ma * mb) / den;
     }
 
@@ -258,24 +329,25 @@
       const W = sized.W;
       const H = sized.H;
       ctx.clearRect(0, 0, W, H);
-      const node = taps.get(audio[name]);
+      const analyser = analysers[name];
+      const time = times[name];
       const color = fast ? LAV : AMAR;
       ctx.beginPath();
       const mid = H / 2;
-      if (on[name] && node) {
-        node.analyser.getByteTimeDomainData(node.time);
-        const step = Math.max(1, Math.floor(node.time.length / W));
+      if (on[name] && analyser && time) {
+        analyser.getByteTimeDomainData(time);
+        const step = Math.max(1, Math.floor(time.length / W));
         for (let x = 0; x < W; x++) {
-          const v = (node.time[Math.min(node.time.length - 1, x * step)] - 128) / 128;
+          const v = (time[Math.min(time.length - 1, x * step)] - 128) / 128;
           const y = mid + v * H * (fast ? 0.28 : 0.42);
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
       } else {
-        const fq = fast ? 0.22 : 0.07;
-        const amp = fast ? H * 0.14 : H * 0.28;
+        const fq = fast ? 0.18 : 0.055;
+        const amp = fast ? H * 0.18 : H * 0.32;
         for (let x = 0; x <= W; x += 2) {
-          const y = mid + Math.sin(x * fq) * amp * 0.18;
+          const y = mid + Math.sin(x * fq) * amp * 0.35;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
@@ -289,10 +361,16 @@
       drawCard('allison', true);
       drawCard('brett', false);
       if (mix) {
-        if (bothOn()) {
+        if (bothOn() && analysers.allison && analysers.brett) {
+          analysers.allison.getByteTimeDomainData(times.allison);
+          analysers.brett.getByteTimeDomainData(times.brett);
+          envA.push(rms(times.allison));
+          envB.push(rms(times.brett));
+          if (envA.length > 45) envA.shift();
+          if (envB.length > 45) envB.shift();
           const c = corr();
-          corrSmooth = corrSmooth * 0.82 + c * 0.18;
-          const harmony = corrSmooth > 0.12;
+          corrSmooth = corrSmooth * 0.85 + c * 0.15;
+          const harmony = corrSmooth > 0.18;
           mix.hidden = false;
           mix.textContent = harmony ? 'HARMONY' : 'DISSONANCE';
           mix.classList.toggle('is-harmony', harmony);
@@ -301,11 +379,8 @@
           mix.hidden = true;
           mix.textContent = '';
           corrSmooth = 0;
-        }
-      }
-      if (on.allison && on.brett && !audio.allison.paused && !audio.brett.paused) {
-        if (Math.abs(audio.allison.currentTime - audio.brett.currentTime) > 0.08) {
-          audio.brett.currentTime = audio.allison.currentTime;
+          envA.length = 0;
+          envB.length = 0;
         }
       }
       requestAnimationFrame(frame);
@@ -314,10 +389,18 @@
     Object.keys(cards).forEach(function (name) {
       if (!cards[name]) return;
       cards[name].addEventListener('click', function () {
+        const want = !on[name];
         context();
-        setVoice(name, !on[name]);
+        loadAll().then(function () {
+          setVoice(name, want);
+        }).catch(function () {});
       });
     });
+
+    root.addEventListener('pointerenter', function preload() {
+      context();
+      loadAll().catch(function () {});
+    }, { once: true });
 
     frame();
     addEventListener('resize', function () {
