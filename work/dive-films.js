@@ -61,8 +61,8 @@
     if (!row) return;
 
     const clips = {
-      beginning: clip('./Caug_beginning.mp3', true),
-      climax: clip('./Caug_climax.mp3', true)
+      beginning: clip('./Minervopolis-Spring-26-beginning.mp3', true),
+      climax: clip('./Minervopolis-Spring-26-climax.mp3', true)
     };
 
     /* Climax MIDI unique pitches; Beginning is the exposed C♯–F♯–A voicing. */
@@ -208,20 +208,34 @@
     const buffers = {};
     const sources = { allison: null, brett: null };
     const analysers = {};
-    const times = {};
+    const waves = {};
     let clockStart = 0;
     let loaded = null;
-    let corrSmooth = 0;
-    const envA = [];
-    const envB = [];
+    const DISSONANCE_AT = 19.0;
+    const WAVE_HOP = 1 / 200;
 
-    function rms(buf) {
-      let s = 0;
-      for (let i = 0; i < buf.length; i++) {
-        const v = (buf[i] - 128) / 128;
-        s += v * v;
+    function peaksFromBuffer(buf) {
+      const ch0 = buf.getChannelData(0);
+      const ch1 = buf.numberOfChannels > 1 ? buf.getChannelData(1) : null;
+      const hop = Math.max(1, Math.round(buf.sampleRate * WAVE_HOP));
+      const n = Math.max(1, Math.ceil(ch0.length / hop));
+      const mins = new Float32Array(n);
+      const maxs = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const a = i * hop;
+        const b = Math.min(ch0.length, a + hop);
+        let mn = 1;
+        let mx = -1;
+        for (let s = a; s < b; s++) {
+          let v = ch0[s];
+          if (ch1) v = (v + ch1[s]) * 0.5;
+          if (v < mn) mn = v;
+          if (v > mx) mx = v;
+        }
+        mins[i] = mn;
+        maxs[i] = mx;
       }
-      return Math.sqrt(s / Math.max(buf.length, 1));
+      return { mins: mins, maxs: maxs, hop: WAVE_HOP, duration: buf.duration };
     }
 
     function ensureNodes() {
@@ -230,11 +244,10 @@
       ['allison', 'brett'].forEach(function (name) {
         if (analysers[name]) return;
         const a = ctx.createAnalyser();
-        a.fftSize = 1024;
-        a.smoothingTimeConstant = 0.7;
+        a.fftSize = 2048;
+        a.smoothingTimeConstant = 0.35;
         a.connect(ctx.destination);
         analysers[name] = a;
-        times[name] = new Uint8Array(a.fftSize);
       });
       return ctx;
     }
@@ -251,6 +264,7 @@
           return ctx.decodeAudioData(buf);
         }).then(function (decoded) {
           buffers[name] = decoded;
+          waves[name] = peaksFromBuffer(decoded);
         });
       }));
       return loaded;
@@ -304,19 +318,68 @@
 
     function bothOn() { return on.allison && on.brett; }
 
-    function corr() {
-      if (envA.length < 8 || envB.length < 8) return 0;
-      const n = Math.min(envA.length, envB.length);
-      let sa = 0, sb = 0, sap = 0, sbp = 0, sab = 0;
-      for (let i = 0; i < n; i++) {
-        const va = envA[i];
-        const vb = envB[i];
-        sa += va; sb += vb; sap += va * va; sbp += vb * vb; sab += va * vb;
+    function sharedTime() {
+      const ctx = audioCtx;
+      if (!ctx || clockStart === 0 || (!on.allison && !on.brett)) return 0;
+      const durs = [];
+      if (on.allison && buffers.allison) durs.push(buffers.allison.duration);
+      if (on.brett && buffers.brett) durs.push(buffers.brett.duration);
+      const dur = durs.length ? Math.min.apply(null, durs) : 1;
+      const elapsed = ctx.currentTime - clockStart;
+      return ((elapsed % dur) + dur) % dur;
+    }
+
+    function drawRibbon(ctx, W, H, wave, tPlay, playing, amp) {
+      const mid = H / 2;
+      const mins = wave.mins;
+      const maxs = wave.maxs;
+      const n = mins.length;
+      ctx.beginPath();
+      if (playing) {
+        const windowSec = 2.8;
+        const hop = wave.hop;
+        const center = tPlay / hop;
+        const span = windowSec / hop;
+        for (let x = 0; x < W; x++) {
+          const idx = Math.round(center + (x / Math.max(W - 1, 1) - 0.5) * span);
+          let mn = 0;
+          let mx = 0;
+          if (idx >= 0 && idx < n) {
+            mn = mins[idx];
+            mx = maxs[idx];
+          }
+          const y = mid - mx * H * amp;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        for (let x = W - 1; x >= 0; x--) {
+          const idx = Math.round(center + (x / Math.max(W - 1, 1) - 0.5) * span);
+          const mn = (idx >= 0 && idx < n) ? mins[idx] : 0;
+          ctx.lineTo(x, mid - mn * H * amp);
+        }
+      } else {
+        for (let x = 0; x < W; x++) {
+          const i0 = Math.floor(x / W * n);
+          const i1 = Math.max(i0 + 1, Math.floor((x + 1) / W * n));
+          let mx = -1;
+          for (let i = i0; i < i1 && i < n; i++) {
+            if (maxs[i] > mx) mx = maxs[i];
+          }
+          const y = mid - mx * H * amp * 0.55;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        for (let x = W - 1; x >= 0; x--) {
+          const i0 = Math.floor(x / W * n);
+          const i1 = Math.max(i0 + 1, Math.floor((x + 1) / W * n));
+          let mn = 1;
+          for (let i = i0; i < i1 && i < n; i++) {
+            if (mins[i] < mn) mn = mins[i];
+          }
+          ctx.lineTo(x, mid - mn * H * amp * 0.55);
+        }
       }
-      const ma = sa / n, mb = sb / n;
-      const den = Math.sqrt(Math.max(sap / n - ma * ma, 0) * Math.max(sbp / n - mb * mb, 0));
-      if (den < 1e-8) return 0;
-      return (sab / n - ma * mb) / den;
+      ctx.closePath();
     }
 
     function drawCard(name, fast) {
@@ -329,48 +392,43 @@
       const W = sized.W;
       const H = sized.H;
       ctx.clearRect(0, 0, W, H);
-      const analyser = analysers[name];
-      const time = times[name];
       const color = fast ? LAV : AMAR;
-      ctx.beginPath();
       const mid = H / 2;
-      if (on[name] && analyser && time) {
-        analyser.getByteTimeDomainData(time);
-        const step = Math.max(1, Math.floor(time.length / W));
-        for (let x = 0; x < W; x++) {
-          const v = (time[Math.min(time.length - 1, x * step)] - 128) / 128;
-          const y = mid + v * H * (fast ? 0.28 : 0.42);
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+      const playing = on[name];
+      const wave = waves[name];
+      const amp = fast ? 0.32 : 0.46;
+      if (wave) {
+        ctx.lineJoin = 'round';
+        drawRibbon(ctx, W, H, wave, playing ? sharedTime() : 0, playing, amp);
+        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (playing ? 0.28 : 0.14) + ')';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (playing ? 0.95 : 0.7) + ')';
+        ctx.lineWidth = fast ? 1.2 : 1.7;
+        ctx.stroke();
+        if (playing) {
+          ctx.beginPath();
+          ctx.moveTo(W / 2, 4);
+          ctx.lineTo(W / 2, H - 4);
+          ctx.strokeStyle = 'rgba(239,231,239,0.45)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
       } else {
-        const fq = fast ? 0.18 : 0.055;
-        const amp = fast ? H * 0.18 : H * 0.32;
-        for (let x = 0; x <= W; x += 2) {
-          const y = mid + Math.sin(x * fq) * amp * 0.35;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
+        ctx.strokeStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.35)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, mid);
+        ctx.lineTo(W, mid);
+        ctx.stroke();
       }
-      ctx.strokeStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.9)';
-      ctx.lineWidth = fast ? 1.35 : 2.15;
-      ctx.stroke();
     }
 
     function frame() {
       drawCard('allison', true);
       drawCard('brett', false);
       if (mix) {
-        if (bothOn() && analysers.allison && analysers.brett) {
-          analysers.allison.getByteTimeDomainData(times.allison);
-          analysers.brett.getByteTimeDomainData(times.brett);
-          envA.push(rms(times.allison));
-          envB.push(rms(times.brett));
-          if (envA.length > 45) envA.shift();
-          if (envB.length > 45) envB.shift();
-          const c = corr();
-          corrSmooth = corrSmooth * 0.85 + c * 0.15;
-          const harmony = corrSmooth > 0.18;
+        if (bothOn()) {
+          const harmony = sharedTime() < DISSONANCE_AT;
           mix.hidden = false;
           mix.textContent = harmony ? 'HARMONY' : 'DISSONANCE';
           mix.classList.toggle('is-harmony', harmony);
@@ -378,9 +436,6 @@
         } else {
           mix.hidden = true;
           mix.textContent = '';
-          corrSmooth = 0;
-          envA.length = 0;
-          envB.length = 0;
         }
       }
       requestAnimationFrame(frame);
@@ -409,21 +464,66 @@
     });
   })();
 
-  /* ---- Morse S-T-O-P ---- */
+  /* ---- Morse S-T-O-P from Echolocation MIDI note on/off ---- */
   (function morse() {
     const btn = document.querySelector('#ix-morse .morse');
     if (!btn) return;
     const clusters = Array.prototype.slice.call(btn.querySelectorAll('.morse-cluster'));
-    const audio = clip('./Morse.mp3', true);
-    /* Echolocation-track letter windows, seconds from first sounding note. */
-    const windows = [
-      { letter: 'S', start: 0.30, end: 5.20 },
-      { letter: 'T', start: 8.50, end: 12.30 },
-      { letter: 'O', start: 13.70, end: 16.70 },
-      { letter: 'P', start: 17.80, end: 20.19 }
+    const audio = clip('./24H-Voice.mp3', true);
+    const byLetter = {};
+    clusters.forEach(function (c) {
+      byLetter[c.getAttribute('data-letter')] = c;
+    });
+    /* Echolocation track (Morse.mid track 3): note on/off, shifted by the 10.0s
+       session offset where that track begins (tick 9600 at 120 BPM / 480 PPQ).
+       24H_Voice is a Logic bounce from that same point. */
+    const notes = [
+      { on: 0.85729, off: 0.95937, letter: 'S', mark: 0 },
+      { on: 1.18021, off: 1.26771, letter: 'S', mark: 1 },
+      { on: 1.5, off: 1.59479, letter: 'S', mark: 2 },
+      { on: 1.85104, off: 2.26979, letter: 'T', mark: 0 },
+      { on: 2.51354, off: 2.85417, letter: 'O', mark: 0 },
+      { on: 3.17708, off: 3.55312, letter: 'O', mark: 1 },
+      { on: 3.83542, off: 4.22188, letter: 'O', mark: 2 },
+      { on: 4.52187, off: 4.60729, letter: 'P', mark: 0 },
+      { on: 4.75, off: 5.0, letter: 'P', mark: 1 },
+      { on: 5.125, off: 5.375, letter: 'P', mark: 2 },
+      { on: 5.54479, off: 5.60938, letter: 'P', mark: 3 },
+      { on: 9.15312, off: 9.2375, letter: 'S', mark: 0 },
+      { on: 9.36771, off: 9.45208, letter: 'S', mark: 1 },
+      { on: 9.60625, off: 9.68021, letter: 'S', mark: 2 },
+      { on: 9.86458, off: 10.09062, letter: 'T', mark: 0 },
+      { on: 10.375, off: 10.625, letter: 'O', mark: 0 },
+      { on: 10.72917, off: 11.0, letter: 'O', mark: 1 },
+      { on: 11.125, off: 11.36771, letter: 'O', mark: 2 },
+      { on: 11.58646, off: 11.66875, letter: 'P', mark: 0 },
+      { on: 11.8125, off: 12.0625, letter: 'P', mark: 1 },
+      { on: 12.11979, off: 12.41667, letter: 'P', mark: 2 },
+      { on: 12.57917, off: 12.64688, letter: 'P', mark: 3 },
+      { on: 14.38542, off: 14.46979, letter: 'S', mark: 0 },
+      { on: 14.5625, off: 14.63542, letter: 'S', mark: 1 },
+      { on: 14.73542, off: 14.81667, letter: 'S', mark: 2 },
+      { on: 14.9375, off: 15.24792, letter: 'T', mark: 0 },
+      { on: 15.40104, off: 15.58333, letter: 'O', mark: 0 },
+      { on: 15.625, off: 15.875, letter: 'O', mark: 1 },
+      { on: 15.91667, off: 16.125, letter: 'O', mark: 2 },
+      { on: 16.25313, off: 16.34271, letter: 'P', mark: 0 },
+      { on: 16.4375, off: 16.625, letter: 'P', mark: 1 },
+      { on: 16.6875, off: 16.86771, letter: 'P', mark: 2 },
+      { on: 16.98854, off: 17.0625, letter: 'P', mark: 3 },
+      { on: 18.44063, off: 18.51146, letter: 'S', mark: 0 },
+      { on: 18.575, off: 18.63437, letter: 'S', mark: 1 },
+      { on: 18.67708, off: 18.74583, letter: 'S', mark: 2 },
+      { on: 18.875, off: 19.04583, letter: 'T', mark: 0 },
+      { on: 19.20833, off: 19.30729, letter: 'O', mark: 0 },
+      { on: 19.41042, off: 19.52812, letter: 'O', mark: 1 },
+      { on: 19.63229, off: 19.75937, letter: 'O', mark: 2 },
+      { on: 19.875, off: 19.93646, letter: 'P', mark: 0 },
+      { on: 20.03125, off: 20.16667, letter: 'P', mark: 1 },
+      { on: 20.20104, off: 20.35417, letter: 'P', mark: 2 },
+      { on: 20.41667, off: 20.46354, letter: 'P', mark: 3 }
     ];
     let playing = false;
-    let raf = 0;
 
     function marks(cluster) {
       return Array.prototype.slice.call(cluster.querySelectorAll('i'));
@@ -438,32 +538,27 @@
 
     function paint(t) {
       clear();
-      let win = null;
-      for (let i = 0; i < windows.length; i++) {
-        if (t >= windows[i].start && t < windows[i].end) { win = windows[i]; break; }
+      if (!notes.length) return;
+      for (let i = 0; i < notes.length; i++) {
+        const n = notes[i];
+        if (t < n.on || t >= n.off) continue;
+        const cluster = byLetter[n.letter];
+        if (!cluster) continue;
+        cluster.classList.add('is-lit');
+        const ms = marks(cluster);
+        if (ms[n.mark]) ms[n.mark].classList.add('is-on');
       }
-      if (!win) return;
-      const cluster = clusters.filter(function (c) {
-        return c.getAttribute('data-letter') === win.letter;
-      })[0];
-      if (!cluster) return;
-      cluster.classList.add('is-lit');
-      const ms = marks(cluster);
-      if (!ms.length) return;
-      const local = (t - win.start) / Math.max(win.end - win.start, 0.001);
-      const idx = Math.min(ms.length - 1, Math.floor(local * ms.length));
-      ms[idx].classList.add('is-on');
     }
 
     function loop() {
       if (playing) paint(audio.currentTime || 0);
-      raf = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
 
-    function setPlay(on) {
-      playing = on;
-      setPressed(btn, on);
-      if (on) {
+    function setPlay(want) {
+      playing = want;
+      setPressed(btn, want);
+      if (want) {
         tap(audio);
         const play = audio.play();
         if (play && play.catch) play.catch(function () {});
@@ -482,6 +577,6 @@
       clusters.forEach(function (c) { c.classList.add('is-show'); });
     }
 
-    raf = requestAnimationFrame(loop);
+    requestAnimationFrame(loop);
   })();
 })();
