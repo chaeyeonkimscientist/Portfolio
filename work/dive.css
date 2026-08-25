@@ -614,6 +614,20 @@ a.tname.pending-ext::before{content:none}
 .img-ph.img-real figcaption{
   margin:0;padding:0.7rem 0.85rem 0.85rem;
 }
+.embed-yt{
+  display:block;width:100%;max-width:100%;
+  aspect-ratio:16/9;position:relative;
+  background:#000;overflow:hidden;
+}
+.embed-yt iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;
+}
+.film-still{
+  margin:1.5rem 0 1.8rem;
+  max-width:min(52rem,100%);
+  min-height:0;
+}
+.img-ph.img-real .embed-yt{background:#000}
 
 .rail{position:fixed;top:0;right:0;bottom:0;z-index:18;pointer-events:none}
 .lp-dock{
@@ -908,6 +922,11 @@ a.tname.pending-ext::before{content:none}
   box-shadow:0 0 18px rgba(201,67,106,.28);
   animation:id-pulse 1.35s ease-in-out infinite;
 }
+.id-card[data-char="allison"][aria-pressed="true"]{
+  border-color:var(--lav);
+  box-shadow:0 0 18px rgba(183,167,216,.28);
+  animation-name:id-pulse-flute;
+}
 .id-name{
   font-family:"Instrument Serif",Georgia,serif;font-size:1.45rem;color:var(--bone);
 }
@@ -916,9 +935,51 @@ a.tname.pending-ext::before{content:none}
   text-transform:uppercase;color:var(--lav);
 }
 .id-voice{font-size:0.9rem;color:var(--bone-dim);margin-top:0.15rem}
+.id-wave{
+  display:block;width:100%;height:3.2rem;margin-top:0.85rem;
+}
+.mix-state{
+  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.18em;
+  text-transform:uppercase;text-align:center;margin:0.85rem 0 0;font-weight:700;
+}
+.mix-state.is-harmony{color:var(--lav)}
+.mix-state.is-dissonance{color:var(--amaranth-lit)}
 @keyframes id-pulse{
   0%,100%{box-shadow:0 0 10px rgba(201,67,106,.18)}
   50%{box-shadow:0 0 22px rgba(201,67,106,.42)}
+}
+@keyframes id-pulse-flute{
+  0%,100%{box-shadow:0 0 10px rgba(183,167,216,.16)}
+  50%{box-shadow:0 0 22px rgba(183,167,216,.4)}
+}
+
+.voicing-row{
+  display:grid;grid-template-columns:1fr;gap:0.85rem;
+}
+@media(min-width:720px){
+  .voicing-row{grid-template-columns:1fr 1fr}
+}
+.voicing-player{
+  display:flex;flex-direction:column;align-items:stretch;gap:0.55rem;
+  text-align:left;cursor:pointer;
+  background:rgba(16,23,25,.72);border:0.5px solid var(--hair);color:inherit;
+  padding:0.9rem 0.85rem 0.8rem;
+  transition:border-color .25s,box-shadow .25s,transform .25s;
+}
+.voicing-player:hover,.voicing-player:focus-visible{
+  border-color:var(--lav);outline:none;transform:translateY(-2px);
+}
+.voicing-player[aria-pressed="true"],.voicing-player.is-hot{
+  border-color:var(--lav);
+  box-shadow:0 0 18px rgba(183,167,216,.22);
+}
+.voicing-label{
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.28rem;color:var(--bone);
+}
+.voicing-axis{display:block;width:100%;height:auto;aspect-ratio:16/7;min-height:7.5rem}
+.voicing-hint{
+  font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--bone-dim);
 }
 
 .morse{
@@ -940,10 +1001,15 @@ a.tname.pending-ext::before{content:none}
 .morse-marks i.dash{
   width:1.15rem;height:0.28rem;border-radius:2px;
 }
-.morse-cluster.is-lit i,
+.morse-cluster.is-lit{
+  filter:drop-shadow(0 0 8px rgba(159,224,216,.25));
+}
 .morse-marks i.is-on{
   opacity:1;background:var(--data);
   box-shadow:0 0 10px var(--data);
+}
+.morse-cluster.is-lit .morse-letter{
+  opacity:1;transform:none;
 }
 .morse-letter{
   font-family:"DM Mono",monospace;font-size:0.72rem;letter-spacing:0.18em;
@@ -958,6 +1024,18 @@ a.tname.pending-ext::before{content:none}
 .morse-gap{
   font-family:"DM Mono",monospace;color:var(--bone-dim);opacity:0.4;
   padding-bottom:1.35rem;
+}
+button.morse{
+  width:100%;cursor:pointer;color:inherit;
+  font:inherit;
+}
+button.morse[aria-pressed="true"]{
+  border-color:var(--data);
+  box-shadow:0 0 18px rgba(159,224,216,.16);
+}
+.morse-decode{
+  font-family:"DM Mono",monospace;font-size:0.72rem;letter-spacing:0.18em;
+  text-align:center;color:var(--data);margin:0.7rem 0 0;
 }
 
 .triptych{
@@ -1006,7 +1084,7 @@ a.tname.pending-ext::before{content:none}
   .scenario p:nth-child(5){padding-left:2.8rem}
   .scenario p:nth-child(6){padding-left:3.5rem}
   .scenario p:nth-child(7){padding-left:4.2rem}
-  .award-row,.id-cards,.triptych{grid-template-columns:1fr}
+  .award-row,.id-cards,.triptych,.voicing-row{grid-template-columns:1fr}
   .wings-still .frame{min-height:14rem}
 }
 
@@ -1017,6 +1095,6 @@ a.tname.pending-ext::before{content:none}
   .scenario-pin{height:auto}
   .scenario{position:static}
   .scenario p{opacity:1;transform:none}
-  .award,.award-gold,.id-card[aria-pressed="true"],.wings,.wings-still:hover .wings{animation:none;transition:none}
+  .award,.award-gold,.id-card[aria-pressed="true"],.wings,.wings-still:hover .wings,.voicing-player{animation:none;transition:none}
   .wings{opacity:0.55;transform:none}
 }
