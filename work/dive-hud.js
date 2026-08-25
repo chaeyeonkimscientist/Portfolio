@@ -33,19 +33,15 @@
     return Math.max(document.documentElement.scrollHeight - innerHeight, 1);
   }
 
+  function headingY(el) {
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+
   function layoutNav() {
-    const max = maxScroll();
-    const positions = items.map(function (item) {
-      return Math.min(Math.max(item.el.offsetTop / max, 0), 1);
-    });
-    const minGap = 0.048;
-    for (let i = 1; i < positions.length; i++) {
-      if (positions[i] < positions[i - 1] + minGap) {
-        positions[i] = Math.min(positions[i - 1] + minGap, 1);
-      }
-    }
-    items.forEach(function (item, i) {
-      item.link.style.top = (positions[i] * 100).toFixed(3) + '%';
+    const docH = Math.max(document.documentElement.scrollHeight, 1);
+    items.forEach(function (item) {
+      const p = Math.min(Math.max(headingY(item.el) / docH, 0), 1);
+      item.link.style.top = (p * 100).toFixed(3) + '%';
     });
   }
 
@@ -132,6 +128,14 @@
     layoutNav();
     requestPaint();
   });
+  addEventListener('load', function () {
+    layoutNav();
+    requestPaint();
+  });
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(function () { layoutNav(); });
+    ro.observe(document.documentElement);
+  }
 
   const pin = document.querySelector('.scenario-pin');
   const steps = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-reveal]')) : [];

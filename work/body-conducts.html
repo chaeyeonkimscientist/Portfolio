@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./dive.css?v=12">
+<link rel="stylesheet" href="./dive.css?v=14">
 </head>
 <body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
@@ -69,7 +69,7 @@
       <div class="memory-map" id="memory-map"></div>
     </div>
     <div class="memory-bubble" id="memory-bubble" hidden>
-      Did you find something about me that you want to take notes of? Add it to your short term memory.
+      Drag and add text to your <strong>working memory</strong>.
     </div>
   </div>
 </aside>
@@ -80,12 +80,10 @@
 
 <div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
   <div class="term-inner">
-    <div class="term-bar">SESSION // CORTEX</div>
-    <pre id="term-warn-msg">WARNING: Session ending. Working memory will be flushed.
-Copy your nodes before disconnecting.</pre>
+    <pre id="term-warn-msg">WARNING: Working memory will be flushed. Copy your nodes before disconnecting.</pre>
     <div class="term-actions">
-      <button type="button" data-term-copy>Copy nodes</button>
-      <button type="button" data-term-dismiss>Stay in session</button>
+      <button type="button" data-term-copy>Copy nodes + Go back to homepage.</button>
+      <button type="button" data-term-dismiss>Stay in session.</button>
     </div>
   </div>
 </div>
@@ -152,16 +150,21 @@ Copy your nodes before disconnecting.</pre>
     <p>I built a full biometric-to-audio pipeline and used it to produce a finished five-track music film.</p>
 
     <h3>Biometric Integration Pipeline</h3>
-    <ol class="pipeline">
+    <ol class="pipeline has-media">
       <li>
         <span class="num">01</span>
-        <div>
-          <h4>Data collection</h4>
-          <ul>
-            <li>Wore a 4-channel OpenBCI <strong>EEG headset</strong> (200 Hz) during stress-inducing scenarios (N-back tasks, social-evaluative stress) to capture neural activity.</li>
-            <li>Alpha waves (8–12 Hz) during baseline, Beta waves (12–30 Hz) during stress.</li>
-            <li><strong>40+ hours</strong> of recording across sessions.</li>
-          </ul>
+        <div class="pipeline-collect-body">
+          <div>
+            <h4>Data collection</h4>
+            <ul>
+              <li>Wore a 4-channel OpenBCI <strong>EEG headset</strong> (200 Hz) during stress-inducing scenarios (N-back tasks, social-evaluative stress) to capture neural activity.</li>
+              <li>Alpha waves (8–12 Hz) during baseline, Beta waves (12–30 Hz) during stress.</li>
+              <li><strong>40+ hours</strong> of recording across sessions.</li>
+            </ul>
+          </div>
+          <figure class="collect-fig">
+            <img src="./IMG_6553.jpeg" alt="EEG data collection session with OpenBCI headset, electrode paste, and live signal monitoring">
+          </figure>
         </div>
       </li>
       <li>
@@ -346,10 +349,10 @@ Copy your nodes before disconnecting.</pre>
   </section>
 </main>
 
-<script src="./dive-hud.js?v=12"></script>
+<script src="./dive-hud.js?v=14"></script>
 <script src="./dive-waves.js?v=12"></script>
 <script src="./dive-bio.js?v=12"></script>
-<script src="./dive-memory.js?v=12"></script>
+<script src="./dive-memory.js?v=14"></script>
 <script src="./dive-player.js?v=12"></script>
 <script src="./dive-signal.js?v=12"></script>
 </body>

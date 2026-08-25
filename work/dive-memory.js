@@ -103,16 +103,34 @@
     render();
   }
 
-  function copyNodes() {
+  const HOME = '../index.html#work';
+  const WARNED = 'ck-term-warned';
+
+  function hasWarned() {
+    try { return sessionStorage.getItem(WARNED) === '1'; }
+    catch (e) { return false; }
+  }
+  function markWarned() {
+    try { sessionStorage.setItem(WARNED, '1'); }
+    catch (e) {}
+  }
+  function homeHref() {
+    const a = document.querySelector('.hud-back');
+    return (a && (a.getAttribute('href') || a.href)) || HOME;
+  }
+  function nodesBlob() {
     const state = load();
-    if (!state.nodes.length) return;
-    const blob = state.nodes.map(function (n) {
+    if (!state.nodes.length) return '';
+    return state.nodes.map(function (n) {
       return '[' + n.project + ' / ' + n.type + ' / ' + n.section + ']\n' + n.text;
     }).join('\n\n');
+  }
+  function copyNodes() {
+    const blob = nodesBlob();
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(blob).catch(function () {});
+      return navigator.clipboard.writeText(blob).catch(function () { return blob; });
     }
-    return blob;
+    return Promise.resolve(blob);
   }
 
   let pending = null;
@@ -167,25 +185,50 @@
       tab.setAttribute('aria-expanded', memory.classList.contains('is-open') ? 'true' : 'false');
     });
   }
-  if (copyBtn) copyBtn.addEventListener('click', copyNodes);
+  if (copyBtn) copyBtn.addEventListener('click', function () { copyNodes(); });
 
   if (bubble && !sessionStorage.getItem(ONBOARD) && load().nodes.length === 0) {
     bubble.hidden = false;
   }
 
-  function showWarn() {
-    if (!load().nodes.length || !warn) return;
+  function showWarn(opts) {
+    if (!warn || hasWarned()) return false;
+    if (!(opts && opts.force) && !load().nodes.length) return false;
+    markWarned();
     warn.hidden = false;
+    return true;
   }
   function hideWarn() {
     if (warn) warn.hidden = true;
   }
   if (warn) {
-    warn.querySelector('[data-term-copy]').addEventListener('click', function () {
-      copyNodes();
-    });
-    warn.querySelector('[data-term-dismiss]').addEventListener('click', hideWarn);
+    const copyTerm = warn.querySelector('[data-term-copy]');
+    const stayTerm = warn.querySelector('[data-term-dismiss]');
+    if (copyTerm) {
+      copyTerm.addEventListener('click', function () {
+        markWarned();
+        const href = homeHref();
+        copyNodes().then(function () {
+          location.href = href;
+        }, function () {
+          location.href = href;
+        });
+      });
+    }
+    if (stayTerm) stayTerm.addEventListener('click', hideWarn);
   }
+
+  document.addEventListener('click', function (e) {
+    const back = e.target.closest && e.target.closest('.hud-back');
+    if (!back) return;
+    if (warn && !warn.hidden) {
+      e.preventDefault();
+      return;
+    }
+    if (hasWarned()) return;
+    e.preventDefault();
+    showWarn({ force: true });
+  }, true);
 
   let idle = 0;
   function bump() { idle = 0; }
@@ -194,7 +237,7 @@
   });
   setInterval(function () {
     idle += 1;
-    if (idle === 120 && load().nodes.length) showWarn();
+    if (idle === 120) showWarn();
   }, 1000);
 
   setInterval(function () {
@@ -211,10 +254,10 @@
   }, 90000);
 
   addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden' && load().nodes.length) showWarn();
+    if (document.visibilityState === 'hidden') showWarn();
   });
   addEventListener('beforeunload', function (e) {
-    if (!load().nodes.length) return;
+    if (hasWarned() || !load().nodes.length) return;
     showWarn();
     e.preventDefault();
     e.returnValue = '';
