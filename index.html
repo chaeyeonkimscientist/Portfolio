@@ -296,111 +296,47 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .release{flex:none;width:100%;min-height:100vh;height:auto}
 }
 
-:root{
-  --tt-slide: 400ms;
-  --tt-spin: 500ms;
-  --tt-wipe: 300ms;
-  --tt-ease: cubic-bezier(.22,.7,.25,1);
-  --tt-disc-size: 46vmin;
-  --tt-ink: #101719;
-  --tt-lav: #B7A7D8;
-  --tt-bone: #EFE7EF;
-}
-
 #turntable-overlay{
   position: fixed;
   inset: 0;
   z-index: 999;
   pointer-events: none;
   display: none;
+  overflow: hidden;
+  background: transparent;
   will-change: transform, opacity;
   transform: translate3d(0,0,0);
+  transition: background .7s ease;
 }
-
+#turntable-overlay.tt-on{
+  display: block;
+  pointer-events: auto;
+}
+#turntable-overlay.tt-dim{
+  background: radial-gradient(120% 90% at 50% 40%, rgba(16,23,25,.55) 0%, rgba(8,9,15,.92) 70%);
+}
 #turntable-overlay.tt-exit{
-  transition: transform var(--tt-wipe) cubic-bezier(.6,0,.85,.3),
-              opacity   var(--tt-wipe) linear;
+  transition: transform 400ms cubic-bezier(.6,0,.85,.3),
+              opacity   400ms linear;
   transform: translate3d(0, 110vh, 0);
   opacity: .35;
 }
-
-.tt-platter{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: var(--tt-disc-size);
-  height: var(--tt-disc-size);
-  margin: 0;
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate3d(-50%,-50%,0) scale(.86);
-  transition: opacity var(--tt-slide) linear,
-              transform var(--tt-slide) var(--tt-ease);
-  will-change: transform, opacity;
-
-  background:
-    radial-gradient(circle at 50% 50%,
-      rgba(183,167,216,.30) 0 1.4%,
-      rgba(16,23,25,0)      1.6% 100%),
-    repeating-radial-gradient(circle at 50% 50%,
-      rgba(183,167,216,.05) 0 6px,
-      rgba(183,167,216,.00) 6px 12px),
-    radial-gradient(circle at 50% 45%, #23202b 0%, #14121a 70%, #0b0a0e 100%);
-  box-shadow:
-    0 0 0 1px rgba(183,167,216,.18),
-    0 40px 120px rgba(0,0,0,.6);
-}
-.tt-platter.tt-in{
-  opacity: 1;
-  transform: translate3d(-50%,-50%,0) scale(1.14);
-}
-
-.tt-arm{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--tt-disc-size) * 0.78);
-  height: 2px;
-  transform-origin: right center;
-  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-42deg);
-  background: linear-gradient(90deg, var(--tt-lav), rgba(183,167,216,.35));
-  opacity: 0;
-  border-radius: 2px;
-  transition: opacity 180ms linear,
-              transform var(--tt-spin) var(--tt-ease);
-  will-change: transform, opacity;
-}
-.tt-arm::before{
-  content:"";
-  position:absolute; left:-6px; top:-4px;
-  width:12px; height:10px; border-radius:2px;
-  background: var(--tt-bone);
-}
-.tt-arm.tt-drop{
-  opacity: .9;
-  transform: translate3d(18%, calc(-50% - 26vmin), 0) rotate(-14deg);
-}
-
-.tt-disc-clone{
-  position: fixed;
-  margin: 0;
-  transform-origin: 50% 50%;
-  will-change: transform, opacity;
-  transition: transform var(--tt-slide) var(--tt-ease);
-}
-
-.tt-disc-spinner{
+#tt-canvas{
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  transform-origin: 50% 50%;
-  will-change: transform;
+  display: block;
+  z-index: 1;
 }
-.tt-disc-spinner.tt-spinning{
-  animation: tt-rotate 900ms linear infinite;
+#tt-sleeve-slot{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
-@keyframes tt-rotate{
-  from{ transform: rotate(0deg); }
-  to  { transform: rotate(360deg); }
+.tt-sleeve-clone{
+  box-shadow: 0 18px 50px rgba(0,0,0,.35);
 }
 
 .release .disc.tt-hidden{ opacity: 0; transition: opacity 120ms linear; }
@@ -1268,146 +1204,11 @@ paintButtons('music');
 onScroll();
 })();
 </script>
-<div id="turntable-overlay" style="position:fixed;inset:0;z-index:999;pointer-events:none;display:none;"></div>
-
- <script>
-(function () {
-  'use strict';
-
-  const SLIDE = 400, SPIN = 500, WIPE = 300;
-  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const overlay = document.getElementById('turntable-overlay');
-  if (!overlay) return;
-
-  let busy = false;
-
-  function cue() {
-    if (typeof Tone === 'undefined' || Tone.context.state !== 'running') return;
-    try {
-      const now = Tone.now();
-
-      const crackle = new Tone.NoiseSynth({
-        noise: { type: 'pink' },
-        envelope: { attack: 0.004, decay: 0.28, sustain: 0 }
-      }).connect(new Tone.Filter(2200, 'lowpass').toDestination());
-      crackle.volume.value = -22;
-      crackle.triggerAttackRelease('8n', now);
-
-      const chord = new Tone.PolySynth(Tone.FMSynth, {
-        harmonicity: 2.2, modulationIndex: 6,
-        oscillator: { type: 'sine' },
-        envelope: { attack: 0.02, decay: 0.6, sustain: 0.25, release: 1.6 }
-      }).connect(new Tone.Reverb({ decay: 3.2, wet: 0.4 }).toDestination());
-      chord.volume.value = -14;
-      chord.triggerAttackRelease(['D3', 'F3', 'A3', 'C4', 'E4'], '2n', now + 0.06);
-
-      setTimeout(() => { crackle.dispose(); chord.dispose(); }, 3000);
-    } catch (e) { }
-  }
-
-  function buildStage() {
-    const platter = document.createElement('div');
-    platter.className = 'tt-platter';
-
-    const arm = document.createElement('div');
-    arm.className = 'tt-arm';
-
-    overlay.append(platter, arm);
-    return { platter, arm };
-  }
-
-  function cloneDisc(disc) {
-    const r = disc.getBoundingClientRect();
-
-    const outer = document.createElement('div');
-    outer.className = 'tt-disc-clone';
-    Object.assign(outer.style, {
-      left:   r.left + 'px',
-      top:    r.top  + 'px',
-      width:  r.width  + 'px',
-      height: r.height + 'px'
-    });
-
-    const spinner = document.createElement('div');
-    spinner.className = 'tt-disc-spinner';
-    spinner.appendChild(disc.cloneNode(true));
-    const inner = spinner.firstElementChild;
-    Object.assign(inner.style, {
-      position: 'absolute', inset: '0',
-      width: '100%', height: '100%',
-      top: '0', right: 'auto', transform: 'none', opacity: '1'
-    });
-
-    outer.appendChild(spinner);
-    return { outer, spinner, rect: r };
-  }
-
-  function centreTransform(rect) {
-    const size = Math.min(innerWidth, innerHeight) * 0.46;
-    const scale = size / Math.max(rect.width, rect.height);
-
-    const dx = (innerWidth  / 2) - (rect.left + rect.width  / 2);
-    const dy = (innerHeight / 2) - (rect.top  + rect.height / 2);
-
-    return `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
-  }
-
-  function run(link, disc, url) {
-    busy = true;
-
-    const { outer, spinner, rect } = cloneDisc(disc);
-    const { platter, arm } = buildStage();
-
-    disc.classList.add('tt-hidden');
-    overlay.appendChild(outer);
-    overlay.style.display = 'block';
-
-    void overlay.offsetWidth;
-
-    requestAnimationFrame(() => {
-      outer.style.transform = centreTransform(rect);
-      platter.classList.add('tt-in');
-    });
-
-    setTimeout(() => {
-      spinner.classList.add('tt-spinning');
-      arm.classList.add('tt-drop');
-      cue();
-    }, SLIDE);
-
-    setTimeout(() => {
-      overlay.classList.add('tt-exit');
-    }, SLIDE + SPIN);
-
-    let gone = false;
-    const go = () => {
-      if (gone) return;
-      gone = true;
-      window.location.href = url;
-    };
-    overlay.addEventListener('transitionend', (e) => {
-      if (e.target === overlay && e.propertyName === 'transform') go();
-    }, { once: true });
-    setTimeout(go, SLIDE + SPIN + WIPE + 200);
-  }
-
-   document.addEventListener('click', (e) => {
-    const link = e.target.closest('a.release');
-    if (!link) return;
-
-    const url = link.getAttribute('href');
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
-
-    const disc = link.querySelector('.disc');
-    if (!disc || busy || REDUCED) return;
-
-    e.preventDefault();
-    run(link, disc, link.href);
-  });
-})();
- </script>
+<div id="turntable-overlay">
+  <canvas id="tt-canvas"></canvas>
+  <div id="tt-sleeve-slot"></div>
+</div>
+<script type="module" src="turntable-transition.js"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.

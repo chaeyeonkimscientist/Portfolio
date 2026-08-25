@@ -638,10 +638,21 @@ a.tname.pending-ext::before{content:none}
   position:absolute;top:0;left:50%;width:9.5rem;height:9.5rem;border-radius:50%;
   animation:lp-spin 9s linear infinite;
   background:
-    radial-gradient(circle at 50% 50%,rgba(183,167,216,.28) 0 6%,rgba(16,23,25,0) 7% 100%),
+    radial-gradient(circle at 50% 50%,rgba(183,167,216,.28) 0 6%,rgba(16,23,25,.0) 7% 100%),
     repeating-radial-gradient(circle at 50% 50%,rgba(183,167,216,.05) 0 6px,rgba(183,167,216,0) 6px 12px),
     radial-gradient(circle at 50% 45%,#23202b 0%,#14121a 70%,#0b0a0e 100%);
   box-shadow:0 0 0 1px rgba(183,167,216,.2),0 20px 50px rgba(0,0,0,.45);
+}
+.lp-disc-3d{
+  overflow:visible;
+  animation:none;
+  background:transparent;
+  box-shadow:none;
+  border-radius:0;
+}
+.lp-disc-3d canvas{
+  display:block;width:9.5rem;height:9.5rem;
+  filter:drop-shadow(0 16px 28px rgba(0,0,0,.5));
 }
 @keyframes lp-spin{to{transform:rotate(360deg)}}
 .lp-label{
