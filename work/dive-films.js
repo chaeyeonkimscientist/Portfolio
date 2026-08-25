@@ -564,6 +564,7 @@
         if (play && play.catch) play.catch(function () {});
       } else {
         audio.pause();
+        audio.currentTime = 0;
         clear();
       }
     }
