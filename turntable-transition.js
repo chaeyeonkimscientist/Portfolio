@@ -184,6 +184,17 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
 
   async function run(link, disc, url) {
     busy = true;
+    try {
+    await runScene(link, disc, url);
+    } catch (err) {
+      console.error('[tt] run failed', err);
+      log('run FAIL ' + (err && err.message ? err.message : err));
+      busy = false;
+      window.location.href = url;
+    }
+  }
+
+  async function runScene(link, disc, url) {
 
     const sleeve = link.querySelector('.sleeve');
     const sleeveRect = sleeve ? sleeve.getBoundingClientRect() : disc.getBoundingClientRect();
@@ -220,7 +231,9 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     }
 
     const renderer = new THREE.WebGLRenderer({
-      canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
+      canvas, antialias: true, alpha: true,
+      powerPreference: 'high-performance',
+      failIfMajorPerformanceCaveat: false
     });
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(innerWidth, innerHeight);
@@ -234,8 +247,12 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x101719, 4.5, 11);
 
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    try {
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    } catch (e) {
+      log('env skipped');
+    }
 
     const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.05, 40);
     camera.position.set(0, 0.08, 2.55);
@@ -477,6 +494,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     if (!disc || busy || REDUCED) return;
 
     e.preventDefault();
+    e.stopPropagation();
     run(link, disc, link.href);
-  });
+  }, true);
 })();
