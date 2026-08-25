@@ -521,6 +521,21 @@ if (typeof Tone === 'undefined') {
   </div>
   <div id="gate-load">loading the hall</div>
 </div>
+<script>
+(function(){
+  var KEY='ck-gate-seen';
+  var seen=false;
+  try{ seen=sessionStorage.getItem(KEY)==='1'; }catch(e){}
+  var hash=(location.hash||'').replace(/^#/,'').split(/[&?]/)[0];
+  if(seen || hash==='work'){
+    try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+    var g=document.getElementById('baton-gate');
+    if(g) g.remove();
+  } else {
+    try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+  }
+})();
+</script>
 
 <div id="tt-debug" aria-hidden="true"></div>
 <script>

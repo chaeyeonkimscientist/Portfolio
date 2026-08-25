@@ -21,8 +21,27 @@ import { gsap } from 'gsap';
 (function () {
   'use strict';
 
+  const GATE_SEEN = 'ck-gate-seen';
+  function markGateSeen() {
+    try { sessionStorage.setItem(GATE_SEEN, '1'); }
+    catch (e) {}
+  }
+  function arrivingAtWork() {
+    return (location.hash || '').replace(/^#/, '').split(/[&?]/)[0] === 'work';
+  }
+
   const gate = document.getElementById('baton-gate');
   if (!gate) return;
+
+  // Inline skip on index.html already removed the overlay for return visits
+  // and for #work. If we still have a gate but landed on #work, drop it.
+  if (arrivingAtWork()) {
+    markGateSeen();
+    gate.classList.add('unlocked');
+    if (gate.parentNode) gate.remove();
+    return;
+  }
+  markGateSeen();
 
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas  = document.getElementById('gate-canvas');
