@@ -21,12 +21,11 @@ export function prepareVinyl(root) {
     }
     // Source material uses a near-zero alpha baseColor — override so vertex
     // colors (grape label + charcoal grooves) actually read.
-    o.material = new THREE.MeshPhysicalMaterial({
+    o.material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
       vertexColors: true,
-      roughness: 0.32,
-      metalness: 0.22,
-      clearcoat: 0.55,
-      clearcoatRoughness: 0.28,
+      roughness: 0.42,
+      metalness: 0.16,
       side: THREE.DoubleSide
     });
     o.castShadow = true;

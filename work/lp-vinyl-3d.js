@@ -24,7 +24,7 @@ import { loadVinylModel } from '../vinyl-glb.js';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 20);
-  camera.position.set(0, 0, 3.7);
+  camera.position.set(0.55, 0.85, 3.15);
   camera.lookAt(0, 0, 0);
 
   scene.add(new THREE.AmbientLight(0xb7a7d8, 1.05));
@@ -49,10 +49,12 @@ import { loadVinylModel } from '../vinyl-glb.js';
   addEventListener('resize', sizeToDock);
 
   let vinyl = null;
+  const pivot = new THREE.Group();
+  scene.add(pivot);
   loadVinylModel().then((model) => {
     vinyl = model;
-    vinyl.scale.setScalar(1);
-    scene.add(vinyl);
+    vinyl.rotation.x = -0.72;
+    pivot.add(vinyl);
     renderer.render(scene, camera);
   }).catch((err) => {
     console.error('[lp] vinyl glb failed', err);
@@ -63,7 +65,8 @@ import { loadVinylModel } from '../vinyl-glb.js';
 
   function frame() {
     requestAnimationFrame(frame);
-    if (vinyl && spin) vinyl.rotation.z += spin * clock.getDelta();
+    const dt = clock.getDelta();
+    if (vinyl && spin) pivot.rotation.y += spin * dt;
     if (vinyl) renderer.render(scene, camera);
   }
   frame();

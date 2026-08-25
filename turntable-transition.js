@@ -29,6 +29,9 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
   let assets = null;
   let loading = null;
 
+  addEventListener('pagehide', () => { busy = false; });
+  addEventListener('pageshow', () => { busy = false; });
+
   function preload() {
     if (loading) return loading;
     loading = Promise.all([loadVinylModel(), loadTurntableModel()])
@@ -223,7 +226,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
+    renderer.toneMappingExposure = 0.92;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x000000, 0);
@@ -242,7 +245,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     scene.add(new THREE.AmbientLight(0xb7a7d8, 0.7));
     scene.add(new THREE.HemisphereLight(0x6767a2, 0x101719, 0.45));
 
-    const key = new THREE.SpotLight(0xfff4e8, 18, 16, THREE.MathUtils.degToRad(42), 0.55, 1.1);
+    const key = new THREE.SpotLight(0xfff4e8, 8.5, 16, THREE.MathUtils.degToRad(42), 0.55, 1.1);
     key.position.set(1.4, 3.2, 3.0);
     key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024);
