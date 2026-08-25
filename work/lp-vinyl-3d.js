@@ -20,16 +20,16 @@ import { loadVinylModel } from '../vinyl-glb.js';
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
+    renderer.toneMappingExposure = 0.88;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 20);
   camera.position.set(0.55, 0.85, 3.15);
   camera.lookAt(0, 0, 0);
 
-  scene.add(new THREE.AmbientLight(0xb7a7d8, 1.05));
-  scene.add(new THREE.HemisphereLight(0x6767a2, 0x101719, 0.55));
-  const dir = new THREE.DirectionalLight(0xfff6ea, 2.4);
+  scene.add(new THREE.AmbientLight(0xb7a7d8, 0.55));
+  scene.add(new THREE.HemisphereLight(0x6767a2, 0x101719, 0.35));
+  const dir = new THREE.DirectionalLight(0xfff6ea, 1.6);
   dir.position.set(1.4, 1.8, 2.4);
   scene.add(dir);
   const rim = new THREE.PointLight(0x8f8fd0, 3.2, 8);

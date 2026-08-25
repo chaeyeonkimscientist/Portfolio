@@ -259,10 +259,10 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     const look = new THREE.Vector3(0, 0.02, 0);
     camera.lookAt(look);
 
-    scene.add(new THREE.AmbientLight(0xb7a7d8, 0.7));
-    scene.add(new THREE.HemisphereLight(0x6767a2, 0x101719, 0.45));
+    scene.add(new THREE.AmbientLight(0xb7a7d8, 0.38));
+    scene.add(new THREE.HemisphereLight(0x6767a2, 0x101719, 0.28));
 
-    const key = new THREE.SpotLight(0xfff4e8, 8.5, 16, THREE.MathUtils.degToRad(42), 0.55, 1.1);
+    const key = new THREE.SpotLight(0xfff4e8, 5.5, 16, THREE.MathUtils.degToRad(42), 0.55, 1.1);
     key.position.set(1.4, 3.2, 3.0);
     key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024);
@@ -327,7 +327,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     ttRoot.add(turntable);
     ttRoot.scale.setScalar(2.55);
     ttRoot.rotation.y = 0.42;
-    const ttRest = new THREE.Vector3(0.72, -0.52, 0.12);
+    const ttRest = new THREE.Vector3(0.42, -0.42, 0.18);
     ttRoot.position.copy(ttRest);
     scene.add(ttRoot);
 
