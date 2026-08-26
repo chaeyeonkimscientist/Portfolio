@@ -106,12 +106,12 @@ import {
   }
 
   /*
-   * Spindle / platter center in turntable-local space (Y-up, platter on −X,
-   * arm on +X). The peg in the GLB is ~(-0.105, 0.148, 0.007). Local +X is
-   * toward the arm (screen-right); a less-negative X parked the hole to the
-   * right of the circular platter.
+   * Platter center in turntable-local space (Y-up, platter on −X, arm on +X).
+   * The disc surface fits a circle at ~(-0.155, 0.137, 0.005). The peg in the
+   * mesh sits a bit toward the arm (~-0.105); using that parked the hole
+   * right of the circular platter. Local +X is toward the arm / screen-right.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.108, 0.141, 0.007);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.160, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
