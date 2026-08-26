@@ -112,7 +112,7 @@ import {
    * right of the platter; a further −X offset seats the hole on the
    * visible circular center. Local +X is toward the arm / screen-right.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.28, 0.141, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.30, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
