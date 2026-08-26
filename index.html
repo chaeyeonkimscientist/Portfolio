@@ -220,6 +220,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   will-change:transform;
 }
 .release{
+  position:relative;
   flex:0 0 calc(100% / var(--work-n));width:calc(100% / var(--work-n));
   height:100%;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -227,15 +228,16 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   padding:1.5rem 8vw 3rem;overflow:visible;
 }
 
-.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible}
+.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible;z-index:1}
 .rig-canvas{
-  position:absolute;left:0;top:-8%;width:158%;height:116%;
-  pointer-events:none;z-index:3;display:block;
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:4;display:block;
   opacity:0;transition:opacity .35s ease;
 }
-.rig.is-3d .rig-canvas{opacity:1}
+.release.is-3d .rig-canvas,.rig.is-3d .rig-canvas{opacity:1}
+.release.is-3d .sleeve,.release.is-3d .disc,
 .rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
-.rig.tt-away .rig-canvas{opacity:0}
+.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{opacity:0}
 .release:hover .disc{transform:translateX(26%)}
 .rig.is-3d:hover .disc{transform:none}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
@@ -599,8 +601,8 @@ if (typeof Tone === 'undefined') {
   <div class="work-track" id="work-track">
 
     <a class="release" href="work/body-conducts.html">
+      <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="the_body_conducts">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
           <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
@@ -617,8 +619,8 @@ if (typeof Tone === 'undefined') {
     </a>
 
     <a class="release" href="work/paramount.html">
+      <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="paramount_internship">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
         <div class="sleeve sl-para">
           <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
@@ -635,8 +637,8 @@ if (typeof Tone === 'undefined') {
     </a>
     
     <a class="release" href="work/short-films.html">
+      <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="short_films">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-gold"><div class="hole"></div></div></div>
         <div class="sleeve sl-films">
           <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>

@@ -105,19 +105,32 @@ import {
     return px * (worldH / innerHeight);
   }
 
-  /* Spindle sits toward the arm (local +X). Earlier centroid parked the LP left of the peg. */
-  const PLATTER_LOCAL = new THREE.Vector3(0.00, 0.138, 0.02);
+  /*
+   * Spindle in turntable-local space (mesh Y-up, platter on −X, arm on +X).
+   * Peg cluster from the GLB is ~(-0.105, 0.148, 0.007). Parenting the LP
+   * here (instead of bbox-snapping in world space) is what actually seats
+   * the hole on the peg. Local +X is toward the arm / screen-right.
+   */
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.055, 0.141, 0.006);
   const PLATTER_RADIUS_LOCAL = 0.30;
+  const VINYL_ON_PLATTER = 0.286;
 
-  function platterWorldFromMesh(root) {
+  function spindleWorld(root) {
     root.updateMatrixWorld(true);
-    return PLATTER_LOCAL.clone().applyMatrix4(root.matrixWorld);
+    return SPINDLE_LOCAL.clone().applyMatrix4(root.matrixWorld);
   }
 
-  function snapVinylCenter(vinylObj, pivot, target) {
-    vinylObj.updateMatrixWorld(true);
-    const center = new THREE.Box3().setFromObject(vinylObj).getCenter(new THREE.Vector3());
-    pivot.position.add(target.clone().sub(center));
+  function mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, spinGroup) {
+    gsap.killTweensOf(vinylPivot.position);
+    gsap.killTweensOf(vinylPivot.rotation);
+    gsap.killTweensOf(vinylTilt.rotation);
+    gsap.killTweensOf(vinyl.scale);
+    ttRoot.add(vinylPivot);
+    vinylPivot.position.copy(SPINDLE_LOCAL);
+    vinylPivot.rotation.set(0, 0, 0);
+    vinylPivot.scale.set(1, 1, 1);
+    vinylTilt.rotation.set(-Math.PI / 2, 0, 0);
+    vinyl.scale.setScalar(VINYL_ON_PLATTER);
   }
 
   async function run(link, disc, url) {
@@ -145,6 +158,7 @@ import {
     disc.classList.add('tt-hidden');
     if (sleeve) sleeve.style.visibility = 'hidden';
     if (rig) rig.classList.add('tt-away');
+    if (link) link.classList.add('tt-away');
     if (typeof window.__pauseWorkCovers === 'function') window.__pauseWorkCovers(true);
 
     const [vinylRoot, turntableRoot, coverRoot] = await Promise.all([
@@ -233,11 +247,13 @@ import {
 
     const vinylPivot = new THREE.Group();
     const vinylTilt = new THREE.Group();
+    const vinylSpin = new THREE.Group();
     const vinyl = cloneAsset(vinylRoot);
     vinyl.scale.setScalar(startVinylScale);
     const jacketTitle = (sleeve && sleeve.querySelector('.stitle')?.innerText || '').replace(/\s+/g, ' ').trim();
     vinyl.add(makeVinylLabel(jacketTitle));
-    vinylTilt.add(vinyl);
+    vinylSpin.add(vinyl);
+    vinylTilt.add(vinylSpin);
     vinylPivot.add(vinylTilt);
     scene.add(vinylPivot);
 
@@ -263,8 +279,7 @@ import {
     scene.add(ttRoot);
 
     ttRoot.updateMatrixWorld(true);
-    const platterWorld = platterWorldFromMesh(ttRoot);
-    platterWorld.y += 0.013 * playScale;
+    const platterWorld = spindleWorld(ttRoot);
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
     key.target.position.copy(platterWorld);
@@ -285,8 +300,8 @@ import {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), 0.05);
       if (spinning) {
-        /* Spin in the disc plane (local Z). After tilt this is the spindle axis. */
-        vinyl.rotation.z -= dt * 3.4;
+        /* After vinylTilt Rx(-90), local Z is the platter / world-up axis. */
+        vinylSpin.rotation.z -= dt * 5.2;
       }
       renderer.render(scene, camera);
     }
@@ -382,15 +397,12 @@ import {
       ease: 'power2.inOut'
     }, 1.55);
 
-    /* 2.85–5.00  playing — sit on the spindle and spin in-plane */
+    /* 2.55  already spinning as it seats; 2.85  parent onto the spindle */
+    tl.add(() => { spinning = true; }, 2.55);
     tl.add(() => {
-      gsap.killTweensOf(vinylPivot.position);
-      gsap.killTweensOf(vinylTilt.rotation);
       ttRoot.position.copy(ttRest);
       ttRoot.updateMatrixWorld(true);
-      const live = platterWorldFromMesh(ttRoot);
-      live.y += 0.013 * playScale;
-      snapVinylCenter(vinyl, vinylPivot, live);
+      mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, vinylSpin);
       spinning = true;
       cueNeedle();
     }, 2.85);
