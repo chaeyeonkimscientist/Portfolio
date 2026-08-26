@@ -1,15 +1,19 @@
 /* ============================================================
    TURNTABLE TRANSITION — Three.js + GSAP
-   Replaces the CSS platter/arm overlay. On a Selected Work click:
-     1. LP slides out of the album sleeve (~1.2s)
-     2. Travels onto the 3D turntable and lays flat (~1.5s)
+   On a Selected Work click:
+     1. LP slides out of the 3D album cover (~1.2s)
+     2. Travels onto the 3D turntable, centered on the platter
      3. Spins as if playing, then wipes into the project page
-   Whole beat is ~5 seconds.
+   Whole beat is ~5 seconds. Cover + vinyl start at the on-page
+   placeholder size.
    ============================================================ */
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
+import {
+  loadVinylModel, loadTurntableModel, loadCoverModel, cloneAsset,
+  COVER_GLBS, VINYL_RADIUS
+} from './vinyl-glb.js';
 
 (function () {
   'use strict';
@@ -18,7 +22,6 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const overlay = document.getElementById('turntable-overlay');
   const canvas = document.getElementById('tt-canvas');
-  const sleeveSlot = document.getElementById('tt-sleeve-slot');
   if (!overlay || !canvas) return;
 
   const log = (msg) => {
@@ -26,42 +29,40 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
   };
 
   let busy = false;
-  let assets = null;
-  let loading = null;
 
   addEventListener('pagehide', () => { busy = false; });
   addEventListener('pageshow', () => { busy = false; });
 
-  function preload() {
-    if (loading) return loading;
-    loading = Promise.all([loadVinylModel(), loadTurntableModel()])
-      .then(([vinyl, turntable]) => {
-        assets = { vinyl, turntable };
-        log('glb ready');
-        return assets;
-      })
-      .catch((err) => {
-        console.error('[tt] glb failed', err);
-        log('glb FAIL ' + (err && err.message ? err.message : err));
-        loading = null;
-        throw err;
-      });
-    return loading;
+  function coverKeyFrom(link) {
+    const rig = link.querySelector('.rig');
+    return (rig && rig.getAttribute('data-cover')) || link.getAttribute('data-cover');
   }
 
-  // Warm models as soon as the work rail is in view / hovered.
+  function preload(coverKey) {
+    const jobs = [loadVinylModel(), loadTurntableModel()];
+    if (coverKey && COVER_GLBS[coverKey]) jobs.push(loadCoverModel(coverKey));
+    return Promise.all(jobs).then((models) => {
+      log('glb ready');
+      return models;
+    }).catch((err) => {
+      console.error('[tt] glb failed', err);
+      log('glb FAIL ' + (err && err.message ? err.message : err));
+      throw err;
+    });
+  }
+
   const work = document.getElementById('work');
   if (work && !REDUCED) {
     const io = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
-        preload();
+        preload('the_body_conducts');
         io.disconnect();
       }
     }, { rootMargin: '200px' });
     io.observe(work);
   }
   document.querySelectorAll('a.release').forEach((a) => {
-    a.addEventListener('pointerenter', preload, { once: true, passive: true });
+    a.addEventListener('pointerenter', () => preload(coverKeyFrom(a)), { once: true, passive: true });
   });
 
   function cueNeedle() {
@@ -95,9 +96,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     ray.setFromCamera(ndc, camera);
     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -planeZ);
     const hit = new THREE.Vector3();
-    if (!ray.ray.intersectPlane(plane, hit)) {
-      hit.set(0, 0, planeZ);
-    }
+    if (!ray.ray.intersectPlane(plane, hit)) hit.set(0, 0, planeZ);
     return hit;
   }
 
@@ -106,129 +105,43 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     return px * (worldH / innerHeight);
   }
 
-  function paintJacketTexture(sleeve) {
-    const canvas2 = document.createElement('canvas');
-    canvas2.width = 1024;
-    canvas2.height = 1024;
-    const ctx = canvas2.getContext('2d');
-    const palettes = {
-      'sl-body': ['#3a2630', '#241620', '#2a1016'],
-      'sl-para': ['#222630', '#191c24', '#142a2f'],
-      'sl-films': ['#33242c', '#1c1820', '#1a2430'],
-      'sl-syn': ['#3f2333', '#2a2b41', '#0f2b2e'],
-      'sl-eng': ['#251a22', '#1a1620', '#280f17']
-    };
-    let stops = palettes['sl-body'];
-    for (const key of Object.keys(palettes)) {
-      if (sleeve.classList.contains(key)) { stops = palettes[key]; break; }
-    }
-    const g = ctx.createLinearGradient(0, 0, 180, 1024);
-    g.addColorStop(0, stops[0]);
-    g.addColorStop(0.55, stops[1]);
-    g.addColorStop(1, stops[2]);
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 1024, 1024);
-
-    ctx.strokeStyle = 'rgba(183,167,216,0.22)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(18, 18, 988, 988);
-
-    const code = sleeve.querySelector('.scode');
-    ctx.fillStyle = 'rgba(239,231,239,0.8)';
-    ctx.font = '28px "DM Mono", monospace';
-    ctx.textBaseline = 'top';
-    if (code) {
-      const spans = [...code.querySelectorAll('span')].map((s) => s.textContent.trim());
-      ctx.fillText(spans[0] || '', 56, 52);
-      ctx.textAlign = 'right';
-      ctx.fillText(spans[1] || '', 968, 52);
-      ctx.textAlign = 'left';
-    }
-
-    const title = (sleeve.querySelector('.stitle')?.innerText || '').trim();
-    ctx.fillStyle = '#EFE7EF';
-    ctx.font = '92px "Dreamer TM", "Pixelify Sans", monospace';
-    ctx.textBaseline = 'bottom';
-    const lines = title.split(/\n+/);
-    let y = 960;
-    for (let i = lines.length - 1; i >= 0; i--) {
-      ctx.fillText(lines[i], 56, y);
-      y -= 100;
-    }
-
-    const tex = new THREE.CanvasTexture(canvas2);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
-    return tex;
-  }
-
-  function makeJacket(sleeve, width, height) {
-    const tex = paintJacketTexture(sleeve);
-    const depth = Math.max(width, height) * 0.045;
-    const geom = new THREE.BoxGeometry(width, height, depth);
-    const paper = new THREE.MeshStandardMaterial({
-      color: 0x1a161c, roughness: 0.82, metalness: 0.04
-    });
-    const front = new THREE.MeshStandardMaterial({
-      map: tex, roughness: 0.55, metalness: 0.05
-    });
-    const mats = [paper, paper, paper, paper, front, paper];
-    const mesh = new THREE.Mesh(geom, mats);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    return mesh;
-  }
-
-  /* Measured from turntable 3d model.glb (Y-up, platter on -X, arm on +X). */
-  const PLATTER_LOCAL = new THREE.Vector3(-0.13, 0.134, 0.0);
+  /* Measured from turntable 3d model.glb:
+     platter is the left-hand disc, Y-up, spindle near (-0.17, 0.137, 0.02). */
+  const PLATTER_LOCAL = new THREE.Vector3(-0.17, 0.137, 0.02);
+  const PLATTER_RADIUS_LOCAL = 0.30;
 
   async function run(link, disc, url) {
     busy = true;
     try {
-    await runScene(link, disc, url);
+      await runScene(link, disc, url);
     } catch (err) {
       console.error('[tt] run failed', err);
       log('run FAIL ' + (err && err.message ? err.message : err));
       busy = false;
+      if (typeof window.__pauseWorkCovers === 'function') window.__pauseWorkCovers(false);
       window.location.href = url;
     }
   }
 
   async function runScene(link, disc, url) {
-
+    const rig = link.querySelector('.rig');
     const sleeve = link.querySelector('.sleeve');
-    const sleeveRect = sleeve ? sleeve.getBoundingClientRect() : disc.getBoundingClientRect();
-    const discRect = disc.getBoundingClientRect();
+    const coverKey = coverKeyFrom(link);
+    const sleeveRect = (sleeve || disc || rig).getBoundingClientRect();
+    const discRect = disc ? disc.getBoundingClientRect() : sleeveRect;
 
     overlay.classList.add('tt-on', 'tt-dim');
     overlay.style.display = 'block';
     disc.classList.add('tt-hidden');
+    if (sleeve) sleeve.style.visibility = 'hidden';
+    if (rig) rig.classList.add('tt-away');
+    if (typeof window.__pauseWorkCovers === 'function') window.__pauseWorkCovers(true);
 
-    let sleeveClone = null;
-    if (sleeve && sleeveSlot) {
-      sleeveClone = sleeve.cloneNode(true);
-      sleeveClone.classList.add('tt-sleeve-clone');
-      Object.assign(sleeveClone.style, {
-        position: 'fixed',
-        left: sleeveRect.left + 'px',
-        top: sleeveRect.top + 'px',
-        width: sleeveRect.width + 'px',
-        height: sleeveRect.height + 'px',
-        margin: '0',
-        zIndex: '2',
-        pointerEvents: 'none'
-      });
-      sleeveSlot.appendChild(sleeveClone);
-      sleeve.style.visibility = 'hidden';
-    }
-
-    let models;
-    try {
-      models = await preload();
-    } catch (e) {
-      window.location.href = url;
-      return;
-    }
+    const [vinylRoot, turntableRoot, coverRoot] = await Promise.all([
+      loadVinylModel(),
+      loadTurntableModel(),
+      coverKey ? loadCoverModel(coverKey).catch(() => null) : Promise.resolve(null)
+    ]);
 
     const renderer = new THREE.WebGLRenderer({
       canvas, antialias: true, alpha: true,
@@ -239,7 +152,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.92;
+    renderer.toneMappingExposure = 0.9;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x000000, 0);
@@ -255,7 +168,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     }
 
     const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.05, 40);
-    camera.position.set(0, 0.08, 2.55);
+    camera.position.set(0, 0.06, 2.55);
     const look = new THREE.Vector3(0, 0.02, 0);
     camera.lookAt(look);
 
@@ -274,10 +187,6 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     rim.position.set(-2.0, 1.6, 1.2);
     scene.add(rim);
 
-    const fill = new THREE.PointLight(0xc9436a, 2.2, 8);
-    fill.position.set(1.6, 0.6, 1.8);
-    scene.add(fill);
-
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(18, 18),
       new THREE.MeshStandardMaterial({ color: 0x0c1012, roughness: 0.95, metalness: 0 })
@@ -287,64 +196,74 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     floor.receiveShadow = true;
     scene.add(floor);
 
+    const dist = camera.position.z;
+    const coverPos = ndcToPlane(
+      sleeveRect.left + sleeveRect.width / 2,
+      sleeveRect.top + sleeveRect.height / 2,
+      camera, 0
+    );
+    const coverWorld = pixelsToWorld(
+      Math.min(sleeveRect.width, sleeveRect.height),
+      camera, dist
+    );
+    const discSize = pixelsToWorld(
+      Math.min(discRect.width, discRect.height),
+      camera, dist
+    );
+    const startVinylScale = (discSize * 0.5) / VINYL_RADIUS;
+
+    let jacket = null;
+    if (coverRoot) {
+      jacket = cloneAsset(coverRoot);
+      jacket.scale.setScalar(coverWorld);
+      jacket.position.copy(coverPos);
+      jacket.position.z = 0.02;
+      scene.add(jacket);
+    }
+
     const vinylPivot = new THREE.Group();
     const vinylTilt = new THREE.Group();
-    const vinyl = models.vinyl.clone(true);
+    const vinyl = cloneAsset(vinylRoot);
+    vinyl.scale.setScalar(startVinylScale);
     vinylTilt.add(vinyl);
     vinylPivot.add(vinylTilt);
     scene.add(vinylPivot);
-
-    const jacketW = pixelsToWorld(sleeveRect.width, camera, camera.position.z);
-    const jacketH = pixelsToWorld(sleeveRect.height, camera, camera.position.z);
-    const jacket = sleeve ? makeJacket(sleeve, jacketW, jacketH) : null;
-    if (jacket) {
-      const jPos = ndcToPlane(
-        sleeveRect.left + sleeveRect.width / 2,
-        sleeveRect.top + sleeveRect.height / 2,
-        camera, 0
-      );
-      jacket.position.copy(jPos);
-      jacket.position.z = -0.02;
-      scene.add(jacket);
-    }
 
     const discCenter = ndcToPlane(
       discRect.left + discRect.width / 2,
       discRect.top + discRect.height / 2,
       camera, 0
     );
-    const discSize = pixelsToWorld(Math.min(discRect.width, discRect.height), camera, camera.position.z);
-    const startScale = discSize / 2;
-    vinyl.scale.setScalar(startScale);
     vinylPivot.position.copy(discCenter);
-    vinylPivot.position.z = 0.01;
+    vinylPivot.position.z = 0;
 
-    // Slide direction: out the right edge of the sleeve, in world units.
-    const outDistance = Math.max(jacketW || discSize, discSize) * 1.12;
+    const outDistance = Math.max(coverWorld, discSize) * 1.05;
 
     const ttRoot = new THREE.Group();
-    const turntable = models.turntable.clone(true);
-    ttRoot.add(turntable);
-    ttRoot.scale.setScalar(2.55);
-    ttRoot.rotation.y = 0.42;
-    const ttRest = new THREE.Vector3(0.42, -0.42, 0.18);
+    ttRoot.add(cloneAsset(turntableRoot));
+    /* Keep the playing LP the same size as the placeholder disc. */
+    const playScale = startVinylScale;
+    const ttScale = playScale / PLATTER_RADIUS_LOCAL;
+    ttRoot.scale.setScalar(ttScale);
+    ttRoot.rotation.y = 0.38;
+    const ttRest = new THREE.Vector3(0.38, -0.18 * ttScale, 0.12);
     ttRoot.position.copy(ttRest);
     scene.add(ttRoot);
 
     ttRoot.updateMatrixWorld(true);
     const platterWorld = PLATTER_LOCAL.clone().applyMatrix4(ttRoot.matrixWorld);
-    platterWorld.y += 0.012;
-    ttRoot.position.x = ttRest.x + 1.15;
+    /* Sit the disc on the platter, not through it (vinyl half-thickness). */
+    platterWorld.y += 0.012 * playScale;
+    ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
-    const playScale = 0.33 * ttRoot.scale.x;
     key.target.position.copy(platterWorld);
 
     const endCam = new THREE.Vector3(
-      platterWorld.x + 0.55,
-      platterWorld.y + 0.95,
-      platterWorld.z + 1.55
+      platterWorld.x + 0.28 * Math.max(ttScale, 1),
+      platterWorld.y + 0.48 * Math.max(ttScale, 1),
+      platterWorld.z + 0.78 * Math.max(ttScale, 1)
     );
-    const endLook = platterWorld.clone().add(new THREE.Vector3(0.05, 0.02, 0));
+    const endLook = platterWorld.clone();
 
     let spinning = false;
     let spinVel = 0;
@@ -385,33 +304,18 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
       }
     });
 
-    /* 0.00–1.20  vinyl slides out of the sleeve */
+    /* 0.00–1.20  vinyl slides out of the 3D cover */
     tl.to(vinylPivot.position, {
       x: discCenter.x + outDistance,
       duration: 1.15,
       ease: 'power2.out'
     }, 0);
 
-    /* 0.90–2.40  sleeve recedes, camera finds the turntable */
-    if (sleeveClone) {
-      tl.to(sleeveClone, {
-        x: -Math.round(innerWidth * 0.22),
-        y: -24,
-        opacity: 0,
-        duration: 0.85,
-        ease: 'power2.in'
-      }, 0.95);
-    }
-    tl.to(ttRoot.position, {
-      x: ttRest.x,
-      duration: 1.35,
-      ease: 'power2.out'
-    }, 1.05);
-
+    /* 0.90–2.40  cover recedes, camera finds the turntable */
     if (jacket) {
       tl.to(jacket.position, {
-        x: jacket.position.x - 1.4,
-        y: jacket.position.y + 0.15,
+        x: jacket.position.x - 1.15,
+        y: jacket.position.y + 0.12,
         duration: 1.15,
         ease: 'power2.inOut'
       }, 1.0);
@@ -422,11 +326,19 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
         ease: 'power2.inOut'
       }, 1.0);
       tl.to(jacket.scale, {
-        x: 0.72, y: 0.72, z: 0.72,
+        x: jacket.scale.x * 0.72,
+        y: jacket.scale.y * 0.72,
+        z: jacket.scale.z * 0.72,
         duration: 1.15,
         ease: 'power2.inOut'
       }, 1.0);
     }
+
+    tl.to(ttRoot.position, {
+      x: ttRest.x,
+      duration: 1.35,
+      ease: 'power2.out'
+    }, 1.05);
 
     tl.to(camera.position, {
       x: endCam.x, y: endCam.y, z: endCam.z,
@@ -441,7 +353,7 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
       onUpdate: () => camera.lookAt(look)
     }, 1.05);
 
-    /* 1.35–3.15  vinyl flies to the platter and lays down */
+    /* 1.45–3.15  vinyl flies to the platter, lays down, stays placeholder-sized */
     tl.to(vinylPivot.position, {
       x: platterWorld.x,
       y: platterWorld.y,
@@ -456,19 +368,20 @@ import { loadVinylModel, loadTurntableModel } from './vinyl-glb.js';
     }, 1.65);
     tl.to(vinyl.scale, {
       x: playScale, y: playScale, z: playScale,
-      duration: 1.35,
+      duration: 1.2,
       ease: 'power2.inOut'
-    }, 1.5);
+    }, 1.55);
 
-    /* 3.15–5.00  playing */
+    /* 3.20–5.00  playing — spin about the platter spindle */
     tl.add(() => {
+      vinylPivot.position.copy(platterWorld);
       spinning = true;
       cueNeedle();
     }, 3.2);
 
     tl.to(camera.position, {
-      y: endCam.y - 0.08,
-      z: endCam.z - 0.12,
+      y: endCam.y - 0.05,
+      z: endCam.z - 0.08,
       duration: 1.7,
       ease: 'sine.inOut',
       onUpdate: () => camera.lookAt(look)

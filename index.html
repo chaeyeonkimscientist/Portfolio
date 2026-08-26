@@ -227,7 +227,17 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   padding:1.5rem 8vw 3rem;
 }
 
-.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer}
+.rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible}
+.rig-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:3;display:block;
+  opacity:0;transition:opacity .35s ease;
+}
+.rig.is-3d .rig-canvas{opacity:1}
+.rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
+.rig.tt-away .rig-canvas{opacity:0}
+.release:hover .disc{transform:translateX(26%)}
+.rig.is-3d:hover .disc{transform:none}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
   box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
@@ -241,7 +251,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
 .sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
 .sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
-.release:hover .disc{transform:translateX(26%)}
 
 .sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
 .sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
@@ -590,7 +599,8 @@ if (typeof Tone === 'undefined') {
   <div class="work-track" id="work-track">
 
     <a class="release" href="work/body-conducts.html">
-      <div class="rig">
+      <div class="rig" data-cover="the_body_conducts">
+        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
           <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
@@ -607,7 +617,8 @@ if (typeof Tone === 'undefined') {
     </a>
 
     <a class="release" href="work/paramount.html">
-      <div class="rig">
+      <div class="rig" data-cover="paramount_internship">
+        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
         <div class="sleeve sl-para">
           <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
@@ -624,7 +635,8 @@ if (typeof Tone === 'undefined') {
     </a>
     
     <a class="release" href="work/short-films.html">
-      <div class="rig">
+      <div class="rig" data-cover="short_films">
+        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-gold"><div class="hole"></div></div></div>
         <div class="sleeve sl-films">
           <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
@@ -1209,6 +1221,7 @@ onScroll();
   <div id="tt-sleeve-slot"></div>
 </div>
 <script type="module" src="turntable-transition.js"></script>
+<script type="module" src="work-covers-3d.js"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
