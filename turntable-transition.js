@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {
-  loadVinylModel, loadTurntableModel, loadCoverModel, cloneAsset,
+  loadVinylModel, loadTurntableModel, loadCoverModel, cloneAsset, makeVinylLabel,
   COVER_GLBS, VINYL_RADIUS
 } from './vinyl-glb.js';
 
@@ -105,29 +105,13 @@ import {
     return px * (worldH / innerHeight);
   }
 
-  /* Measured from turntable 3d model.glb:
-     platter is the left-hand disc, Y-up, spindle near (-0.17, 0.137, 0.02). */
-  const PLATTER_LOCAL = new THREE.Vector3(-0.17, 0.137, 0.02);
+  /* Spindle sits toward the arm (local +X). Earlier centroid parked the LP left of the peg. */
+  const PLATTER_LOCAL = new THREE.Vector3(0.00, 0.138, 0.02);
   const PLATTER_RADIUS_LOCAL = 0.30;
 
   function platterWorldFromMesh(root) {
-    const acc = new THREE.Vector3();
-    const local = new THREE.Vector3();
-    let n = 0;
     root.updateMatrixWorld(true);
-    root.traverse((o) => {
-      if (!o.isMesh || !o.geometry) return;
-      const attr = o.geometry.getAttribute('position');
-      if (!attr) return;
-      for (let i = 0; i < attr.count; i += 9) {
-        local.fromBufferAttribute(attr, i);
-        if (local.y < 0.122 || local.y > 0.145 || local.x > 0.08) continue;
-        acc.add(local.clone().applyMatrix4(o.matrixWorld));
-        n++;
-      }
-    });
-    if (!n) return null;
-    return acc.divideScalar(n);
+    return PLATTER_LOCAL.clone().applyMatrix4(root.matrixWorld);
   }
 
   function snapVinylCenter(vinylObj, pivot, target) {
@@ -251,6 +235,8 @@ import {
     const vinylTilt = new THREE.Group();
     const vinyl = cloneAsset(vinylRoot);
     vinyl.scale.setScalar(startVinylScale);
+    const jacketTitle = (sleeve && sleeve.querySelector('.stitle')?.innerText || '').replace(/\s+/g, ' ').trim();
+    vinyl.add(makeVinylLabel(jacketTitle));
     vinylTilt.add(vinyl);
     vinylPivot.add(vinylTilt);
     scene.add(vinylPivot);
@@ -277,9 +263,8 @@ import {
     scene.add(ttRoot);
 
     ttRoot.updateMatrixWorld(true);
-    const measured = platterWorldFromMesh(ttRoot);
-    const platterWorld = measured || PLATTER_LOCAL.clone().applyMatrix4(ttRoot.matrixWorld);
-    platterWorld.y += 0.012 * playScale;
+    const platterWorld = platterWorldFromMesh(ttRoot);
+    platterWorld.y += 0.013 * playScale;
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
     key.target.position.copy(platterWorld);
@@ -292,7 +277,6 @@ import {
     const endLook = platterWorld.clone();
 
     let spinning = false;
-    let spinVel = 0;
     const clock = new THREE.Clock();
     let raf = 0;
     let gone = false;
@@ -301,8 +285,8 @@ import {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), 0.05);
       if (spinning) {
-        spinVel = Math.min(spinVel + dt * 8.5, 3.6);
-        vinylPivot.rotation.y += spinVel * dt;
+        /* Spin in the disc plane (local Z). After tilt this is the spindle axis. */
+        vinyl.rotation.z -= dt * 3.4;
       }
       renderer.render(scene, camera);
     }
@@ -398,16 +382,18 @@ import {
       ease: 'power2.inOut'
     }, 1.55);
 
-    /* 3.20–5.00  playing — snap LP center to the spindle, then spin */
+    /* 2.85–5.00  playing — sit on the spindle and spin in-plane */
     tl.add(() => {
+      gsap.killTweensOf(vinylPivot.position);
+      gsap.killTweensOf(vinylTilt.rotation);
       ttRoot.position.copy(ttRest);
       ttRoot.updateMatrixWorld(true);
-      const live = platterWorldFromMesh(ttRoot) || platterWorld.clone();
-      live.y += 0.012 * playScale;
+      const live = platterWorldFromMesh(ttRoot);
+      live.y += 0.013 * playScale;
       snapVinylCenter(vinyl, vinylPivot, live);
       spinning = true;
       cueNeedle();
-    }, 3.2);
+    }, 2.85);
 
     tl.to(camera.position, {
       y: endCam.y - 0.05,

@@ -1,7 +1,8 @@
 /* Idle 3D album covers in Selected Work — replaces CSS sleeve/disc placeholders. */
 import * as THREE from 'three';
 import {
-  loadVinylModel, loadCoverModel, cloneAsset, COVER_SIZE, VINYL_RADIUS
+  loadVinylModel, loadCoverModel, cloneAsset, makeVinylLabel,
+  COVER_SIZE, VINYL_RADIUS
 } from './vinyl-glb.js';
 
 (function () {
@@ -14,6 +15,8 @@ import {
   if (!rigs.length) return;
 
   const cards = [];
+  const TILT_X = 0.16;
+  const TILT_Y = 0.32;
 
   function lights(scene) {
     scene.add(new THREE.AmbientLight(0xb7a7d8, 0.55));
@@ -27,10 +30,12 @@ import {
   }
 
   function layout(card) {
-    const { camera, cover, vinyl, vinylRest } = card;
+    const { camera, cover, vinyl, vinylRest, stage } = card;
     const canvas = card.renderer.domElement;
-    const w = canvas.clientWidth || 1;
-    const h = canvas.clientHeight || 1;
+    const rigW = card.rig.clientWidth || 1;
+    const rigH = card.rig.clientHeight || 1;
+    const w = canvas.clientWidth || rigW;
+    const h = canvas.clientHeight || rigH;
     if (w < 4 || h < 4) return;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -40,25 +45,19 @@ import {
     const dist = camera.position.z;
     const worldH = 2 * Math.tan((camera.fov * Math.PI) / 360) * dist;
     const worldW = worldH * camera.aspect;
+    const rigWorldW = worldW * (rigW / w);
 
-    // Match the CSS sleeve: 64% of rig width, full height — nearly square.
-    const sleeveW = worldW * 0.64;
-    const sleeveH = worldH;
-    const coverScale = Math.min(sleeveW, sleeveH) / COVER_SIZE;
+    const sleeveW = rigWorldW * 0.58;
+    const coverScale = Math.min(sleeveW, worldH * 0.92) / COVER_SIZE;
     cover.scale.setScalar(coverScale);
-    cover.position.set(-worldW * 0.5 + sleeveW * 0.5, 0, 0.02);
+    const left = -worldW * 0.5 + coverScale * 0.52;
+    cover.position.set(left, 0, 0.02);
 
-    // Disc is 62% of rig width; keep it slightly smaller than the jacket.
-    const discPxFrac = 0.62;
-    const vinylScale = (worldW * discPxFrac * 0.5) / VINYL_RADIUS;
+    const vinylScale = coverScale * 0.46;
     vinyl.scale.setScalar(vinylScale);
-    const peek = coverScale * 0.36;
-    vinylRest.set(
-      cover.position.x + peek,
-      0,
-      -0.01
-    );
+    vinylRest.set(cover.position.x + coverScale * 0.34, 0, -0.01);
     vinyl.position.copy(vinylRest);
+    if (stage) stage.position.set(0, 0, 0);
   }
 
   async function mount(rig) {
@@ -93,13 +92,20 @@ import {
     ]);
     const cover = cloneAsset(coverRoot);
     const vinyl = cloneAsset(vinylRoot);
-    scene.add(cover);
-    scene.add(vinyl);
+    const title = (rig.querySelector('.stitle')?.innerText || '').replace(/\s+/g, ' ').trim();
+    vinyl.add(makeVinylLabel(title));
+
+    const stage = new THREE.Group();
+    stage.add(cover);
+    stage.add(vinyl);
+    scene.add(stage);
 
     const card = {
-      rig, renderer, scene, camera, cover, vinyl,
+      rig, renderer, scene, camera, cover, vinyl, stage,
       vinylRest: new THREE.Vector3(),
-      hover: 0, hoverT: 0, visible: false, paused: false
+      hover: 0, hoverT: 0,
+      tiltX: 0, tiltY: 0, tiltTX: 0, tiltTY: 0,
+      visible: false, paused: false
     };
     layout(card);
     renderer.render(scene, camera);
@@ -123,11 +129,22 @@ import {
     cards.forEach((c) => io.observe(c.rig));
 
     cards.forEach((c) => {
-      const rel = c.rig.closest('a.release');
-      const enter = () => { c.hoverT = 1; };
-      const leave = () => { c.hoverT = 0; };
-      (rel || c.rig).addEventListener('pointerenter', enter);
-      (rel || c.rig).addEventListener('pointerleave', leave);
+      const rel = c.rig.closest('a.release') || c.rig;
+      rel.addEventListener('pointerenter', () => { c.hoverT = 1; });
+      rel.addEventListener('pointerleave', () => {
+        c.hoverT = 0;
+        c.tiltTX = 0;
+        c.tiltTY = 0;
+      });
+      rel.addEventListener('pointermove', (e) => {
+        const r = c.rig.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+        const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+        c.tiltTY = THREE.MathUtils.clamp(nx, -1, 1) * TILT_Y;
+        c.tiltTX = THREE.MathUtils.clamp(ny, -1, 1) * TILT_X;
+        c.hoverT = 1;
+      });
     });
 
     addEventListener('resize', () => cards.forEach(layout));
@@ -136,11 +153,16 @@ import {
     function frame() {
       requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), 0.05);
+      const k = Math.min(1, dt * 8);
       cards.forEach((c) => {
         if (c.paused || !c.visible) return;
-        c.hover += (c.hoverT - c.hover) * Math.min(1, dt * 8);
-        const extra = c.cover.scale.x * 0.28 * c.hover;
+        c.hover += (c.hoverT - c.hover) * k;
+        c.tiltX += (c.tiltTX - c.tiltX) * k;
+        c.tiltY += (c.tiltTY - c.tiltY) * k;
+        const extra = c.cover.scale.x * 0.42 * c.hover;
         c.vinyl.position.x = c.vinylRest.x + extra;
+        c.stage.rotation.x = c.tiltX;
+        c.stage.rotation.y = c.tiltY;
         c.renderer.render(c.scene, c.camera);
       });
     }

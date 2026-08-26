@@ -224,12 +224,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   height:100%;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;text-decoration:none;color:inherit;
-  padding:1.5rem 8vw 3rem;
+  padding:1.5rem 8vw 3rem;overflow:visible;
 }
 
 .rig{position:relative;width:min(62vmin,580px);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible}
 .rig-canvas{
-  position:absolute;inset:0;width:100%;height:100%;
+  position:absolute;left:0;top:-8%;width:158%;height:116%;
   pointer-events:none;z-index:3;display:block;
   opacity:0;transition:opacity .35s ease;
 }
