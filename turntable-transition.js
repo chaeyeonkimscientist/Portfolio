@@ -173,7 +173,8 @@ import {
       renderer = new THREE.WebGLRenderer({
         canvas, antialias: true, alpha: true,
         powerPreference: 'high-performance',
-        failIfMajorPerformanceCaveat: false
+        failIfMajorPerformanceCaveat: false,
+        preserveDrawingBuffer: true
       });
     } catch (err) {
       log('webgl FAIL ' + (err && err.message ? err.message : err));
@@ -300,6 +301,7 @@ import {
     const endLook = platterWorld.clone();
 
     let spinning = false;
+    let seated = false;
     const clock = new THREE.Clock();
     let raf = 0;
     let gone = false;
@@ -307,8 +309,20 @@ import {
     function frame() {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), 0.05);
+      if (!seated && clock.getElapsedTime() > 2.85) {
+        seated = true;
+        gsap.killTweensOf(vinylPivot.position);
+        gsap.killTweensOf(vinylPivot.rotation);
+        gsap.killTweensOf(vinylTilt.rotation);
+        gsap.killTweensOf(vinyl.scale);
+        ttRoot.position.copy(ttRest);
+        ttRoot.updateMatrixWorld(true);
+        mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, vinylSpin);
+        spinning = true;
+        cueNeedle();
+        log('seated');
+      }
       if (spinning) {
-        /* After vinylTilt Rx(-90), local Z is the platter / world-up axis. */
         vinylSpin.rotation.z -= dt * 5.2;
       }
       renderer.render(scene, camera);
@@ -386,48 +400,38 @@ import {
       onUpdate: () => camera.lookAt(look)
     }, 1.05);
 
-    /* 1.45–3.15  vinyl flies to the platter, lays down, stays placeholder-sized */
+    /* 1.35–2.55  vinyl flies to the platter and lays down */
     tl.to(vinylPivot.position, {
       x: platterWorld.x,
       y: platterWorld.y,
       z: platterWorld.z,
-      duration: 1.55,
+      duration: 1.2,
       ease: 'power3.inOut'
-    }, 1.45);
+    }, 1.35);
     tl.to(vinylTilt.rotation, {
       x: -Math.PI / 2,
-      duration: 1.2,
+      duration: 1.05,
       ease: 'power2.inOut'
-    }, 1.65);
+    }, 1.45);
     tl.to(vinyl.scale, {
       x: playScale, y: playScale, z: playScale,
-      duration: 1.2,
+      duration: 1.0,
       ease: 'power2.inOut'
-    }, 1.55);
+    }, 1.45);
 
-    /* 2.55  already spinning as it seats; 2.85  parent onto the spindle */
-    tl.add(() => { spinning = true; }, 2.55);
-    tl.add(() => {
-      ttRoot.position.copy(ttRest);
-      ttRoot.updateMatrixWorld(true);
-      mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, vinylSpin);
-      spinning = true;
-      cueNeedle();
-    }, 2.85);
+    /* 2.40  start spinning; seating is handled when the fly tween completes */
+    tl.add(() => { spinning = true; }, 2.4);
 
     tl.to(camera.position, {
       y: endCam.y - 0.05,
       z: endCam.z - 0.08,
-      duration: 1.7,
+      duration: 2.2,
       ease: 'sine.inOut',
       onUpdate: () => camera.lookAt(look)
-    }, 3.25);
+    }, 2.6);
 
-    tl.to({}, { duration: Math.max(0.05, DURATION - 4.85) }, 4.85);
+    tl.to(camera.position, { x: '+=0', duration: DURATION - 4.8, ease: 'none' }, 4.8);
 
-    overlay.addEventListener('transitionend', (e) => {
-      if (e.target === overlay && e.propertyName === 'transform') go();
-    }, { once: true });
     setTimeout(go, DURATION * 1000 + 700);
   }
 
