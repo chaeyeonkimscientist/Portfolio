@@ -111,7 +111,7 @@ import {
    * toward the arm so the hole meets the circular platter. Y is raised so
    * the disc sits above the platter instead of intersecting it.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.16, 0.185, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.16, 0.20, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
@@ -412,19 +412,26 @@ import {
       onUpdate: () => camera.lookAt(look)
     }, 1.05);
 
-    /* 1.35–2.55  vinyl flies to the platter and lays down */
+    /* 1.25–2.55  vinyl flies in from above and lays down before it arrives */
+    const hoverPos = platterWorld.clone();
+    hoverPos.y += Math.max(0.08, playScale * 0.35);
     tl.to(vinylPivot.position, {
-      x: platterWorld.x,
-      y: platterWorld.y,
-      z: platterWorld.z,
-      duration: 1.2,
+      x: hoverPos.x,
+      y: hoverPos.y,
+      z: hoverPos.z,
+      duration: 1.15,
       ease: 'power3.inOut'
     }, 1.35);
+    tl.to(vinylPivot.position, {
+      y: platterWorld.y,
+      duration: 0.32,
+      ease: 'power2.in'
+    }, 2.50);
     tl.to(vinylTilt.rotation, {
       x: -Math.PI / 2,
-      duration: 1.05,
+      duration: 0.85,
       ease: 'power2.inOut'
-    }, 1.45);
+    }, 1.25);
     tl.to(vinyl.scale, {
       x: playScale, y: playScale, z: playScale,
       duration: 1.0,
