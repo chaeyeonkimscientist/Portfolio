@@ -267,13 +267,11 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .hook .hl{color:var(--lav)}
 .demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
 .demo::before{content:"\25B8 "}
-.tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
-.tag{font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
-.tag.t-mus{color:var(--lav);border-color:rgba(183,167,216,0.4)}
-.tag.t-cog{color:var(--grape-lit);border-color:rgba(143,143,208,0.45)}
-.tag.t-dat{color:var(--bone);border-color:rgba(236,232,242,0.28)}
-.tag.t-tec{color:var(--amaranth-lit);border-color:rgba(201,67,106,0.5)}
-.tag.t-ind{color:var(--bone-dim)}
+.tags{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:center}
+.tag{display:inline-flex;align-items:center;justify-content:center;padding:0;border:none;background:transparent;line-height:0}
+.tag img{display:block;height:2.35rem;width:auto;object-fit:contain;pointer-events:none}
+.tag.t-cog img{height:2.55rem}
+.tag.t-dat img,.tag.t-tec img,.tag.t-ind img{height:2.2rem}
 
 @media(max-width:760px){
   .hero{padding:0 6vw}nav{padding:1.4rem 6vw}.cue{display:none}
@@ -286,6 +284,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .rig{width:min(48vmin,420px);margin-bottom:1rem}
   .ptitle{font-size:1.4rem}
   .hook{font-size:0.82rem;margin-bottom:10px}
+  .tag img{height:1.9rem}
+  .tag.t-cog img{height:2.05rem}
+  .tag.t-dat img,.tag.t-tec img,.tag.t-ind img{height:1.75rem}
 }
 @media(prefers-reduced-motion:reduce){
   .cue,.scrolldown{display:none}
@@ -666,7 +667,11 @@ if (typeof Tone === 'undefined') {
         <div class="idx">01</div>
         <div class="ptitle">The Body Conducts</div>
         <div class="hook">Stress symphony scored from the brain. A 5-track music film that turns <span class="hl">invisible inflammation audible.</span> EEG data embedded as genre, rhythm, and texture.</div>
-        <div class="tags"><span class="tag t-mus">Music</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-dat">Data</span></div>
+        <div class="tags" aria-label="Music, Cognitive Science, Data">
+          <span class="tag t-mus" title="Music"><img src="icons/music.png" alt="Music"></span>
+          <span class="tag t-cog" title="Cognitive Science"><img src="icons/cogsci.png" alt="Cognitive Science"></span>
+          <span class="tag t-dat" title="Data"><img src="icons/data.png" alt="Data"></span>
+        </div>
       </div>
     </a>
 
@@ -683,7 +688,9 @@ if (typeof Tone === 'undefined') {
         <div class="idx">02</div>
         <div class="ptitle">Paramount&nbsp;/&nbsp;GCDR</div>
         <div class="hook">Research infrastructure that <span class="hl">cut pre-release analysis time by 65%.</span> An AI agent and audience-profiling pipeline for content distribution across 25 territories.</div>
-        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-ind">Industry</span></div>
+        <div class="tags" aria-label="Data, Industry">
+          <span class="tag t-dat" title="Data"><img src="icons/data.png" alt="Data"></span>
+        </div>
       </div>
     </a>
     
@@ -701,7 +708,11 @@ if (typeof Tone === 'undefined') {
         <div class="ptitle">Short Films</div>
         <div class="hook">Four 24-hour films where <span class="hl">the score is the film’s psychology.</span> Instruments as characters, ML as impossible casting, motifs that carry what dialogue never states.</div>
         <div class="demo">Golden Owl · Best Audio</div>
-        <div class="tags"><span class="tag t-mus">Music</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-tec">Technology</span></div>
+        <div class="tags" aria-label="Music, Cognitive Science, Technology">
+          <span class="tag t-mus" title="Music"><img src="icons/music.png" alt="Music"></span>
+          <span class="tag t-cog" title="Cognitive Science"><img src="icons/cogsci.png" alt="Cognitive Science"></span>
+          <span class="tag t-tec" title="Technology"><img src="icons/data.png" alt="Technology"></span>
+        </div>
       </div>
     </a>
 
@@ -719,7 +730,11 @@ if (typeof Tone === 'undefined') {
         <div class="ptitle">Synthetic Synesthesia</div>
         <div class="hook">A neurological experience <span class="hl">96% of people can't access,</span> made playable in a browser. Sound becomes color, color becomes sound &mdash; grounded in peer-reviewed research.</div>
         <div class="demo">live demo</div>
-        <div class="tags"><span class="tag t-tec">Technology</span><span class="tag t-cog">Cognitive Science</span><span class="tag t-mus">Music</span></div>
+        <div class="tags" aria-label="Technology, Cognitive Science, Music">
+          <span class="tag t-tec" title="Technology"><img src="icons/data.png" alt="Technology"></span>
+          <span class="tag t-cog" title="Cognitive Science"><img src="icons/cogsci.png" alt="Cognitive Science"></span>
+          <span class="tag t-mus" title="Music"><img src="icons/music.png" alt="Music"></span>
+        </div>
       </div>
     </a>
 
@@ -736,7 +751,10 @@ if (typeof Tone === 'undefined') {
         <div class="idx">05</div>
         <div class="ptitle">Predicting Engagement</div>
         <div class="hook">What <span class="hl">&ldquo;engagement&rdquo; actually is,</span> grounded in brain networks. Replicated and extended a study mapping behavioral predictors to attention, reward, and default-mode systems.</div>
-        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-cog">Cognitive Science</span></div>
+        <div class="tags" aria-label="Data, Cognitive Science">
+          <span class="tag t-dat" title="Data"><img src="icons/data.png" alt="Data"></span>
+          <span class="tag t-cog" title="Cognitive Science"><img src="icons/cogsci.png" alt="Cognitive Science"></span>
+        </div>
       </div>
     </a>
     
