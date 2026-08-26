@@ -110,6 +110,32 @@ import {
   const PLATTER_LOCAL = new THREE.Vector3(-0.17, 0.137, 0.02);
   const PLATTER_RADIUS_LOCAL = 0.30;
 
+  function platterWorldFromMesh(root) {
+    const acc = new THREE.Vector3();
+    const local = new THREE.Vector3();
+    let n = 0;
+    root.updateMatrixWorld(true);
+    root.traverse((o) => {
+      if (!o.isMesh || !o.geometry) return;
+      const attr = o.geometry.getAttribute('position');
+      if (!attr) return;
+      for (let i = 0; i < attr.count; i += 9) {
+        local.fromBufferAttribute(attr, i);
+        if (local.y < 0.122 || local.y > 0.145 || local.x > 0.08) continue;
+        acc.add(local.clone().applyMatrix4(o.matrixWorld));
+        n++;
+      }
+    });
+    if (!n) return null;
+    return acc.divideScalar(n);
+  }
+
+  function snapVinylCenter(vinylObj, pivot, target) {
+    vinylObj.updateMatrixWorld(true);
+    const center = new THREE.Box3().setFromObject(vinylObj).getCenter(new THREE.Vector3());
+    pivot.position.add(target.clone().sub(center));
+  }
+
   async function run(link, disc, url) {
     busy = true;
     try {
@@ -251,8 +277,8 @@ import {
     scene.add(ttRoot);
 
     ttRoot.updateMatrixWorld(true);
-    const platterWorld = PLATTER_LOCAL.clone().applyMatrix4(ttRoot.matrixWorld);
-    /* Sit the disc on the platter, not through it (vinyl half-thickness). */
+    const measured = platterWorldFromMesh(ttRoot);
+    const platterWorld = measured || PLATTER_LOCAL.clone().applyMatrix4(ttRoot.matrixWorld);
     platterWorld.y += 0.012 * playScale;
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
@@ -372,9 +398,13 @@ import {
       ease: 'power2.inOut'
     }, 1.55);
 
-    /* 3.20–5.00  playing — spin about the platter spindle */
+    /* 3.20–5.00  playing — snap LP center to the spindle, then spin */
     tl.add(() => {
-      vinylPivot.position.copy(platterWorld);
+      ttRoot.position.copy(ttRest);
+      ttRoot.updateMatrixWorld(true);
+      const live = platterWorldFromMesh(ttRoot) || platterWorld.clone();
+      live.y += 0.012 * playScale;
+      snapVinylCenter(vinyl, vinylPivot, live);
       spinning = true;
       cueNeedle();
     }, 3.2);
