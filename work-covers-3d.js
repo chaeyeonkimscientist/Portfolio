@@ -202,4 +202,14 @@ import {
   window.__pauseWorkCovers = function (on) {
     cards.forEach((c) => { c.paused = !!on; });
   };
+  window.__disposeWorkCovers = function () {
+    cards.forEach((c) => {
+      c.paused = true;
+      c.visible = false;
+      try {
+        if (c.renderer && c.renderer.forceContextLoss) c.renderer.forceContextLoss();
+        if (c.renderer) c.renderer.dispose();
+      } catch (err) { /* already gone */ }
+    });
+  };
 })();

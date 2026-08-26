@@ -111,7 +111,7 @@ import {
    * here (instead of bbox-snapping in world space) is what actually seats
    * the hole on the peg. Local +X is toward the arm / screen-right.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.055, 0.141, 0.006);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.020, 0.141, 0.006);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
@@ -160,6 +160,7 @@ import {
     if (rig) rig.classList.add('tt-away');
     if (link) link.classList.add('tt-away');
     if (typeof window.__pauseWorkCovers === 'function') window.__pauseWorkCovers(true);
+    if (typeof window.__disposeWorkCovers === 'function') window.__disposeWorkCovers();
 
     const [vinylRoot, turntableRoot, coverRoot] = await Promise.all([
       loadVinylModel(),
@@ -167,11 +168,18 @@ import {
       coverKey ? loadCoverModel(coverKey).catch(() => null) : Promise.resolve(null)
     ]);
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas, antialias: true, alpha: true,
-      powerPreference: 'high-performance',
-      failIfMajorPerformanceCaveat: false
-    });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas, antialias: true, alpha: true,
+        powerPreference: 'high-performance',
+        failIfMajorPerformanceCaveat: false
+      });
+    } catch (err) {
+      log('webgl FAIL ' + (err && err.message ? err.message : err));
+      throw err;
+    }
+    log('webgl ok');
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -432,10 +440,12 @@ import {
     if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
 
     const disc = link.querySelector('.disc');
-    if (!disc || busy || REDUCED) return;
+    const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!disc || busy || reducedNow) return;
 
     e.preventDefault();
     e.stopPropagation();
+    log('click ' + url);
     run(link, disc, link.href);
   }, true);
 })();
