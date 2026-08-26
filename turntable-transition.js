@@ -107,12 +107,11 @@ import {
 
   /*
    * Platter center in turntable-local space (Y-up, platter on −X, arm on +X).
-   * The disc surface fits a circle at ~(-0.155, 0.137, 0.005). The playing
-   * camera looks from the arm side, which makes a 3D-centered disc read
-   * right of the platter; a further −X offset seats the hole on the
-   * visible circular center. Local +X is toward the arm / screen-right.
+   * X: last left correction went from −0.02 to −0.30; this sits halfway back
+   * toward the arm so the hole meets the circular platter. Y is raised so
+   * the disc sits above the platter instead of intersecting it.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.30, 0.141, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.16, 0.185, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
