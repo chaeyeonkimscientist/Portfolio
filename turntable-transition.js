@@ -107,11 +107,12 @@ import {
 
   /*
    * Platter center in turntable-local space (Y-up, platter on −X, arm on +X).
-   * The disc surface fits a circle at ~(-0.155, 0.137, 0.005). The peg in the
-   * mesh sits a bit toward the arm (~-0.105); using that parked the hole
-   * right of the circular platter. Local +X is toward the arm / screen-right.
+   * The disc surface fits a circle at ~(-0.155, 0.137, 0.005). The playing
+   * camera looks from the arm side, which makes a 3D-centered disc read
+   * right of the platter; a further −X offset seats the hole on the
+   * visible circular center. Local +X is toward the arm / screen-right.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.160, 0.141, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.28, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
@@ -120,17 +121,25 @@ import {
     return SPINDLE_LOCAL.clone().applyMatrix4(root.matrixWorld);
   }
 
-  function mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, spinGroup) {
+  function mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale) {
+    gsap.killTweensOf(vinylPivot);
     gsap.killTweensOf(vinylPivot.position);
     gsap.killTweensOf(vinylPivot.rotation);
     gsap.killTweensOf(vinylTilt.rotation);
     gsap.killTweensOf(vinyl.scale);
-    ttRoot.add(vinylPivot);
-    vinylPivot.position.copy(SPINDLE_LOCAL);
+    /* Stay in world space so leftover GSAP world-position tweens cannot
+       treat platter-local coords as a world offset toward the arm. */
+    if (vinylPivot.parent !== scene) scene.add(vinylPivot);
+    const p = spindleWorld(ttRoot);
+    vinylPivot.position.copy(p);
     vinylPivot.rotation.set(0, 0, 0);
     vinylPivot.scale.set(1, 1, 1);
     vinylTilt.rotation.set(-Math.PI / 2, 0, 0);
-    vinyl.scale.setScalar(VINYL_ON_PLATTER);
+    vinyl.scale.setScalar(playScale);
+    log('seat local ' + SPINDLE_LOCAL.toArray().map((n) => n.toFixed(3)).join(',')
+      + ' world ' + p.toArray().map((n) => n.toFixed(3)).join(',')
+      + ' tt ' + ttRoot.position.toArray().map((n) => n.toFixed(3)).join(',')
+      + ' s=' + ttRoot.scale.x.toFixed(3));
   }
 
   async function run(link, disc, url) {
@@ -317,12 +326,16 @@ import {
         gsap.killTweensOf(vinyl.scale);
         ttRoot.position.copy(ttRest);
         ttRoot.updateMatrixWorld(true);
-        mountVinylOnPlatter(ttRoot, vinylPivot, vinylTilt, vinyl, vinylSpin);
+        mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale);
         spinning = true;
         cueNeedle();
         log('seated');
       }
-      if (spinning) {
+      if (seated) {
+        const p = spindleWorld(ttRoot);
+        vinylPivot.position.copy(p);
+        vinylPivot.rotation.set(0, 0, 0);
+        vinylTilt.rotation.set(-Math.PI / 2, 0, 0);
         vinylSpin.rotation.z -= dt * 5.2;
       }
       renderer.render(scene, camera);
