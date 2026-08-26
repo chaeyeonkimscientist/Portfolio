@@ -106,12 +106,12 @@ import {
   }
 
   /*
-   * Spindle in turntable-local space (mesh Y-up, platter on −X, arm on +X).
-   * Peg cluster from the GLB is ~(-0.105, 0.148, 0.007). Parenting the LP
-   * here (instead of bbox-snapping in world space) is what actually seats
-   * the hole on the peg. Local +X is toward the arm / screen-right.
+   * Spindle / platter center in turntable-local space (Y-up, platter on −X,
+   * arm on +X). The peg in the GLB is ~(-0.105, 0.148, 0.007). Local +X is
+   * toward the arm (screen-right); a less-negative X parked the hole to the
+   * right of the circular platter.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.020, 0.141, 0.006);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.108, 0.141, 0.007);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
