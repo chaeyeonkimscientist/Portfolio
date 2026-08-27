@@ -278,8 +278,16 @@ import {
       discRect.top + discRect.height / 2,
       camera, 0
     );
+    /* Start in the sleeve: vertical, Side A on +Z with the cover art. */
+    vinylTilt.rotation.set(0, 0, 0);
     vinylPivot.position.copy(discCenter);
-    vinylPivot.position.z = 0;
+    if (jacket) {
+      vinylPivot.position.x = jacket.position.x + coverWorld * 0.34;
+      vinylPivot.position.y = jacket.position.y;
+      vinylPivot.position.z = jacket.position.z - 0.03;
+    } else {
+      vinylPivot.position.z = -0.02;
+    }
 
     const ttRoot = new THREE.Group();
     ttRoot.add(cloneAsset(turntableRoot));
@@ -296,11 +304,9 @@ import {
     const platterWorld = spindleWorld(ttRoot);
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
-    /* Peek out of the sleeve without sliding through the player.
-       If the cover already sits in the player's X band, lift in place. */
-    const peekTarget = discCenter.x + Math.max(coverWorld, discSize) * 0.48;
-    const playerClearX = platterWorld.x - playScale * 0.4;
-    const sleeveOutX = peekTarget < playerClearX ? peekTarget : discCenter.x;
+    /* Slide out of the sleeve while still upright — always leave the jacket. */
+    const sleeveOutX = vinylPivot.position.x + Math.max(coverWorld, discSize) * 0.45;
+    const sleeveOutZ = (jacket ? jacket.position.z : 0.02) + 0.08;
 
     key.target.position.copy(platterWorld);
 
@@ -371,54 +377,58 @@ import {
     gsap.ticker.lagSmoothing(0);
 
     /*
-     * Rise and flatten FIRST, then move toward the player. An upright disc
-     * traveling only on X at cover/sit height cuts through the chassis.
-     * Sit height stays on the platter — this lift is travel only.
+     * 1. Slide out of the sleeve upright, Side A facing the same way as the art.
+     * 2. Then float and lay flat — never while still inside the jacket.
+     * 3. Approach the player at float height; sit on the platter, not above it.
      */
     const floatY = platterWorld.y + playScale + 0.10;
     log('arc floatY=' + floatY.toFixed(3) + ' sitY=' + platterWorld.y.toFixed(3));
-    tl.to(vinylPivot.position, {
-      y: floatY,
-      duration: 0.4,
-      ease: 'power2.out',
-      overwrite: false
-    }, 0);
-    tl.to(vinylTilt.rotation, {
-      x: -Math.PI / 2,
-      duration: 0.65,
-      ease: 'power2.inOut',
-      overwrite: false
-    }, 0);
 
-    /* Slide out of the sleeve only after the disc has lifted. */
     tl.to(vinylPivot.position, {
       x: sleeveOutX,
-      duration: 0.75,
+      z: sleeveOutZ,
+      duration: 1.05,
       ease: 'power2.out',
       overwrite: false
-    }, 0.35);
+    }, 0);
 
-    /* 0.90–2.40  cover recedes, camera finds the turntable */
+    /* Rise once the disc is already coming out, still vertical. */
+    tl.to(vinylPivot.position, {
+      y: floatY,
+      duration: 0.55,
+      ease: 'power2.out',
+      overwrite: false
+    }, 0.55);
+
+    /* Lay onto the player only after it has left the cover. */
+    tl.to(vinylTilt.rotation, {
+      x: -Math.PI / 2,
+      duration: 0.7,
+      ease: 'power2.inOut',
+      overwrite: false
+    }, 1.15);
+
+    /* Cover gets out of the way while the LP is still upright and leaving the sleeve. */
     if (jacket) {
       tl.to(jacket.position, {
         x: jacket.position.x - 1.15,
         y: jacket.position.y + 0.12,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 1.0);
+      }, 0.45);
       tl.to(jacket.rotation, {
         y: -0.55,
         z: 0.08,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 1.0);
+      }, 0.45);
       tl.to(jacket.scale, {
         x: jacket.scale.x * 0.72,
         y: jacket.scale.y * 0.72,
         z: jacket.scale.z * 0.72,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 1.0);
+      }, 0.45);
     }
 
     tl.to(ttRoot.position, {
