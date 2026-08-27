@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chaeyeon Kim</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 @font-face{
   font-family:"Dreamer TM";
@@ -36,7 +33,7 @@ body{background:var(--iris);color:var(--bone);font-family:"Helvetica Neue",Helve
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 nav{position:fixed;top:0;right:0;left:0;z-index:10;display:flex;justify-content:flex-end;gap:1.8rem;
-  padding:1.6rem 8vw;font-family:"DM Mono",monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
+  padding:1.6rem 8vw;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;
   background:transparent;border:none;backdrop-filter:none}
 nav a{color:var(--bone);text-decoration:none;opacity:0.65;transition:opacity .2s}
 nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-offset:4px;opacity:1}
@@ -45,7 +42,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .eyebrow{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.72rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--lav);margin-bottom:1.6rem}
 
 .panel{position:absolute;left:8vw;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:1.1rem;pointer-events:auto}
-.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"DM Mono",monospace;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .25s ease,transform .35s cubic-bezier(.2,.8,.3,1);transform-origin:left center}
+.mode{display:flex;align-items:center;gap:0.7rem;background:none;border:none;padding:0;cursor:pointer;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);transition:color .25s ease,transform .35s cubic-bezier(.2,.8,.3,1);transform-origin:left center}
 .mode .ind{width:12px;height:12px;flex:0 0 12px;border:1.5px solid var(--bone-dim);background:transparent;transition:background .25s,border-color .25s,box-shadow .25s,width .3s,height .3s;image-rendering:pixelated}
 .mode:hover,.mode:focus-visible{color:var(--bone);outline:none}
 .mode:hover .ind,.mode:focus-visible .ind{border-color:var(--acc)}
@@ -60,18 +57,18 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 @media(max-width:860px){
   .panel{position:absolute;left:0;right:0;top:auto;bottom:5.5rem;transform:none;flex-direction:row;justify-content:center;gap:1.2rem;flex-wrap:wrap;padding:0 6vw}
 }
-.name{font-family:"Dreamer TM","Pixelify Sans",ui-monospace,monospace;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
+.name{font-family:"Dreamer TM","Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-weight:400;font-size:clamp(3rem,11vw,9rem);line-height:0.9;letter-spacing:0.01em;color:var(--bone);margin-bottom:1.5rem}
 
-.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"DM Mono",monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
+.readout{position:relative;z-index:3;margin:0.4rem auto 0;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.7rem;letter-spacing:0.06em;color:var(--bone-dim);pointer-events:none;text-align:center;max-width:90vw;transition:opacity .4s}
 .readout b{color:var(--bone)}.readout .state{transition:color .25s}
 .readout.mute{opacity:0;visibility:hidden}
 .readout .hpa{transition:color .3s ease,text-shadow .3s ease;font-weight:500}
 
-.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"DM Mono",monospace;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
+.cue{position:absolute;bottom:1.8rem;right:8vw;z-index:3;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.68rem;color:var(--bone-dim);opacity:0.5;pointer-events:none;transition:opacity .6s}
 .hero-fade{opacity:0 !important}
 
 .armprompt{position:absolute;bottom:4.6rem;left:50%;transform:translateX(-50%);z-index:4;
-  font-family:"DM Mono",monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
   color:var(--lav);pointer-events:none;white-space:nowrap;
   animation:armpulse 2.4s ease-in-out infinite;
   transition:opacity .6s ease}
@@ -79,7 +76,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 @keyframes armpulse{0%,100%{opacity:0.45}50%{opacity:0.95}}
 @media(prefers-reduced-motion:reduce){.armprompt{animation:none;opacity:0.7}}
 
-.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
+.scrolldown{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);opacity:0.55;pointer-events:none;transition:opacity .4s}
 
 .hl{font-style:normal;color:var(--lav)}
 .statement-zone{position:relative;z-index:5;background:var(--iris);height:340vh}
@@ -105,7 +102,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 .stuck-grid > .grid-item{
   transform-style:preserve-3d;
-  font-family:"DM Mono",monospace;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
   font-size:clamp(0.9rem,2.6vmin,1.6rem);font-weight:400;
   text-wrap:nowrap;color:var(--lav);opacity:0.45;
 }
@@ -211,8 +208,8 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   flex:0 0 auto;display:flex;justify-content:space-between;align-items:baseline;
   border-bottom:1px solid var(--hair);padding:5.6rem 8vw 1.2rem;margin:0;width:100%;
 }
-.sec-head h2{font-family:"Instrument Serif",Georgia,serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
-.sec-head .count{font-family:"DM Mono",monospace;font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.1em}
+.sec-head h2{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
+.sec-head .count{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.1em}
 
 .work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative}
 .work-track{
@@ -250,9 +247,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .disc .hole{width:8%;height:8%;min-width:5px;min-height:5px;border-radius:50%;background:var(--iris)}
 .sleeve{position:absolute;top:0;left:0;width:64%;height:100%;border-radius:2px;overflow:hidden;z-index:2;
   display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
-.sleeve .scode{font-family:"DM Mono",monospace;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
-.sleeve .stitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
-.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
+.sleeve .scode{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
+.sleeve .stitle{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
+.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
 
 .sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
 .sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
@@ -265,21 +262,21 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
 .disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
 .disc.slate .label,.disc.slate .hole{display:none}
-.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.5rem;color:var(--grape-lit)}
+.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.5rem;color:var(--grape-lit)}
 .disc.fig{border-radius:3px;background:linear-gradient(135deg,#1f1820,#120b10);overflow:hidden}
 .disc.fig::after{background:radial-gradient(circle at 35% 40%,rgba(168,50,66,0.35) 0 3%,transparent 3.5%),radial-gradient(circle at 60% 30%,rgba(183,167,216,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 55% 65%,rgba(95,155,148,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 40% 70%,rgba(168,50,66,0.25) 0 2%,transparent 2.5%)}
 .disc.fig .label,.disc.fig .hole{display:none}
-.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.4rem;color:var(--amaranth-lit)}
+.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.4rem;color:var(--amaranth-lit)}
 
 .meta{max-width:34ch}
-.idx{font-family:"DM Mono",monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
-.ptitle{font-family:"Dreamer TM","Pixelify Sans",monospace;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
+.idx{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
+.ptitle{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
 .hook{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
 .hook .hl{color:var(--lav)}
-.demo{font-family:"DM Mono",monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
+.demo{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.1em;color:var(--grape-lit);margin-bottom:14px}
 .demo::before{content:"\25B8 "}
 .tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
-.tag{font-family:"DM Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
+.tag{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:0.5px solid var(--hair);border-radius:2px;color:var(--bone-dim)}
 .tag.t-mus{color:var(--lav);border-color:rgba(183,167,216,0.4)}
 .tag.t-cog{color:var(--grape-lit);border-color:rgba(143,143,208,0.45)}
 .tag.t-dat{color:var(--bone);border-color:rgba(236,232,242,0.28)}
@@ -358,7 +355,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 
 
 #tt-debug{position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;
-  font-family:"DM Mono",monospace;font-size:11px;line-height:1.5;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:11px;line-height:1.5;
   color:#9fe0d8;background:rgba(10,12,16,.88);border:1px solid rgba(159,224,216,.4);
   border-radius:6px;padding:8px 10px;white-space:pre-wrap;pointer-events:none;display:none}
 #tt-debug.on{display:block}
@@ -418,12 +415,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
     pointer-events:none; transition:opacity .5s ease;
   }
   .gate-title{
-    font-family:"Dreamer TM","Pixelify Sans",monospace; font-weight:400;
+    font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif; font-weight:400;
     font-size:clamp(1.6rem,4.5vw,3rem); color:var(--bone); opacity:.94;
     margin-bottom:1rem; text-shadow:0 2px 30px rgba(0,0,0,.8);
   }
   .instruction-text{
-    font-family:"DM Mono",monospace; font-size:.72rem; letter-spacing:.34em;
+    font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif; font-size:.72rem; letter-spacing:.34em;
     color:var(--bone); opacity:.75; text-transform:uppercase;
     animation:text-glow 3s ease-in-out infinite alternate;
   }
@@ -433,7 +430,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   }
   #gate-load{
     position:absolute; left:50%; bottom:3.5vh; transform:translateX(-50%); z-index:5;
-    font-family:"DM Mono",monospace; font-size:.62rem; letter-spacing:.2em;
+    font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif; font-size:.62rem; letter-spacing:.2em;
     color:var(--bone-dim); text-transform:uppercase; transition:opacity .4s;
   }
   #gate-load.gone{ opacity:0; }

@@ -36,7 +36,7 @@
   }
 
   function setFont(ctx, size) {
-    ctx.font = '500 ' + size + 'px "DM Mono", ui-monospace, monospace';
+    ctx.font = '500 ' + size + 'px "Helvetica Neue",Helvetica,Arial,sans-serif';
   }
 
   function hexAlpha(hex, a) {
