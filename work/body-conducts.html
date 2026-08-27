@@ -7,7 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./dive.css?v=14">
+<link rel="stylesheet" href="./dive.css?v=15">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
 <a class="skip" href="#content">Skip to content</a>
@@ -41,9 +49,8 @@
 
 <aside class="rail" id="rail">
   <div class="lp-dock" id="lp-dock" hidden>
-    <div class="lp-disc" aria-hidden="true">
-      <div class="lp-label"></div>
-      <div class="lp-hole"></div>
+    <div class="lp-disc lp-disc-3d" aria-hidden="true">
+      <canvas id="lp-vinyl-canvas" width="304" height="304"></canvas>
     </div>
     <div class="lp-card">
       <div class="lp-kicker">now playing</div>
@@ -355,5 +362,6 @@
 <script src="./dive-memory.js?v=14"></script>
 <script src="./dive-player.js?v=12"></script>
 <script src="./dive-signal.js?v=12"></script>
+<script type="module" src="./lp-vinyl-3d.js"></script>
 </body>
 </html>
