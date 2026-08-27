@@ -305,8 +305,12 @@ import {
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
 
     /* Slide out of the sleeve while still upright — always leave the jacket. */
-    const sleeveOutX = vinylPivot.position.x + Math.max(coverWorld, discSize) * 0.45;
-    const sleeveOutZ = (jacket ? jacket.position.z : 0.02) + 0.08;
+    const vinylR = startVinylScale * VINYL_RADIUS;
+    const jacketX = jacket ? jacket.position.x : vinylPivot.position.x;
+    const jacketZ = jacket ? jacket.position.z : 0.02;
+    const coverRight = jacketX + coverWorld * 0.5;
+    const sleeveOutX = coverRight + vinylR + 0.05;
+    const freeZ = jacketZ + 0.07;
 
     key.target.position.copy(platterWorld);
 
@@ -386,11 +390,18 @@ import {
 
     tl.to(vinylPivot.position, {
       x: sleeveOutX,
-      z: sleeveOutZ,
       duration: 1.05,
       ease: 'power2.out',
       overwrite: false
     }, 0);
+
+    /* Come forward off the artwork only after the disc has cleared the right edge. */
+    tl.to(vinylPivot.position, {
+      z: freeZ,
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: false
+    }, 0.95);
 
     /* Rise once the disc is already coming out, still vertical. */
     tl.to(vinylPivot.position, {
@@ -398,7 +409,7 @@ import {
       duration: 0.55,
       ease: 'power2.out',
       overwrite: false
-    }, 0.55);
+    }, 0.7);
 
     /* Lay onto the player only after it has left the cover. */
     tl.to(vinylTilt.rotation, {
@@ -406,29 +417,29 @@ import {
       duration: 0.7,
       ease: 'power2.inOut',
       overwrite: false
-    }, 1.15);
+    }, 1.2);
 
-    /* Cover gets out of the way while the LP is still upright and leaving the sleeve. */
+    /* Cover recedes as the LP begins to lay onto the player. */
     if (jacket) {
       tl.to(jacket.position, {
         x: jacket.position.x - 1.15,
         y: jacket.position.y + 0.12,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 0.45);
+      }, 1.05);
       tl.to(jacket.rotation, {
         y: -0.55,
         z: 0.08,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 0.45);
+      }, 1.05);
       tl.to(jacket.scale, {
         x: jacket.scale.x * 0.72,
         y: jacket.scale.y * 0.72,
         z: jacket.scale.z * 0.72,
         duration: 1.15,
         ease: 'power2.inOut'
-      }, 0.45);
+      }, 1.05);
     }
 
     tl.to(ttRoot.position, {
@@ -454,10 +465,10 @@ import {
     tl.to(vinylPivot.position, {
       x: platterWorld.x,
       z: platterWorld.z,
-      duration: 1.15,
+      duration: 1.05,
       ease: 'power3.inOut',
       overwrite: false
-    }, 1.20);
+    }, 1.35);
     /* Drop onto the platter only after the disc is over it and already flat. */
     tl.to(vinylPivot.position, {
       y: platterWorld.y,
