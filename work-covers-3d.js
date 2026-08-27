@@ -207,7 +207,15 @@ import {
       c.paused = true;
       c.visible = false;
       try {
-        if (c.renderer && c.renderer.forceContextLoss) c.renderer.forceContextLoss();
+        const el = c.renderer && c.renderer.domElement;
+        if (el) {
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+          el.style.visibility = 'hidden';
+          el.style.background = 'transparent';
+        }
+        /* Do not forceContextLoss — Chrome paints a broken-image icon
+           on the lost canvas, which flashes as a white band. */
         if (c.renderer) c.renderer.dispose();
       } catch (err) { /* already gone */ }
     });

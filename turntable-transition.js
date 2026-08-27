@@ -161,8 +161,12 @@ import {
     const sleeveRect = (sleeve || disc || rig).getBoundingClientRect();
     const discRect = disc ? disc.getBoundingClientRect() : sleeveRect;
 
+    /* Cover the page with an opaque veil first so lost/empty canvases
+       cannot flash a white band or Chrome's broken-image icon. */
     overlay.classList.add('tt-on', 'tt-dim');
+    overlay.classList.remove('tt-ready', 'tt-exit');
     overlay.style.display = 'block';
+    canvas.style.visibility = 'hidden';
     disc.classList.add('tt-hidden');
     if (sleeve) sleeve.style.visibility = 'hidden';
     if (rig) rig.classList.add('tt-away');
@@ -179,7 +183,7 @@ import {
     let renderer;
     try {
       renderer = new THREE.WebGLRenderer({
-        canvas, antialias: true, alpha: true,
+        canvas, antialias: true, alpha: false,
         powerPreference: 'high-performance',
         failIfMajorPerformanceCaveat: false,
         preserveDrawingBuffer: true
@@ -188,15 +192,18 @@ import {
       log('webgl FAIL ' + (err && err.message ? err.message : err));
       throw err;
     }
-    log('webgl ok');
+    renderer.setClearColor(0x08090f, 1);
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(innerWidth, innerHeight);
+    renderer.clear();
+    overlay.classList.add('tt-ready');
+    canvas.style.visibility = 'visible';
+    log('webgl ok');
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.9;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setClearColor(0x000000, 0);
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x101719, 4.5, 11);
