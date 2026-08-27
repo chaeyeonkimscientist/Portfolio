@@ -108,10 +108,10 @@ import {
   /*
    * Platter center in turntable-local space (Y-up, platter on −X, arm on +X).
    * Sit height matches the platter surface. Local +X is toward the arm /
-   * screen-right. -0.16 sat left of the circular board; this nudges the
-   * hole onto the board center.
+   * screen-right. Tiny left correction from -0.08 (less than half of the
+   * previous 0.08 right nudge) so the hole meets the spindle.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.08, 0.141, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.11, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
