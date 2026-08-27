@@ -281,8 +281,6 @@ import {
     vinylPivot.position.copy(discCenter);
     vinylPivot.position.z = 0;
 
-    const outDistance = Math.max(coverWorld, discSize) * 1.05;
-
     const ttRoot = new THREE.Group();
     ttRoot.add(cloneAsset(turntableRoot));
     /* Keep the playing LP the same size as the placeholder disc. */
@@ -297,6 +295,12 @@ import {
     ttRoot.updateMatrixWorld(true);
     const platterWorld = spindleWorld(ttRoot);
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
+
+    /* Peek out of the sleeve without sliding through the player.
+       If the cover already sits in the player's X band, lift in place. */
+    const peekTarget = discCenter.x + Math.max(coverWorld, discSize) * 0.48;
+    const playerClearX = platterWorld.x - playScale * 0.4;
+    const sleeveOutX = peekTarget < playerClearX ? peekTarget : discCenter.x;
 
     key.target.position.copy(platterWorld);
 
@@ -313,22 +317,24 @@ import {
     let raf = 0;
     let gone = false;
 
+    function seatNow() {
+      if (seated) return;
+      seated = true;
+      gsap.killTweensOf(vinylPivot.position);
+      gsap.killTweensOf(vinylPivot.rotation);
+      gsap.killTweensOf(vinylTilt.rotation);
+      gsap.killTweensOf(vinyl.scale);
+      ttRoot.position.copy(ttRest);
+      ttRoot.updateMatrixWorld(true);
+      mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale);
+      spinning = true;
+      cueNeedle();
+      log('seated');
+    }
+
     function frame() {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), 0.05);
-      if (!seated && clock.getElapsedTime() > 2.85) {
-        seated = true;
-        gsap.killTweensOf(vinylPivot.position);
-        gsap.killTweensOf(vinylPivot.rotation);
-        gsap.killTweensOf(vinylTilt.rotation);
-        gsap.killTweensOf(vinyl.scale);
-        ttRoot.position.copy(ttRest);
-        ttRoot.updateMatrixWorld(true);
-        mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale);
-        spinning = true;
-        cueNeedle();
-        log('seated');
-      }
       if (seated) {
         const p = spindleWorld(ttRoot);
         vinylPivot.position.copy(p);
@@ -361,32 +367,36 @@ import {
         setTimeout(go, 420);
       }
     });
-
-    /* 0.00–1.00  vinyl slides out of the 3D cover (still beside the sleeve). */
-    tl.to(vinylPivot.position, {
-      x: discCenter.x + outDistance,
-      duration: 1.0,
-      ease: 'power2.out'
-    }, 0);
+    /* Keep the 5s beat on wall time even if a few frames hitch. */
+    gsap.ticker.lagSmoothing(0);
 
     /*
-     * Float before any travel toward the player. An upright disc of radius
-     * playScale will cut through the chassis if it only moves on X at sit
-     * height. Sit height itself stays on the platter — this lift is travel only.
+     * Rise and flatten FIRST, then move toward the player. An upright disc
+     * traveling only on X at cover/sit height cuts through the chassis.
+     * Sit height stays on the platter — this lift is travel only.
      */
-    const floatY = platterWorld.y + playScale + 0.08;
+    const floatY = platterWorld.y + playScale + 0.10;
+    log('arc floatY=' + floatY.toFixed(3) + ' sitY=' + platterWorld.y.toFixed(3));
     tl.to(vinylPivot.position, {
       y: floatY,
-      duration: 0.5,
-      ease: 'power2.out'
-    }, 0.35);
-
-    /* Lay flat while still high and still next to the cover. */
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: false
+    }, 0);
     tl.to(vinylTilt.rotation, {
       x: -Math.PI / 2,
-      duration: 0.7,
-      ease: 'power2.inOut'
-    }, 0.45);
+      duration: 0.65,
+      ease: 'power2.inOut',
+      overwrite: false
+    }, 0);
+
+    /* Slide out of the sleeve only after the disc has lifted. */
+    tl.to(vinylPivot.position, {
+      x: sleeveOutX,
+      duration: 0.75,
+      ease: 'power2.out',
+      overwrite: false
+    }, 0.35);
 
     /* 0.90–2.40  cover recedes, camera finds the turntable */
     if (jacket) {
@@ -435,22 +445,23 @@ import {
       x: platterWorld.x,
       z: platterWorld.z,
       duration: 1.15,
-      ease: 'power3.inOut'
-    }, 1.25);
+      ease: 'power3.inOut',
+      overwrite: false
+    }, 1.20);
     /* Drop onto the platter only after the disc is over it and already flat. */
     tl.to(vinylPivot.position, {
       y: platterWorld.y,
       duration: 0.4,
-      ease: 'power2.inOut'
-    }, 2.4);
+      ease: 'power2.inOut',
+      overwrite: false
+    }, 2.40);
     tl.to(vinyl.scale, {
       x: playScale, y: playScale, z: playScale,
       duration: 1.0,
       ease: 'power2.inOut'
-    }, 1.35);
+    }, 1.30);
 
-    /* 2.40  start spinning; seating is handled when the fly tween completes */
-    tl.add(() => { spinning = true; }, 2.4);
+    tl.add(seatNow, 2.85);
 
     tl.to(camera.position, {
       y: endCam.y - 0.05,
