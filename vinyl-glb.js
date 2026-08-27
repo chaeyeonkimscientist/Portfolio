@@ -141,7 +141,7 @@ export function makeVinylLabel(title) {
   ctx.fillStyle = '#EFE7EF';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = '700 54px "Instrument Serif","Times New Roman",serif';
+  ctx.font = '700 54px "Helvetica Neue",Helvetica,Arial,sans-serif';
   ctx.fillText('SIDE A', 256, 168);
 
   const raw = String(title || 'LP').replace(/\s+/g, ' ').trim();
