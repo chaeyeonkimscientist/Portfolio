@@ -107,11 +107,10 @@ import {
 
   /*
    * Platter center in turntable-local space (Y-up, platter on −X, arm on +X).
-   * X: last left correction went from −0.02 to −0.30; this sits halfway back
-   * toward the arm so the hole meets the circular platter. Y is raised so
-   * the disc sits above the platter instead of intersecting it.
+   * Sit height matches the platter surface. Travel floats above this so the
+   * still-upright disc does not cut through the player on the way in.
    */
-  const SPINDLE_LOCAL = new THREE.Vector3(-0.16, 0.20, 0.005);
+  const SPINDLE_LOCAL = new THREE.Vector3(-0.16, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
 
@@ -363,12 +362,31 @@ import {
       }
     });
 
-    /* 0.00–1.20  vinyl slides out of the 3D cover */
+    /* 0.00–1.00  vinyl slides out of the 3D cover (still beside the sleeve). */
     tl.to(vinylPivot.position, {
       x: discCenter.x + outDistance,
-      duration: 1.15,
+      duration: 1.0,
       ease: 'power2.out'
     }, 0);
+
+    /*
+     * Float before any travel toward the player. An upright disc of radius
+     * playScale will cut through the chassis if it only moves on X at sit
+     * height. Sit height itself stays on the platter — this lift is travel only.
+     */
+    const floatY = platterWorld.y + playScale + 0.08;
+    tl.to(vinylPivot.position, {
+      y: floatY,
+      duration: 0.5,
+      ease: 'power2.out'
+    }, 0.35);
+
+    /* Lay flat while still high and still next to the cover. */
+    tl.to(vinylTilt.rotation, {
+      x: -Math.PI / 2,
+      duration: 0.7,
+      ease: 'power2.inOut'
+    }, 0.45);
 
     /* 0.90–2.40  cover recedes, camera finds the turntable */
     if (jacket) {
@@ -412,31 +430,24 @@ import {
       onUpdate: () => camera.lookAt(look)
     }, 1.05);
 
-    /* 1.25–2.55  vinyl flies in from above and lays down before it arrives */
-    const hoverPos = platterWorld.clone();
-    hoverPos.y += Math.max(0.08, playScale * 0.35);
+    /* Approach on X/Z only — keep float Y so the path never dips through the player. */
     tl.to(vinylPivot.position, {
-      x: hoverPos.x,
-      y: hoverPos.y,
-      z: hoverPos.z,
+      x: platterWorld.x,
+      z: platterWorld.z,
       duration: 1.15,
       ease: 'power3.inOut'
-    }, 1.35);
+    }, 1.25);
+    /* Drop onto the platter only after the disc is over it and already flat. */
     tl.to(vinylPivot.position, {
       y: platterWorld.y,
-      duration: 0.32,
-      ease: 'power2.in'
-    }, 2.50);
-    tl.to(vinylTilt.rotation, {
-      x: -Math.PI / 2,
-      duration: 0.85,
+      duration: 0.4,
       ease: 'power2.inOut'
-    }, 1.25);
+    }, 2.4);
     tl.to(vinyl.scale, {
       x: playScale, y: playScale, z: playScale,
       duration: 1.0,
       ease: 'power2.inOut'
-    }, 1.45);
+    }, 1.35);
 
     /* 2.40  start spinning; seating is handled when the fly tween completes */
     tl.add(() => { spinning = true; }, 2.4);
