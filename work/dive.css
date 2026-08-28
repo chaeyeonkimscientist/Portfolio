@@ -20,8 +20,8 @@
   --space-xl:2.75rem;
   --space-2xl:3.75rem;
   --space-3xl:5.5rem;
-  --measure:62ch;
-  --measure-narrow:42ch;
+  --measure:36rem;
+  --measure-narrow:24rem;
   --well:68rem;
   --indent:1.15rem;
   --col-gap:var(--space-lg);
@@ -187,7 +187,7 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > *{
   max-width:var(--measure);
   width:100%;
-  margin-left:auto;margin-right:auto;
+  margin-left:var(--col-left);margin-right:auto;
   text-align:left;
 }
 .dive > section > .bio-loop,
@@ -1156,7 +1156,7 @@ button.morse[aria-pressed="true"]{
     --gutter-left:3.35rem;
     --gutter-right:4.25rem;
     --nav-offset:6.6rem;
-    --measure:46ch;
+    --measure:22rem;
     --space-2xl:2.75rem;
     --space-3xl:4rem;
     --well:100%;
