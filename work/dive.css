@@ -103,22 +103,10 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 }
 .hud.is-open .hud-rail,
 .hud-rail:hover{width:18rem;background:linear-gradient(90deg,rgba(16,23,25,.92) 0%,rgba(16,23,25,.55) 70%,transparent 100%)}
-.hud-track{
-  position:absolute;top:5.6rem;bottom:10vh;left:1.55rem;width:2px;
-  background:rgba(183,167,216,.32);border-radius:1px;
-  box-shadow:0 0 8px rgba(183,167,216,.35);
-}
-.hud-fill{
-  position:absolute;top:0;left:0;width:100%;height:0;
-  background:var(--lav);border-radius:inherit;
-  box-shadow:0 0 8px var(--lav);
-}
+.hud-track,
+.hud-fill,
 .hud-dot{
-  position:absolute;left:50%;top:0;
-  width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;
-  background:var(--lav);
-  box-shadow:0 0 8px var(--lav),0 0 18px rgba(183,167,216,.7);
-  z-index:2;
+  display:none;
 }
 .hud-back{
   position:absolute;top:1.2rem;left:0.7rem;
@@ -191,6 +179,7 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
    centered, just allowed to run wider. */
 section{
   --page-gutter:max(var(--gutter-left),var(--gutter-right));
+  --col-left:max(0px, calc((100% - var(--measure)) / 2));
   padding:var(--space-2xl) max(var(--page-gutter), calc((100% - var(--well)) / 2));
   position:relative;
 }
@@ -199,9 +188,8 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
   max-width:var(--measure);
   width:100%;
   margin-left:auto;margin-right:auto;
+  text-align:left;
 }
-.dive > section > .scenario-pin,
-.dive > section > .scenario,
 .dive > section > .bio-loop,
 .dive > section > .tracks-wrap,
 .dive > section > .award-row,
@@ -215,9 +203,19 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > .film-still,
 .dive > section > .img-ph{
   max-width:min(var(--well),100%);
+  width:calc(100% - var(--col-left));
+  margin-left:var(--col-left);margin-right:0;
+}
+.dive > section > .scenario-pin,
+.dive > section > .scenario{
+  max-width:min(var(--well),100%);
+  width:100%;
+  margin-left:auto;margin-right:auto;
 }
 .dive > section > .wings-still{
   max-width:min(42rem,100%);
+  width:calc(100% - var(--col-left));
+  margin-left:var(--col-left);margin-right:0;
 }
 .section-kicker{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.16em;
@@ -552,8 +550,8 @@ a.tname.pending-ext::before{content:none}
   text-align:left;
   display:flex;flex-direction:column;align-items:flex-start;
   gap:0.55em;
-  padding:0.15rem 0 0.15rem 1.2rem;
-  border-left:1.5px solid var(--lav);
+  padding:0;
+  border-left:none;
 }
 .scenario-scroll{padding:var(--space-xs) 0 var(--space-md)}
 .scenario p{

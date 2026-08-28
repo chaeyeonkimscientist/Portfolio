@@ -71,8 +71,8 @@
   function paint() {
     const p = Math.min(Math.max(scrollY / maxScroll(), 0), 1);
     const pct = (p * 100).toFixed(3) + '%';
-    fill.style.height = pct;
-    dot.style.top = pct;
+    if (fill) fill.style.height = pct;
+    if (dot) dot.style.top = pct;
 
     const cur = currentHeading();
     items.forEach(function (item) {
