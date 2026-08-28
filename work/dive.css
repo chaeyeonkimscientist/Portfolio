@@ -217,6 +217,45 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
   width:calc(100% - var(--col-left));
   margin-left:var(--col-left);margin-right:0;
 }
+/* One left edge for a heading + its following copy/media. */
+.stack{
+  width:min(var(--well),100%);
+  max-width:var(--well);
+  margin-left:auto;margin-right:auto;
+}
+.dive > section > .stack{
+  max-width:var(--well);width:min(var(--well),100%);
+  margin-left:auto;margin-right:auto;
+}
+.stack > h2,
+.stack > h3,
+.stack > p,
+.stack > ul,
+.stack > .lede,
+.stack > .note,
+.stack > .cta-row,
+.stack > .toggle,
+.stack > .pipeline,
+.stack > .demo-list,
+.stack > .bullets{
+  max-width:var(--measure);
+  width:100%;
+  margin-left:0;margin-right:auto;
+  text-align:left;
+}
+.stack > .pipeline.has-media,
+.stack > .split,
+.stack > .bio-loop,
+.stack > .tracks-wrap,
+.stack > .viz-row,
+.stack > .ix,
+.stack > .ix-wide,
+.stack > .film-still,
+.stack > .img-ph,
+.stack > .cta-row:has(.embed-yt){
+  max-width:100%;width:100%;
+  margin-left:0;margin-right:0;
+}
 .section-kicker{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.16em;
   text-transform:uppercase;color:var(--lav);margin:0 0 0.45rem;font-weight:700;
