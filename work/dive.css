@@ -161,8 +161,8 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
 }
 .hero-wave{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
 .hero-copy{
-  position:relative;z-index:1;width:min(var(--well),100%);
-  padding-bottom:1.5rem;
+  position:relative;z-index:1;width:min(var(--measure),100%);
+  margin-inline:auto;padding-bottom:1.5rem;
 }
 .hero h1{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
@@ -186,19 +186,20 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
   margin:0 auto;
   padding:var(--space-md) 0 var(--space-3xl);
 }
-/* Centered well: never collides with the HUD rail or the right-side chrome.
-   Prose stays on a readable measure; diagrams, tables, and media fill the well. */
+/* One centered column. Equal side padding keeps the well in the middle of the
+   viewport; measure-width copy then centers inside it. Wide media is also
+   centered, just allowed to run wider. */
 section{
-  padding:var(--space-2xl) max(var(--gutter-right), calc((100% - var(--well)) / 2)) var(--space-2xl) max(var(--gutter-left), calc((100% - var(--well)) / 2));
+  --page-gutter:max(var(--gutter-left),var(--gutter-right));
+  padding:var(--space-2xl) max(var(--page-gutter), calc((100% - var(--well)) / 2));
   position:relative;
 }
 section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > *{
   max-width:var(--measure);
   width:100%;
-  margin-left:0;margin-right:auto;
+  margin-left:auto;margin-right:auto;
 }
-.dive > section > h2,
 .dive > section > .scenario-pin,
 .dive > section > .scenario,
 .dive > section > .bio-loop,
@@ -210,13 +211,13 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > .split,
 .dive > section > .problem-split,
 .dive > section > .pipeline.has-media,
-.dive > section > .cta-row,
+.dive > section > .cta-row:has(.embed-yt),
 .dive > section > .film-still,
 .dive > section > .img-ph{
-  max-width:100%;width:100%;
+  max-width:min(var(--well),100%);
 }
 .dive > section > .wings-still{
-  max-width:min(42rem,100%);width:100%;
+  max-width:min(42rem,100%);
 }
 .section-kicker{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.16em;
