@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chaeyeon Kim</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23101719'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23B7A7D8'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23101719'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23B7A7D8'/%3E%3C/svg%3E">
 <style>
 @font-face{
   font-family:"Dreamer TM";
@@ -230,11 +232,14 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;z-index:4;display:block;
   opacity:0;transition:opacity .35s ease;
+  background:transparent;
 }
 .release.is-3d .rig-canvas,.rig.is-3d .rig-canvas{opacity:1}
 .release.is-3d .sleeve,.release.is-3d .disc,
 .rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
-.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{opacity:0}
+.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{
+  opacity:0;visibility:hidden;transition:none;background:transparent;
+}
 .release:hover .disc{transform:translateX(26%)}
 .rig.is-3d:hover .disc{transform:none}
 .disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
@@ -311,23 +316,17 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   pointer-events: none;
   display: none;
   overflow: hidden;
-  background: transparent;
+  background: #08090f;
   will-change: transform, opacity;
   transform: translate3d(0,0,0);
-  transition: background .7s ease;
 }
 #turntable-overlay.tt-on{
   display: block;
   pointer-events: auto;
+  background: #08090f;
 }
 #turntable-overlay.tt-dim{
-  background: radial-gradient(120% 90% at 50% 40%, rgba(16,23,25,.55) 0%, rgba(8,9,15,.92) 70%);
-}
-#turntable-overlay.tt-exit{
-  transition: transform 400ms cubic-bezier(.6,0,.85,.3),
-              opacity   400ms linear;
-  transform: translate3d(0, 110vh, 0);
-  opacity: .35;
+  background: #08090f;
 }
 #tt-canvas{
   position: absolute;
@@ -336,6 +335,17 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   height: 100%;
   display: block;
   z-index: 1;
+  background: #08090f;
+  visibility: hidden;
+}
+#turntable-overlay.tt-ready #tt-canvas{
+  visibility: visible;
+}
+#turntable-overlay.tt-exit{
+  transition: transform 400ms cubic-bezier(.6,0,.85,.3),
+              opacity   400ms linear;
+  transform: translate3d(0, 110vh, 0);
+  opacity: .35;
 }
 #tt-sleeve-slot{
   position: absolute;
@@ -1216,7 +1226,7 @@ onScroll();
 })();
 </script>
 <div id="turntable-overlay">
-  <canvas id="tt-canvas"></canvas>
+  <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
 <script type="module" src="turntable-transition.js"></script>
