@@ -147,9 +147,12 @@
       return;
     }
     const rect = pin.getBoundingClientRect();
-    const visible = rect.top < innerHeight * 0.82 && rect.bottom > 72;
-    steps.forEach(function (el) {
-      el.classList.toggle('is-in', visible);
+    const range = Math.max(pin.offsetHeight - innerHeight, 1);
+    const started = rect.top <= innerHeight * 0.52;
+    const p = Math.min(Math.max(-rect.top / range, 0), 1);
+    steps.forEach(function (el, i) {
+      const enter = i / steps.length;
+      el.classList.toggle('is-in', started && p >= enter);
     });
   }
 

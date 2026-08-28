@@ -539,41 +539,40 @@ a.tname.pending-ext::before{content:none}
 .hue-data + .hue-data::before,
 .hue-music + .hue-music::before{top:-14rem}
 
-/* Scenario: a contained cascade, not a 240vh sticky pin.
-   Modest indent keeps the stair without opening a dead triangle. */
+/* Sticky cascade: tall pin is the scroll runway; the cluster stays
+   centered on screen while each line fades in one-by-one. */
 .scenario-pin{
-  height:auto;
-  margin:var(--space-md) 0 var(--space-xl);
+  height:240vh;
+  margin:var(--space-md) auto var(--space-xl);
 }
 .scenario{
-  position:static;
-  margin:0;
+  position:sticky;top:calc(var(--nav-offset) + 0.15rem);
+  width:max-content;max-width:100%;
+  margin-left:auto;margin-right:auto;
   text-align:left;
-  max-width:min(var(--measure),100%);
   display:flex;flex-direction:column;align-items:flex-start;
-  gap:0.5em;
-  padding:0.2rem 0 0.2rem 1.2rem;
+  gap:0.55em;
+  padding:0.15rem 0 0.15rem 1.2rem;
   border-left:1.5px solid var(--lav);
 }
-.scenario-scroll{padding:0}
+.scenario-scroll{padding:var(--space-xs) 0 var(--space-md)}
 .scenario p{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
-  font-size:clamp(1.02rem,0.85vw + 0.78rem,1.22rem);
+  font-size:clamp(1.02rem,0.9vw + 0.76rem,1.24rem);
   font-weight:400;line-height:1.5;color:var(--bone);
-  margin:0;padding-left:0;width:auto;
-  max-width:100%;
+  margin:0;padding-left:0;width:auto;max-width:min(40rem,100%);
   display:block;text-align:left;
   overflow-wrap:normal;hyphens:none;
-  opacity:0;transform:translate3d(0,12px,0);
-  transition:opacity .5s var(--ease),transform .5s var(--ease);
+  opacity:0;transform:translate3d(-14px,12px,0);
+  transition:opacity .45s var(--ease),transform .45s var(--ease);
 }
-.scenario p:nth-child(1){margin-left:0;transition-delay:0ms}
-.scenario p:nth-child(2){margin-left:calc(var(--stagger) * 1);transition-delay:55ms}
-.scenario p:nth-child(3){margin-left:calc(var(--stagger) * 2);transition-delay:110ms}
-.scenario p:nth-child(4){margin-left:calc(var(--stagger) * 3);transition-delay:165ms}
-.scenario p:nth-child(5){margin-left:calc(var(--stagger) * 4);transition-delay:220ms}
-.scenario p:nth-child(6){margin-left:calc(var(--stagger) * 5);transition-delay:275ms}
-.scenario p:nth-child(7){margin-left:calc(var(--stagger) * 6);transition-delay:330ms}
+.scenario p:nth-child(1){margin-left:0}
+.scenario p:nth-child(2){margin-left:calc(var(--stagger) * 1)}
+.scenario p:nth-child(3){margin-left:calc(var(--stagger) * 2)}
+.scenario p:nth-child(4){margin-left:calc(var(--stagger) * 3)}
+.scenario p:nth-child(5){margin-left:calc(var(--stagger) * 4)}
+.scenario p:nth-child(6){margin-left:calc(var(--stagger) * 5)}
+.scenario p:nth-child(7){margin-left:calc(var(--stagger) * 6)}
 .scenario .scenario-kicker{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
   font-size:clamp(0.62rem,0.4vw + 0.52rem,0.72rem);letter-spacing:0.16em;
@@ -1179,6 +1178,7 @@ button.morse[aria-pressed="true"]{
   .wings-still .frame{min-height:14rem}
   .memory{top:12vh}
   .memory-bubble{width:min(14rem,70vw)}
+  .scenario-pin{height:200vh}
 }
 
 @media(min-width:1024px){
@@ -1194,7 +1194,7 @@ button.morse[aria-pressed="true"]{
   .mode-icon.is-lit{transform:none}
   .scenario-pin{height:auto}
   .scenario{position:static}
-  .scenario p{opacity:1;transform:none;transition-delay:0ms}
+  .scenario p{opacity:1;transform:none}
   .award,.award-gold,.id-card[aria-pressed="true"],.wings,.wings-still:hover .wings,.voicing-player{animation:none;transition:none}
   .wings{opacity:0.55;transform:none}
 }
