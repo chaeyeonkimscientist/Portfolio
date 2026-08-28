@@ -148,7 +148,7 @@
     }
     const rect = pin.getBoundingClientRect();
     const range = Math.max(pin.offsetHeight - innerHeight, 1);
-    const started = rect.top <= innerHeight * 0.5;
+    const started = rect.top <= innerHeight * 0.52;
     const p = Math.min(Math.max(-rect.top / range, 0), 1);
     steps.forEach(function (el, i) {
       const enter = i / steps.length;

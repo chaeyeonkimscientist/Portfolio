@@ -51,7 +51,7 @@
   }
 
   function draw() {
-    const narrow = mount.clientWidth < 640;
+    const narrow = mount.clientWidth < 560;
     const mode = narrow ? 'vert' : 'horiz';
     if (mode === layoutMode && nodeEls.length) return;
     layoutMode = mode;
