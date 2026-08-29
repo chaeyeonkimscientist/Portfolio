@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Body Says Otherwise — Chaeyeon Kim</title>
+<link rel="stylesheet" href="./dive.css?v=27">
+</head>
+<body data-project="The Body Says Otherwise" data-project-id="body-says-otherwise">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
+  </div>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
+  </div>
+</div>
+
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <nav class="hud-nav" id="hud-nav"></nav>
+  </div>
+</aside>
+
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Drag and add text to your <strong>working memory</strong>.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <pre id="term-warn-msg">WARNING: Working memory will be flushed. Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes + Go back to homepage.</button>
+      <button type="button" data-term-dismiss>Stay in session.</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>THE BODY SAYS OTHERWISE</h1>
+    <p class="subtitle">Building a prediction model for children's cognitive flexibility — and finding the gap between what they said and what their bodies did.</p>
+    <p class="meta">Chaeyeon Kim · Research Assistant · UTDT Neuroscience Lab · Buenos Aires · 2024–2025</p>
+    <p class="disciplines">Experimental design · fMRI &amp; eye-movement analysis · PyTorch prediction modeling · R (ANOVA) · Literature synthesis</p>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede"><strong>The Body Says Otherwise</strong> is the research strand behind a gamified cognitive-training platform built to measure cognitive flexibility in over 200 children. I designed the trials, analyzed the datasets in R, and built a PyTorch prediction model on behavioral and physiological signals.</p>
+    <p>The model's predictions failed in a revealing way. A child would score well on the task while their body showed distress — elevated heart rate, suppressed alpha-wave activity — and still report <em>"I'm fine."</em> The systematic gap between self-report and physiology became the finding.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="n">200+</div><div class="l">children measured</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">experimental trials</div></div>
+      <div class="stat"><div class="n">55+</div><div class="l">studies synthesized</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">teams unblocked</div></div>
+    </div>
+  </section>
+
+  <section class="hue-cog" data-icons="cog" data-kind="cog">
+    <h2 id="problem" class="h-cog">THE PROBLEM</h2>
+    <p class="lede">You can measure a task score. You cannot ask a seven-year-old what their nervous system is doing.</p>
+    <p>Cognitive flexibility — the ability to switch rules, strategies, and frames — is one of the executive functions that matters most for how children learn. The platform, Mate Marote, measures it through gamified switching tasks, historically scored on two variables: <strong>accuracy</strong> and <strong>response time</strong>.</p>
+    <p>Those two numbers describe the <em>output</em> of thinking. They say nothing about its <em>cost</em>. A child can produce a correct answer while paying a physiological price for it — and the standard measures are blind to that price.</p>
+    <p>So I widened the aperture. Alongside behavior, I recorded physiological signals: heart rate, and alpha-band EEG activity, which drops when the brain is under load. The plan was simple: if self-report and task score both track effort, a model trained on physiology should predict them. It didn't. And the way it broke was the point.</p>
+    <blockquote class="callout pull">A child would perform well, hands fidgeting, breathing heavier — and say, <span class="said-body">"I'm fine."</span></blockquote>
+    <p>Children in Argentina echoed something I'd later hear again in Berlin: <strong>the body was telling a different story than the words.</strong> If people under cognitive load can't verbally report their state, perhaps their bodies can compose it instead.</p>
+  </section>
+
+  <section class="hue-data" data-icons="cog data" data-kind="data">
+    <div class="stack">
+    <h2 id="solution" class="h-data">THE SOLUTION</h2>
+    <p class="lede">An end-to-end pipeline: design the trials, isolate the drivers, then model the signal underneath the score.</p>
+
+    <h3>Experimental design &amp; behavioral analysis</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Seven trials, 200+ datasets</h4>
+          <p>Designed and ran seven experimental trials evaluating the cognitive-training product for children, then analyzed 200+ participant datasets in R.</p>
+          <ul>
+            <li>ANOVA across conditions to isolate which product features measurably drove performance</li>
+            <li>Separated real effects from noise before anything reached the model</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>A measure that survives switching — CORSWOPS</h4>
+          <p>Beyond accuracy and RT, I evaluated switch ratio (CORSWOPS) — correct switches over opportunities to switch — as a flexibility index less biased by baseline accuracy and age.</p>
+          <ul>
+            <li>Switch ratio significantly predicted accuracy gains (p = 0.003, R² ≈ 0.36)</li>
+            <li>But cross-validation exposed its fragility (mean CV R² negative) — a caution I carried into the model, not a result I oversold</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <h3>The prediction model</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Behavioral + physiological signals in PyTorch</h4>
+          <p>Built a prediction model in PyTorch on combined behavioral and physiological signals, alongside secondary analysis of human fMRI and eye-movement data.</p>
+          <ul>
+            <li>Inputs: task behavior, heart rate, alpha-band suppression, gaze patterns</li>
+            <li>Target: the child's reported and scored state</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <h4>The informative failure</h4>
+          <p>The model couldn't reconcile the inputs — because they genuinely disagreed. The physiology said <em>loaded</em>; the self-report said <em>fine</em>. Rather than paper over it, I surfaced the divergence as the result: a systematic, reproducible gap between what children reported and what their neural and behavioral data showed.</p>
+        </div>
+      </li>
+    </ol>
+
+    <h3>Synthesis that moved the teams</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">05</span>
+        <div>
+          <h4>55+ studies into shared briefs</h4>
+          <p>Synthesized 55+ peer-reviewed studies on cognitive-flexibility measurement into briefs both sides could act on — breaking a deadlock between the research and product teams over which measures the platform should adopt.</p>
+        </div>
+      </li>
+    </ol>
+    </div>
+  </section>
+
+  <section class="hue-cog" data-icons="cog data" data-kind="cog">
+    <h2 id="signal" class="h-cog">THE SIGNAL</h2>
+    <p class="lede">What the child said, and what the body showed — at the same moment.</p>
+    <p>This is the gap the model kept hitting. Switch between a child's self-report and their live physiological trace during the same task window. The words hold steady. The body doesn't.</p>
+
+    <div class="sig" id="sig">
+      <div class="sig-head">
+        <span class="cap">participant · anonymized · switching task, block 3</span>
+      </div>
+      <div class="sig-stage">
+        <div class="sig-panel report">
+          <div class="sig-plabel"><span class="sig-dot"></span>Self-report</div>
+          <div class="quote-said" id="saidText">"I'm fine."</div>
+          <div class="report-meta" id="reportMeta">
+            task score <span class="ok">— high</span><br>
+            reported effort — low<br>
+            verbal state — calm
+          </div>
+        </div>
+        <div class="sig-panel body">
+          <div class="sig-plabel"><span class="sig-dot"></span>Physiological trace</div>
+          <div class="trace-wrap">
+            <div class="metric">
+              <span class="mlabel">heart rate</span>
+              <span class="mval hi" id="hrVal">— bpm</span>
+            </div>
+            <div class="bar hr"><i id="hrBar"></i></div>
+            <div class="metric" style="margin-top:1rem">
+              <span class="mlabel">alpha-band power</span>
+              <span class="mval lo" id="alVal">— %</span>
+            </div>
+            <div class="bar al"><i id="alBar"></i></div>
+            <svg class="waveform" id="wave" viewBox="0 0 300 52" preserveAspectRatio="none" aria-hidden="true"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="sig-controls" role="group" aria-label="Task condition">
+        <button type="button" data-state="calm" class="active" aria-pressed="true">Baseline</button>
+        <button type="button" data-state="load" aria-pressed="false">Under load</button>
+        <button type="button" data-state="peak" aria-pressed="false">Peak switch cost</button>
+        <span class="note" id="sigNote">the words don't move — the body does</span>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="cell">
+        <div class="k">Self-report</div>
+        <div class="v" style="color:var(--bone-dim)">"I'm fine"</div>
+        <div class="d">Flat across every condition. Language under-reports load.</div>
+      </div>
+      <div class="cell">
+        <div class="k">Alpha suppression</div>
+        <div class="v" style="color:var(--data)">↓ 8–12 Hz</div>
+        <div class="d">Drops sharply as switch cost rises — an index of effort the child never names.</div>
+      </div>
+      <div class="cell">
+        <div class="k">Model verdict</div>
+        <div class="v" style="color:var(--amaranth-lit)">divergent</div>
+        <div class="d">The prediction fails precisely where report and physiology disagree.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="result" class="h-strong">THE RESULT</h2>
+    <p class="lede">The failed prediction became the finding.</p>
+    <ul class="bullets">
+      <li>Isolated, via ANOVA over 200+ datasets, <strong>which product features measurably drove performance</strong> — giving the product team an evidence-based basis for what to keep.</li>
+      <li>Surfaced a <strong>systematic gap between children's self-report and their neural/behavioral data</strong>, reframing "the model failed" as "self-report is an unreliable channel for cognitive load."</li>
+      <li>Delivered shared briefs from <strong>55+ studies that broke a research-vs-product deadlock</strong> on which flexibility measures the platform should adopt.</li>
+      <li>Carried the core question forward: <strong>if the body composes a state words can't report, that state can be measured — and, later, made audible.</strong></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="demonstrates" class="h-strong" data-nav="Demonstrates">WHAT THIS PROJECT DEMONSTRATES</h2>
+    <ul class="demo-list">
+      <li>
+        <h3>Experimental design &amp; statistics</h3>
+        <p>Seven trials, 200+ participant datasets, ANOVA-driven feature isolation, and a critical read on a measure's cross-validated limits — reported honestly rather than oversold.</p>
+      </li>
+      <li>
+        <h3>Physiological ML modeling</h3>
+        <p>A PyTorch prediction model over behavioral and physiological signals, with secondary fMRI and eye-movement analysis, treating a model failure as a source of insight.</p>
+      </li>
+      <li>
+        <h3>Research synthesis</h3>
+        <p>55+ peer-reviewed studies distilled into briefs that aligned two teams with competing priorities around a shared measurement standard.</p>
+      </li>
+      <li>
+        <h3>Interdisciplinary framing</h3>
+        <p>A neuroscience result about the limits of self-report, framed so both a product organization and a research lab could act on it.</p>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<script src="./dive-hud.js?v=22"></script>
+<script src="./dive-waves.js?v=17"></script>
+<script src="./dive-memory.js?v=17"></script>
+<script src="./dive-player.js?v=17"></script>
+<script>
+(function(){
+  const states={
+    calm:{hr:78,hrTxt:'78 bpm',al:82,alTxt:'82%',note:'baseline — report and body agree',amp:5,jit:0},
+    load:{hr:104,hrTxt:'104 bpm',al:46,alTxt:'46%',note:'the words don\'t move — the body does',amp:11,jit:1},
+    peak:{hr:121,hrTxt:'121 bpm',al:27,alTxt:'27%',note:'peak switch cost — still "I\'m fine"',amp:16,jit:1.6}
+  };
+  const hrBar=document.getElementById('hrBar');
+  const alBar=document.getElementById('alBar');
+  const hrVal=document.getElementById('hrVal');
+  const alVal=document.getElementById('alVal');
+  const note=document.getElementById('sigNote');
+  const wave=document.getElementById('wave');
+  const btns=document.querySelectorAll('.sig-controls button');
+  if(!hrBar||!wave) return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let cur='calm',t=0,raf=null;
+
+  function drawWave(amp,jit){
+    let d='M0 26';
+    for(let x=0;x<=300;x+=6){
+      const base=Math.sin((x/300)*Math.PI*8 + t)*amp;
+      const spike=(x%60<6)? -amp*1.4 : 0;
+      const noise=jit? (Math.sin(x*1.7+t*3)*jit*2):0;
+      const y=26+base+spike+noise;
+      d+=' L'+x+' '+y.toFixed(1);
+    }
+    wave.innerHTML='<path d="'+d+'" fill="none" stroke="#c9436a" stroke-width="1.4" opacity="0.85"/>';
+  }
+  function setState(s){
+    cur=s;
+    const st=states[s];
+    hrBar.style.width=Math.min(100,(st.hr-60)/(140-60)*100)+'%';
+    alBar.style.width=st.al+'%';
+    hrVal.textContent=st.hrTxt;
+    alVal.textContent=st.alTxt;
+    note.textContent=st.note;
+    btns.forEach(function(b){
+      var on=b.dataset.state===s;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if(reduce) drawWave(st.amp,0);
+  }
+  function loop(){
+    t+=0.06;
+    const st=states[cur];
+    drawWave(st.amp,st.jit);
+    raf=requestAnimationFrame(loop);
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){ setState(b.dataset.state); });
+  });
+  setState('calm');
+  if(!reduce) loop();
+  else drawWave(states.calm.amp,0);
+})();
+</script>
+</body>
+</html>
