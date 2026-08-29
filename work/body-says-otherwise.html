@@ -216,10 +216,10 @@
           </div>
         </div>
       </div>
-      <div class="sig-controls">
-        <button type="button" data-state="calm" class="active">Baseline</button>
-        <button type="button" data-state="load">Under load</button>
-        <button type="button" data-state="peak">Peak switch cost</button>
+      <div class="sig-controls" role="group" aria-label="Task condition">
+        <button type="button" data-state="calm" class="active" aria-pressed="true">Baseline</button>
+        <button type="button" data-state="load" aria-pressed="false">Under load</button>
+        <button type="button" data-state="peak" aria-pressed="false">Peak switch cost</button>
         <span class="note" id="sigNote">the words don't move — the body does</span>
       </div>
     </div>
@@ -318,7 +318,11 @@
     hrVal.textContent=st.hrTxt;
     alVal.textContent=st.alTxt;
     note.textContent=st.note;
-    btns.forEach(function(b){ b.classList.toggle('active',b.dataset.state===s); });
+    btns.forEach(function(b){
+      var on=b.dataset.state===s;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     if(reduce) drawWave(st.amp,0);
   }
   function loop(){

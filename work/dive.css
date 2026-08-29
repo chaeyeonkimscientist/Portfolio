@@ -619,7 +619,8 @@ a.tname.pending-ext::before{content:none}
 .sig-controls button:hover,.sig-controls button:focus-visible{
   border-color:var(--lav);outline:none;color:var(--lav);
 }
-.sig-controls button.active{
+.sig-controls button.active,
+.sig-controls button[aria-pressed="true"]{
   border-color:var(--lav);color:var(--bone);
   background:rgba(183,167,216,.12);
   box-shadow:0 0 18px rgba(183,167,216,.18);
