@@ -195,7 +195,6 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > .award-row,
 .dive > section > .stat-row,
 .dive > section > .sig,
-.dive > section > .chroma,
 .dive > section > .readout,
 .dive > section > .ix,
 .dive > section > .ix-wide,
@@ -211,7 +210,9 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
   margin-left:var(--col-left);margin-right:0;
 }
 .dive > section > .scenario-pin,
-.dive > section > .scenario{
+.dive > section > .scenario,
+.dive > section > .chroma,
+.dive > section > .bio-loop.is-center{
   max-width:min(var(--well),100%);
   width:100%;
   margin-left:auto;margin-right:auto;
@@ -638,8 +639,8 @@ a.tname.pending-ext::before{content:none}
 }
 .chroma-head{
   padding:1rem 1.05rem 0;
-  display:flex;align-items:baseline;justify-content:space-between;
-  gap:1rem;flex-wrap:wrap;
+  display:flex;align-items:baseline;justify-content:center;
+  gap:1rem;flex-wrap:wrap;text-align:center;
 }
 .chroma-head .cap{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.58rem;letter-spacing:0.14em;
@@ -850,6 +851,7 @@ a.tname.pending-ext::before{content:none}
   text-transform:uppercase;color:var(--lav);margin-bottom:1rem;font-weight:700;
   text-align:left;
 }
+.bio-loop.is-center .kicker{text-align:center}
 .bio-graph{width:100%;min-height:12rem}
 .bio-svg{width:100%;height:auto;display:block;overflow:visible}
 
