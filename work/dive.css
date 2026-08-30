@@ -174,12 +174,10 @@ a:focus-visible{outline:2px solid var(--lav);outline-offset:4px}
   margin:0 auto;
   padding:var(--space-md) 0 var(--space-3xl);
 }
-/* One centered column. Equal side padding keeps the well in the middle of the
-   viewport; measure-width copy then centers inside it. Wide media is also
-   centered, just allowed to run wider. */
+/* Copy sits in a centered measure column (left edges of paragraphs line up).
+   Interactive / media boxes are independently centered, and may run wider. */
 section{
   --page-gutter:max(var(--gutter-left),var(--gutter-right));
-  --col-left:max(0px, calc((100% - var(--measure)) / 2));
   padding:var(--space-2xl) max(var(--page-gutter), calc((100% - var(--well)) / 2));
   position:relative;
 }
@@ -187,7 +185,7 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > *{
   max-width:var(--measure);
   width:100%;
-  margin-left:var(--col-left);margin-right:auto;
+  margin-left:auto;margin-right:auto;
   text-align:left;
 }
 .dive > section > .bio-loop,
@@ -204,10 +202,12 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > .pipeline.has-media,
 .dive > section > .cta-row:has(.embed-yt),
 .dive > section > .film-still,
-.dive > section > .img-ph{
+.dive > section > .img-ph,
+.dive > section > .id-cards,
+.dive > section > .triptych{
   max-width:min(var(--well),100%);
-  width:calc(100% - var(--col-left));
-  margin-left:var(--col-left);margin-right:0;
+  width:100%;
+  margin-left:auto;margin-right:auto;
 }
 .dive > section > .scenario-pin,
 .dive > section > .scenario{
@@ -217,10 +217,9 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 }
 .dive > section > .wings-still{
   max-width:min(42rem,100%);
-  width:calc(100% - var(--col-left));
-  margin-left:var(--col-left);margin-right:0;
+  width:100%;
+  margin-left:auto;margin-right:auto;
 }
-/* One left edge for a heading + its following copy/media. */
 .stack{
   width:min(var(--well),100%);
   max-width:var(--well);
@@ -243,7 +242,7 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .stack > .bullets{
   max-width:var(--measure);
   width:100%;
-  margin-left:0;margin-right:auto;
+  margin-left:auto;margin-right:auto;
   text-align:left;
 }
 .stack > .pipeline.has-media,
@@ -258,9 +257,11 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .stack > .ix-wide,
 .stack > .film-still,
 .stack > .img-ph,
+.stack > .id-cards,
+.stack > .triptych,
 .stack > .cta-row:has(.embed-yt){
   max-width:100%;width:100%;
-  margin-left:0;margin-right:0;
+  margin-left:auto;margin-right:auto;
 }
 .section-kicker{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.16em;
@@ -280,11 +281,11 @@ blockquote.callout{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-style:italic;
   font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.4;color:var(--lav);
   font-weight:400;
-  border:none;margin:0;max-width:28ch;
+  border:none;margin-inline:auto;max-width:28ch;
 }
 blockquote.callout.pull{
   max-width:var(--measure);
-  margin:var(--space-lg) 0;
+  margin-block:var(--space-lg);
 }
 .hero .callout{
   display:block;width:max-content;max-width:100%;
