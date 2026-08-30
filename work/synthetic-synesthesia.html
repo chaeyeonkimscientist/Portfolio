@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Synthetic Synesthesia — Chaeyeon Kim</title>
+<link rel="stylesheet" href="./dive.css?v=28">
+</head>
+<body data-project="Synthetic Synesthesia" data-project-id="synthetic-synesthesia">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
+  </div>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
+  </div>
+</div>
+
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <nav class="hud-nav" id="hud-nav"></nav>
+  </div>
+</aside>
+
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Drag and add text to your <strong>working memory</strong>.
+    </div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <pre id="term-warn-msg">WARNING: Working memory will be flushed. Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes + Go back to homepage.</button>
+      <button type="button" data-term-dismiss>Stay in session.</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>SYNTHETIC SYNESTHESIA</h1>
+    <p class="subtitle">Turning Sound into Color, and Color into Sound</p>
+    <p class="meta">Chaeyeon Kim · 2025</p>
+    <p class="disciplines">Cognitive Science · Web Audio API · Machine Learning · React</p>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede"><strong>Synthetic Synesthesia</strong> is a real-time web app that simulates <strong>chromesthesia</strong> — the form of synesthesia where sound is <em>seen</em> as color. It runs in both directions: aim it at sound and it paints; aim it at color and it plays. Every mapping rule is drawn from <strong>peer-reviewed research</strong>, not aesthetic guesswork.</p>
+    <p>The <strong>Sound → Color</strong> direction reads your microphone with a live FFT, extracts pitch class, octave, loudness, and timbre, and maps each to hue, lightness, saturation, and shape on a glowing canvas. The <strong>Color → Sound</strong> direction points the camera at anything, pulls the dominant colors with k-means clustering, and reverse-maps them through the <em>same</em> model into a chord that shifts as you pan. One science engine, run forwards and backwards, so the simulation stays internally consistent.</p>
+    <p class="cta-row">
+      <a class="cta" href="https://synthetic-synesthesia-g21aip9dx-chaeyeon-minervaedus-projects.vercel.app" target="_blank" rel="noopener noreferrer">Launch the simulator</a>
+      <a class="cta pending-ext">Code</a>
+    </p>
+    <p class="note">Synthetic Synesthesia runs entirely in your browser and asks for microphone and camera access. Nothing is recorded or uploaded — all analysis happens locally on your device.</p>
+  </section>
+
+  <section class="hue-cog" data-icons="cog" data-kind="cog">
+    <h2 id="problem" class="h-cog">THE PROBLEM</h2>
+    <div class="scenario-pin">
+      <div class="scenario scenario-scroll">
+        <p class="scenario-kicker" data-reveal>Think about this:</p>
+        <p data-reveal>you hear a violin, or the letter A, or a single piano&nbsp;note.</p>
+        <p data-reveal>For about <strong>one in twenty-five people</strong>, it has a color,</p>
+        <p data-reveal>and the same sound calls up the same color every&nbsp;time.</p>
+        <p data-reveal>The note might flash red; a higher octave, lighter.</p>
+        <p data-reveal>For the other 96%, this entire experience is invisible.</p>
+      </div>
+    </div>
+    <p>Chromesthesia is not random. Across studies, some sound–color links are strikingly systematic: <strong>higher pitch reads as lighter and brighter</strong>, louder sounds as more saturated, sharper timbres as more vivid, and pitch classes tend to fall along a rainbow from red to violet. These are real, measurable regularities in how brains bind hearing to sight.</p>
+    <p>But almost every audio visualizer you've ever seen ignores this. It maps color to sound <strong>arbitrarily</strong> — whatever looks good — which means it <strong>scientifically misrepresents</strong> a genuine neurological phenomenon and reduces it to decoration.</p>
+    <figure class="bio-loop">
+      <div class="kicker">The consensus from the literature</div>
+      <div class="readout four" role="list" aria-label="Recurring sound-to-color tendencies from research">
+        <div class="cell">
+          <div class="k">Pitch → lightness</div>
+          <div class="v">higher = lighter</div>
+          <div class="d">Higher pitch → lighter / brighter color</div>
+        </div>
+        <div class="cell">
+          <div class="k">Loudness → saturation</div>
+          <div class="v">louder = richer</div>
+          <div class="d">Louder / more energy → more saturated color</div>
+        </div>
+        <div class="cell">
+          <div class="k">Timbre → brightness</div>
+          <div class="v">sharper = brighter</div>
+          <div class="d">Sharper timbre → brighter, higher-value color</div>
+        </div>
+        <div class="cell">
+          <div class="k">Pitch class → hue</div>
+          <div class="v">C ≈ red</div>
+          <div class="d">Pitch class → hue along a red-to-violet rainbow</div>
+        </div>
+      </div>
+    </figure>
+    <p>There is no single universal "sound → color code" — exact palettes are deeply individual. But the <em>tendencies</em> are robust and probabilistic, which means they can be modeled. So the goal became: build a simulator where every rule is defensible, and let anyone step inside a perception they may never have had.</p>
+  </section>
+
+  <section class="hue-data" data-icons="cog data" data-kind="data">
+    <div class="stack">
+    <h2 id="solution" class="h-data">THE SOLUTION</h2>
+    <p>I built a single, reversible science engine and wrapped it in two live, sensor-driven interfaces.</p>
+
+    <h3>The pipeline</h3>
+    <ol class="pipeline">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <h4>Grounding in research</h4>
+          <ul>
+            <li>Surveyed the peer-reviewed chromesthesia literature (15+ studies across synesthetes and non-synesthetes).</li>
+            <li>Extracted the <strong>consensus mappings</strong>: pitch class → hue, octave → lightness, loudness → saturation, spectral centroid → brightness, timbre → shape.</li>
+            <li>Encoded each rule as a deterministic function in a custom <strong>chromesthesia.js</strong> module, with exponential smoothing to mirror how synesthetes report stable, consistent associations.</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <h4>Sound → Color</h4>
+          <ul>
+            <li>Live microphone analysis via the <strong>Web Audio API</strong>: a 4096-sample FFT, spectral-centroid calculation, and RMS loudness.</li>
+            <li>Pitch detected and converted to a MIDI note to recover <strong>pitch class</strong> (hue) and <strong>octave</strong> (lightness).</li>
+            <li>Rendered on an HTML5 Canvas with device-pixel-ratio-aware drawing, trail effects, and shape generation driven by timbre.</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <h4>Color → Sound</h4>
+          <ul>
+            <li>Camera frames sampled at ~4 FPS; the <strong>3–4 dominant colors</strong> extracted with custom <strong>k-means clustering</strong> (8 iterations).</li>
+            <li>Each color is <strong>reverse-mapped</strong> back through the same model to recover musical notes.</li>
+            <li>Played as a continuous chord with <strong>Tone.js</strong> — four independent sine synths with per-voice frequency ramping so the harmony glides rather than jumps as the camera pans.</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <h4>Bidirectionality as the design</h4>
+          <ul>
+            <li>Both interfaces call the <strong>same</strong> engine, so the two directions are inverses of each other rather than two separate demos.</li>
+            <li>A given note produces a color that, fed back through the camera path, resolves toward that same note — the simulation is self-consistent by construction.</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <h3>Built with an AI pair-programmer</h3>
+    <p>The app was developed end-to-end with <strong>GitHub Copilot</strong> in VS Code: scaffolding the React architecture, implementing the Web Audio pipeline, debugging peer-dependency conflicts with ml5.js / TensorFlow, resolving Retina canvas coordinate bugs, and architecting the k-means clustering. It's an honest example of an AI-augmented build — the judgment about <em>which</em> mappings were defensible stayed human; the boilerplate did not.</p>
+    </div>
+  </section>
+
+  <section class="hue-data" data-icons="music data" data-kind="data">
+    <h2 id="mapping" class="h-data">THE MAPPING</h2>
+    <p>This is the engine, made playable. Pick a pitch class to set the <strong>hue</strong>, then move octave, loudness, and timbre to hear — in color — how the model translates a sound. Every rule below is the one running live in the app.</p>
+
+    <div class="chroma" id="chroma">
+      <div class="chroma-head">
+        <div class="cap">sound → color · mapping key</div>
+        <div class="sub">grounded in Chiou 2013 · Sun 2018 · Anikin &amp; Johansson 2018 · Orlandatou 2015</div>
+      </div>
+      <div class="chroma-stage">
+        <div class="chroma-panel">
+          <div class="semi-row" id="semi-row" role="group" aria-label="Pitch class to hue"></div>
+          <div class="chroma-controls">
+            <label class="ctrl">
+              <span class="ctrl-top">Octave → lightness <b id="v-oct">4</b></span>
+              <input type="range" id="s-oct" min="1" max="7" step="1" value="4" aria-label="Octave">
+            </label>
+            <label class="ctrl">
+              <span class="ctrl-top">Loudness → saturation <b id="v-loud">70%</b></span>
+              <input type="range" id="s-loud" min="10" max="100" step="1" value="70" aria-label="Loudness">
+            </label>
+            <label class="ctrl">
+              <span class="ctrl-top">Timbre → shape <b id="v-tim">soft</b></span>
+              <input type="range" id="s-tim" min="0" max="100" step="1" value="20" aria-label="Timbre from soft to sharp">
+            </label>
+          </div>
+        </div>
+        <div class="chroma-out">
+          <div class="out-shape" id="out-shape" aria-hidden="true"></div>
+          <div class="out-read" id="out-read">note <b>C4</b><br>hsl(0°, 70%, 55%)</div>
+          <div class="out-note" id="out-note">round · soft timbre</div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Bouba/kiki in action: soft timbres round the shape off; sharp timbres pull it toward points. The <strong>Color → Sound</strong> path runs this key in reverse — a swatch of color is read back into the nearest note.</p>
+  </section>
+
+  <section>
+    <h2 id="result" class="h-strong">THE RESULT</h2>
+    <ul class="bullets">
+      <li><strong>Shipped and public</strong> — a live, self-contained web app deployed on Vercel with GitHub CI/CD, runnable in any modern browser with no install.</li>
+      <li><strong>Fully bidirectional</strong> — sound → color and color → sound driven by one shared, research-backed model, rather than two unrelated visualizers.</li>
+      <li><strong>Grounded, not arbitrary</strong> — every mapping traces to published chromesthesia findings; the science engine is a discrete, auditable module.</li>
+      <li><strong>An accessibility bridge</strong> — a scientifically grounded visual representation of sound for deaf and hard-of-hearing users, and sonification of the visual environment for blind and low-vision users.</li>
+    </ul>
+    <p class="note">Scope, honestly: this is a fast, focused proof-of-concept built in a short window with an AI pair-programmer — its value is in the rigor of the mapping and the bidirectional design, not in production polish or a user study.</p>
+  </section>
+
+  <section>
+    <h2 id="demonstrates" class="h-strong">WHAT THIS PROJECT DEMONSTRATES</h2>
+    <ul class="demo-list">
+      <li>
+        <h3>Research-grounded systems design</h3>
+        <p>Translating a body of peer-reviewed cognitive-science findings into a small set of deterministic, defensible mapping functions — and making the reasoning legible rather than hiding it behind "it looks nice."</p>
+      </li>
+      <li>
+        <h3>Real-time DSP &amp; machine learning</h3>
+        <p>A browser audio pipeline (4096-sample FFT, spectral centroid, RMS, MIDI pitch detection) alongside k-means color clustering on live camera frames and Tone.js synthesis with per-voice ramping.</p>
+      </li>
+      <li>
+        <h3>Reversible, bidirectional modeling</h3>
+        <p>One model expressed as its own inverse, so a single engine drives both directions and the two experiences stay internally consistent.</p>
+      </li>
+      <li>
+        <h3>Accessibility &amp; science communication</h3>
+        <p>Making a phenomenon that ~4% of people have — and 96% cannot access — experienceable by anyone with a browser, with genuine affordances for deaf/HoH and blind/low-vision users.</p>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<script src="./dive-hud.js?v=22"></script>
+<script src="./dive-waves.js?v=17"></script>
+<script src="./dive-memory.js?v=17"></script>
+<script src="./dive-player.js?v=17"></script>
+<script src="./dive-synesthesia.js?v=1"></script>
+</body>
+</html>
