@@ -8,7 +8,9 @@ export const TURNTABLE_GLB = new URL('./turntable 3d model.glb', import.meta.url
 export const COVER_GLBS = {
   'the_body_conducts': new URL('./the_body_conducts.glb', import.meta.url).href,
   'paramount_internship': new URL('./paramount_internship.glb', import.meta.url).href,
-  'short_films': new URL('./short_films.glb', import.meta.url).href
+  'short_films': new URL('./short_films.glb', import.meta.url).href,
+  'body_says_otherwise': new URL('./body_says_otherwise.glb', import.meta.url).href,
+  'synthetic_synesthesia': new URL('./synthetic_synesthesia.glb', import.meta.url).href
 };
 
 const loader = new GLTFLoader();
