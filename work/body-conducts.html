@@ -5,16 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>The Body Conducts — Chaeyeon Kim</title>
 <link rel="stylesheet" href="./dive.css?v=30">
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-  }
-}
-</script>
 </head>
-<body data-project="The Body Conducts" data-project-id="body-conducts" data-has-lp="true">
+<body data-project="The Body Conducts" data-project-id="body-conducts">
 <a class="skip" href="#content">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
 
@@ -41,20 +33,6 @@
 </aside>
 
 <aside class="rail" id="rail">
-  <div class="lp-dock" id="lp-dock" hidden>
-    <div class="lp-disc lp-disc-3d" aria-hidden="true">
-      <canvas id="lp-vinyl-canvas" width="304" height="304"></canvas>
-    </div>
-    <div class="lp-card">
-      <div class="lp-kicker">now playing</div>
-      <div class="lp-title">[ track ]</div>
-      <label class="lp-vol">
-        <span>vol</span>
-        <input type="range" min="0" max="100" value="70" disabled>
-      </label>
-    </div>
-  </div>
-
   <div class="memory" id="memory">
     <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
       <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
@@ -355,8 +333,6 @@
 <script src="./dive-waves.js?v=12"></script>
 <script src="./dive-bio.js?v=20"></script>
 <script src="./dive-memory.js?v=14"></script>
-<script src="./dive-player.js?v=12"></script>
 <script src="./dive-signal.js?v=18"></script>
-<script type="module" src="./lp-vinyl-3d.js"></script>
 </body>
 </html>
