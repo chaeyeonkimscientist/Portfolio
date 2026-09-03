@@ -13,6 +13,12 @@ export const COVER_GLBS = {
   'synthetic_synesthesia': new URL('./synthetic_synesthesia.glb', import.meta.url).href
 };
 
+export const COVER_IMAGES = {
+  body_says_otherwise: new URL('./covers/body_says_otherwise.webp', import.meta.url).href,
+  synthetic_synesthesia: new URL('./covers/synthetic_synesthesia.webp', import.meta.url).href,
+  paramount_internship: new URL('./covers/paramount_internship.webp', import.meta.url).href
+};
+
 const loader = new GLTFLoader();
 const cache = new Map();
 
@@ -93,9 +99,47 @@ export function loadTurntableModel() {
 }
 
 export function loadCoverModel(key) {
+  const imgUrl = COVER_IMAGES[key];
+  if (imgUrl) {
+    if (!cache.has(imgUrl)) cache.set(imgUrl, loadImageJacket(imgUrl));
+    return cache.get(imgUrl);
+  }
   const url = COVER_GLBS[key];
   if (!url) return Promise.reject(new Error('unknown cover ' + key));
   return cached(url, prepareCover);
+}
+
+function loadImageJacket(url) {
+  return new Promise((resolve, reject) => {
+    new THREE.TextureLoader().load(
+      url,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 8;
+        tex.needsUpdate = true;
+        const edge = new THREE.MeshStandardMaterial({
+          color: 0x171410, roughness: 0.78, metalness: 0.04
+        });
+        const front = new THREE.MeshStandardMaterial({
+          map: tex, color: 0xffffff, roughness: 0.68, metalness: 0.03
+        });
+        const back = new THREE.MeshStandardMaterial({
+          color: 0x1b1814, roughness: 0.86, metalness: 0.02
+        });
+        const mesh = new THREE.Mesh(
+          new THREE.BoxGeometry(1, 1, 0.05),
+          [edge, edge, edge, edge, front, back]
+        );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        const group = new THREE.Group();
+        group.add(mesh);
+        resolve(group);
+      },
+      undefined,
+      reject
+    );
+  });
 }
 
 export function cloneAsset(root) {

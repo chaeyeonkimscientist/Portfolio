@@ -276,11 +276,13 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
 
 .sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
-.sl-syn{background:linear-gradient(115deg,#3f2333 0%,#2a2b41 38%,#1f3c40 72%,#0f2b2e 100%)}
-.sl-para{background:linear-gradient(160deg,#222630 0%,#191c24 55%,#142a2f 100%)}
+.sl-syn{background:url("covers/synthetic_synesthesia.webp") center/cover no-repeat,#1f1820}
+.sl-para{background:url("covers/paramount_internship.webp") center/cover no-repeat,#191c24}
 .sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
 .sl-films{background:linear-gradient(155deg,#33242c 0%,#1c1820 52%,#1a2430 100%)}
-.sl-utdt{background:linear-gradient(158deg,#1c2430 0%,#162028 48%,#1a2e32 100%)}
+.sl-utdt{background:url("covers/body_says_otherwise.webp") center/cover no-repeat,#162028}
+.sl-para .inote,.sl-syn .inote,.sl-utdt .inote{opacity:0}
+.sl-para .stitle,.sl-syn .stitle,.sl-utdt .stitle{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.75)}
 .lbl-body{background-image:url("vinyl-labels/the_body_conducts.webp")}
 .lbl-para{background-image:url("vinyl-labels/paramount_internship.webp")}
 .lbl-films{background-image:url("vinyl-labels/short_films.webp")}
@@ -1320,8 +1322,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=3"></script>
-<script type="module" src="work-covers-3d.js?v=3"></script>
+<script type="module" src="turntable-transition.js?v=4"></script>
+<script type="module" src="work-covers-3d.js?v=4"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
