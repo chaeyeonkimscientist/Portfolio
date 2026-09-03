@@ -107,8 +107,7 @@ import {
     ]);
     const cover = cloneAsset(coverRoot);
     const vinyl = cloneAsset(vinylRoot);
-    const title = (rig.querySelector('.stitle')?.innerText || '').replace(/\s+/g, ' ').trim();
-    vinyl.add(makeVinylLabel(title));
+    vinyl.add(makeVinylLabel(key));
 
     const stage = new THREE.Group();
     stage.add(cover);

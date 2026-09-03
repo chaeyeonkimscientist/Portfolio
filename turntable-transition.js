@@ -274,8 +274,7 @@ import {
     const vinylSpin = new THREE.Group();
     const vinyl = cloneAsset(vinylRoot);
     vinyl.scale.setScalar(startVinylScale);
-    const jacketTitle = (sleeve && sleeve.querySelector('.stitle')?.innerText || '').replace(/\s+/g, ' ').trim();
-    vinyl.add(makeVinylLabel(jacketTitle));
+    vinyl.add(makeVinylLabel(coverKey));
     vinylSpin.add(vinyl);
     vinylTilt.add(vinylSpin);
     vinylPivot.add(vinylTilt);

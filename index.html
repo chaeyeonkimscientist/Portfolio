@@ -267,7 +267,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   transition:transform .45s cubic-bezier(.2,.7,.3,1)}
 .disc::after{content:"";position:absolute;inset:0;border-radius:50%;
   background:repeating-radial-gradient(circle at 50% 50%,transparent 0 2px,rgba(255,255,255,0.025) 2.5px 3px)}
-.disc .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.disc .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat}
 .disc .hole{width:8%;height:8%;min-width:5px;min-height:5px;border-radius:50%;background:var(--iris)}
 .sleeve{position:absolute;top:0;left:0;width:64%;height:100%;border-radius:2px;overflow:hidden;z-index:2;
   display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
@@ -281,8 +281,11 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
 .sl-films{background:linear-gradient(155deg,#33242c 0%,#1c1820 52%,#1a2430 100%)}
 .sl-utdt{background:linear-gradient(158deg,#1c2430 0%,#162028 48%,#1a2e32 100%)}
-.lbl-grape{background:var(--grape)}.lbl-amar{background:var(--amaranth-lit)}.lbl-lav{background:var(--lav)}
-.lbl-gold{background:#c9a14a}
+.lbl-body{background-image:url("vinyl-labels/the_body_conducts.webp")}
+.lbl-para{background-image:url("vinyl-labels/paramount_internship.webp")}
+.lbl-films{background-image:url("vinyl-labels/short_films.webp")}
+.lbl-utdt{background-image:url("vinyl-labels/body_says_otherwise.webp")}
+.lbl-syn{background-image:url("vinyl-labels/synthetic_synesthesia.webp")}
 
 .disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
 .disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
@@ -633,7 +636,7 @@ if (typeof Tone === 'undefined') {
     <a class="release is-current" href="work/body-conducts.html">
       <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="the_body_conducts">
-        <div class="disc"><div class="label lbl-grape"><div class="hole"></div></div></div>
+        <div class="disc"><div class="label lbl-body"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
           <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
           <div class="inote">[ film still ]</div>
@@ -669,7 +672,7 @@ if (typeof Tone === 'undefined') {
     <a class="release" href="work/short-films.html">
       <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="short_films">
-        <div class="disc"><div class="label lbl-gold"><div class="hole"></div></div></div>
+        <div class="disc"><div class="label lbl-films"><div class="hole"></div></div></div>
         <div class="sleeve sl-films">
           <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
           <div class="inote">[ film still ]</div>
@@ -688,7 +691,7 @@ if (typeof Tone === 'undefined') {
     <a class="release" href="work/body-says-otherwise.html">
       <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="body_says_otherwise">
-        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
+        <div class="disc"><div class="label lbl-utdt"><div class="hole"></div></div></div>
         <div class="sleeve sl-utdt">
           <div class="scode"><span>BO&middot;006</span><span>200+</span></div>
           <div class="inote">[ lab still ]</div>
@@ -706,7 +709,7 @@ if (typeof Tone === 'undefined') {
     <a class="release" href="work/synthetic-synesthesia.html">
       <canvas class="rig-canvas" aria-hidden="true"></canvas>
       <div class="rig" data-cover="synthetic_synesthesia">
-        <div class="disc"><div class="label lbl-lav"><div class="hole"></div></div></div>
+        <div class="disc"><div class="label lbl-syn"><div class="hole"></div></div></div>
         <div class="sleeve sl-syn">
           <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
           <div class="inote">[ app capture ]</div>

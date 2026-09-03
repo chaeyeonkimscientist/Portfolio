@@ -102,78 +102,84 @@ export function cloneAsset(root) {
   return root.clone(true);
 }
 
+export const LABEL_URLS = {
+  the_body_conducts: new URL('./vinyl-labels/the_body_conducts.webp', import.meta.url).href,
+  paramount_internship: new URL('./vinyl-labels/paramount_internship.webp', import.meta.url).href,
+  short_films: new URL('./vinyl-labels/short_films.webp', import.meta.url).href,
+  body_says_otherwise: new URL('./vinyl-labels/body_says_otherwise.webp', import.meta.url).href,
+  synthetic_synesthesia: new URL('./vinyl-labels/synthetic_synesthesia.webp', import.meta.url).href
+};
+
+export const PROJECT_LABEL_KEYS = {
+  'body-conducts': 'the_body_conducts',
+  paramount: 'paramount_internship',
+  'short-films': 'short_films',
+  'body-says-otherwise': 'body_says_otherwise',
+  'synthetic-synesthesia': 'synthetic_synesthesia'
+};
+
+const labelTexCache = new Map();
+
+function loadLabelTexture(url) {
+  if (!labelTexCache.has(url)) {
+    labelTexCache.set(url, new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 1024;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, size, size);
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size * 0.09, 0, Math.PI * 2);
+        ctx.fill();
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 4;
+        tex.needsUpdate = true;
+        resolve(tex);
+      };
+      img.onerror = () => reject(new Error('label image failed: ' + url));
+      img.src = url;
+    }));
+  }
+  return labelTexCache.get(url);
+}
+
 /**
- * Asymmetric paper label so rotation is visible.
- * The disc mesh is circularly symmetric; a gold wedge + SIDE A is what reads as spin.
+ * Circular label disc for the vinyl center. Texture only — no type.
  */
-export function makeVinylLabel(title) {
+export function makeVinylLabel(key) {
   const group = new THREE.Group();
   group.name = 'vinyl-label';
 
-  const paper = new THREE.Mesh(
-    new THREE.CircleGeometry(0.32, 64),
-    new THREE.MeshBasicMaterial({
-      color: 0x6a3aa8, side: THREE.DoubleSide, toneMapped: false
-    })
-  );
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x111111,
+    transparent: true,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    toneMapped: false
+  });
+  const paper = new THREE.Mesh(new THREE.CircleGeometry(0.32, 64), mat);
   paper.position.z = 0.0132;
   paper.renderOrder = 2;
   group.add(paper);
 
-  const wedge = new THREE.Mesh(
-    new THREE.CircleGeometry(0.32, 32, 0.12, Math.PI * 0.62),
-    new THREE.MeshBasicMaterial({
-      color: 0xd4b45c, side: THREE.DoubleSide, toneMapped: false
-    })
-  );
-  wedge.position.z = 0.0134;
-  wedge.renderOrder = 3;
-  group.add(wedge);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 512, 512);
-  ctx.strokeStyle = 'rgba(239,231,239,0.92)';
-  ctx.lineWidth = 8;
-  ctx.beginPath();
-  ctx.arc(256, 256, 240, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = '#EFE7EF';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.font = '700 54px "Helvetica Neue",Helvetica,Arial,sans-serif';
-  ctx.fillText('SIDE A', 256, 168);
-
-  const raw = String(title || 'LP').replace(/\s+/g, ' ').trim();
-  const words = raw.split(' ').filter(Boolean);
-  let lines = [raw];
-  if (raw.length > 14 && words.length > 1) {
-    const mid = Math.ceil(words.length / 2);
-    lines = [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+  const url = LABEL_URLS[key];
+  if (url) {
+    loadLabelTexture(url).then((tex) => {
+      mat.map = tex;
+      mat.color.set(0xffffff);
+      mat.needsUpdate = true;
+    }).catch((err) => {
+      console.warn('[vinyl] label texture failed', key, err);
+    });
   }
-  ctx.font = '600 32px "Helvetica Neue",Helvetica,Arial,sans-serif';
-  const startY = 300 - (lines.length - 1) * 18;
-  lines.slice(0, 3).forEach((line, i) => ctx.fillText(line, 256, startY + i * 36));
-
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.beginPath();
-  ctx.arc(256, 256, 26, 0, Math.PI * 2);
-  ctx.fill();
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const text = new THREE.Mesh(
-    new THREE.CircleGeometry(0.32, 48),
-    new THREE.MeshBasicMaterial({
-      map: tex, transparent: true, side: THREE.DoubleSide,
-      depthWrite: false, toneMapped: false
-    })
-  );
-  text.position.z = 0.0136;
-  text.renderOrder = 4;
-  group.add(text);
 
   return group;
 }
