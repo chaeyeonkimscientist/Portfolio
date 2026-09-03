@@ -14,9 +14,9 @@ export const COVER_GLBS = {
 };
 
 export const COVER_IMAGES = {
-  body_says_otherwise: new URL('./covers/body_says_otherwise.webp', import.meta.url).href,
-  synthetic_synesthesia: new URL('./covers/synthetic_synesthesia.webp', import.meta.url).href,
-  paramount_internship: new URL('./covers/paramount_internship.webp', import.meta.url).href
+  body_says_otherwise: new URL('./covers/body_says_otherwise.webp', import.meta.url).href + '?v=2',
+  synthetic_synesthesia: new URL('./covers/synthetic_synesthesia.webp', import.meta.url).href + '?v=2',
+  paramount_internship: new URL('./covers/paramount_internship.webp', import.meta.url).href + '?v=2'
 };
 
 const loader = new GLTFLoader();
@@ -116,6 +116,9 @@ function loadImageJacket(url) {
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 8;
+        tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.magFilter = THREE.LinearFilter;
         tex.needsUpdate = true;
         const edge = new THREE.MeshStandardMaterial({
           color: 0x171410, roughness: 0.78, metalness: 0.04
