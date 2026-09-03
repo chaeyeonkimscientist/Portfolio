@@ -134,10 +134,6 @@ function loadLabelTexture(url) {
         ctx.closePath();
         ctx.clip();
         ctx.drawImage(img, 0, 0, size, size);
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, size * 0.09, 0, Math.PI * 2);
-        ctx.fill();
         const tex = new THREE.CanvasTexture(canvas);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 4;
@@ -165,7 +161,7 @@ export function makeVinylLabel(key) {
     depthWrite: false,
     toneMapped: false
   });
-  const paper = new THREE.Mesh(new THREE.CircleGeometry(0.32, 64), mat);
+  const paper = new THREE.Mesh(new THREE.CircleGeometry(0.36, 64), mat);
   paper.position.z = 0.0132;
   paper.renderOrder = 2;
   group.add(paper);
