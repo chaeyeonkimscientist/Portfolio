@@ -141,11 +141,11 @@ import {
       entries.forEach((en) => {
         const card = cards.find((c) => c.rig === en.target || c.host === en.target);
         if (!card) return;
-        const vis = en.isIntersecting && en.intersectionRatio > 0.08;
+        const vis = en.isIntersecting && en.intersectionRatio > 0.02;
         if (vis && !card.visible) layout(card);
         card.visible = vis;
       });
-    }, { threshold: [0, 0.08, 0.4] });
+    }, { threshold: [0, 0.02, 0.08, 0.4] });
     cards.forEach((c) => io.observe(c.host || c.rig));
 
     if (typeof ResizeObserver !== 'undefined') {
