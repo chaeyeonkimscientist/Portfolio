@@ -232,7 +232,6 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
   margin-left:auto;margin-right:auto;
 }
 .stack > h2,
-.stack > h3,
 .stack > p,
 .stack > ul,
 .stack > .lede,
@@ -317,6 +316,14 @@ h3{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-weight:700;
   font-size:clamp(1.08rem,1.2vw + 0.7rem,1.28rem);line-height:1.2;color:var(--lav);
   margin:var(--space-xl) 0 var(--space-sm);
+}
+/* Match THE SOLUTION: left of the stack, not centered in the measure column. */
+.stack > h3{
+  max-width:var(--measure);
+  width:100%;
+  margin-left:0;
+  margin-right:auto;
+  text-align:left;
 }
 p{margin:0 0 var(--space-md);color:var(--bone);font-weight:400;line-height:1.6}
 p:last-child{margin-bottom:0}
@@ -999,7 +1006,23 @@ a.tname.pending-ext::before{content:none}
 @keyframes lp-spin{to{transform:rotate(360deg)}}
 .lp-label{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:30%;height:30%;border-radius:50%;background:var(--grape);
+  width:30%;height:30%;border-radius:50%;overflow:hidden;
+  background:var(--grape) center / cover no-repeat;
+}
+body[data-project-id="body-conducts"] .lp-label{
+  background-image:url("../vinyl-labels/the_body_conducts.webp");background-color:transparent;
+}
+body[data-project-id="paramount"] .lp-label{
+  background-image:url("../vinyl-labels/paramount_internship.webp");background-color:transparent;
+}
+body[data-project-id="short-films"] .lp-label{
+  background-image:url("../vinyl-labels/short_films.webp");background-color:transparent;
+}
+body[data-project-id="body-says-otherwise"] .lp-label{
+  background-image:url("../vinyl-labels/body_says_otherwise.webp");background-color:transparent;
+}
+body[data-project-id="synthetic-synesthesia"] .lp-label{
+  background-image:url("../vinyl-labels/synthetic_synesthesia.webp");background-color:transparent;
 }
 .lp-hole{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
