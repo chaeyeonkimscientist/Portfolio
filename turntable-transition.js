@@ -560,7 +560,8 @@ import {
 
     const disc = link.querySelector('.disc');
     const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!disc || busy || reducedNow) return;
+    if (!coverKeyFrom(link) || !disc || busy || reducedNow) return;
+    if (link.classList.contains('is-loop-clone') || link.getAttribute('aria-hidden') === 'true') return;
 
     e.preventDefault();
     e.stopPropagation();
