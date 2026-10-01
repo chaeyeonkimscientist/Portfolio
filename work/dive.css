@@ -1088,7 +1088,7 @@ body[data-project-id="synthetic-synesthesia"] .lp-label{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.5rem;letter-spacing:0.12em;color:var(--bone-dim);
 }
 .memory-panel{
-  position:absolute;top:0;right:100%;width:min(22rem,78vw);
+  position:absolute;top:0;right:100%;width:min(22rem,78vw);z-index:3;
   background:rgba(16,23,25,.96);border:0.5px solid var(--hair);border-right:none;
   padding:1rem 1rem 1.1rem;max-height:70vh;overflow:auto;
   opacity:0;transform:translateX(12px);pointer-events:none;
@@ -1142,6 +1142,17 @@ body[data-project-id="synthetic-synesthesia"] .lp-label{
 }
 .memory-bubble strong{font-weight:700;color:var(--lav)}
 .memory-bubble[hidden]{display:none}
+.memory-reminder{
+  position:absolute;right:calc(100% + 0.55rem);top:0.1rem;z-index:2;
+  width:max-content;max-width:min(16rem,70vw);
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;
+  letter-spacing:0.06em;line-height:1.45;color:var(--data);
+  background:rgba(16,23,25,.96);border:0.5px solid var(--data);
+  padding:0.55rem 0.7rem;box-shadow:0 0 16px rgba(159,224,216,.16);
+  opacity:0;transform:translateX(8px);pointer-events:none;
+  transition:opacity .45s var(--ease),transform .45s var(--ease);
+}
+.memory-reminder.is-on{opacity:1;transform:none;pointer-events:auto}
 
 .sel-pop{
   position:absolute;z-index:40;transform:translate(-50%,-120%);
@@ -1178,12 +1189,6 @@ body[data-project-id="synthetic-synesthesia"] .lp-label{
   white-space:normal;text-align:left;max-width:100%;
 }
 .term-actions button:hover{border-color:var(--data);color:var(--data)}
-.memory-toast{
-  position:fixed;right:1.2rem;bottom:1.2rem;z-index:45;
-  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.62rem;letter-spacing:0.08em;
-  color:var(--data);background:rgba(16,23,25,.95);border:0.5px solid var(--data);
-  padding:0.7rem 0.85rem;max-width:22rem;
-}
 
 /* ===== short films interactives ===== */
 .award-row{
@@ -1497,6 +1502,7 @@ button.morse[aria-pressed="true"]{
   .wings-still .frame{min-height:14rem}
   .memory{top:12vh}
   .memory-bubble{width:min(14rem,70vw)}
+  .memory-reminder{max-width:min(14rem,70vw)}
   .scenario-pin{height:200vh}
 }
 
@@ -1509,7 +1515,7 @@ button.morse[aria-pressed="true"]{
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .mode-icon,.hud-rail,.hud-nav,.hud-back,.toggle .caret,.memory-panel,.lp-card,.scenario p,.lp-disc,.record-platter img{transition:none;animation:none}
+  .mode-icon,.hud-rail,.hud-nav,.hud-back,.toggle .caret,.memory-panel,.memory-reminder,.lp-card,.scenario p,.lp-disc,.record-platter img{transition:none;animation:none}
   .mode-icon.is-lit{transform:none}
   .scenario-pin{height:auto}
   .scenario{position:static}

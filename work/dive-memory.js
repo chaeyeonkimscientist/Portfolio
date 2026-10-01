@@ -105,6 +105,7 @@
 
   const HOME = '../index.html#work';
   const WARNED = 'ck-term-warned';
+  const REMINDER_COPY = "Don't forget to copy me before you leave.";
 
   function hasWarned() {
     try { return sessionStorage.getItem(WARNED) === '1'; }
@@ -131,6 +132,36 @@
       return navigator.clipboard.writeText(blob).catch(function () { return blob; });
     }
     return Promise.resolve(blob);
+  }
+
+  /* Same-tab hops across this portfolio stay one working-memory session. */
+  let internalNav = false;
+  let internalNavReset = 0;
+  function markInternalNav() {
+    internalNav = true;
+    clearTimeout(internalNavReset);
+    internalNavReset = setTimeout(function () { internalNav = false; }, 1500);
+  }
+  function isInternalUrl(href) {
+    if (!href) return false;
+    const raw = String(href).trim();
+    if (!raw || raw.charAt(0) === '#') return true;
+    if (/^(mailto:|tel:|javascript:)/i.test(raw)) return false;
+    try {
+      const url = new URL(raw, location.href);
+      return url.origin === location.origin;
+    } catch (e) {
+      return false;
+    }
+  }
+  function isInternalDocumentNav(href) {
+    if (!isInternalUrl(href)) return false;
+    try {
+      const url = new URL(href, location.href);
+      return url.pathname !== location.pathname;
+    } catch (e) {
+      return false;
+    }
   }
 
   let pending = null;
@@ -209,8 +240,10 @@
         markWarned();
         const href = homeHref();
         copyNodes().then(function () {
+          markInternalNav();
           location.href = href;
         }, function () {
+          markInternalNav();
           location.href = href;
         });
       });
@@ -219,16 +252,66 @@
   }
 
   document.addEventListener('click', function (e) {
-    const back = e.target.closest && e.target.closest('.hud-back');
-    if (!back) return;
-    if (warn && !warn.hidden) {
-      e.preventDefault();
-      return;
-    }
-    if (hasWarned()) return;
-    e.preventDefault();
-    showWarn({ force: true });
+    const a = e.target.closest && e.target.closest('a');
+    if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target && a.target !== '_self') return;
+    if (isInternalDocumentNav(a.getAttribute('href') || a.href)) markInternalNav();
   }, true);
+
+  if (window.navigation && typeof navigation.addEventListener === 'function') {
+    navigation.addEventListener('navigate', function (e) {
+      try {
+        if (e.destination && isInternalDocumentNav(e.destination.url)) markInternalNav();
+      } catch (err) {}
+    });
+  }
+
+  function ensureReminder() {
+    let el = document.getElementById('memory-reminder') || memory.querySelector('.memory-reminder');
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'memory-reminder';
+      el.id = 'memory-reminder';
+      el.setAttribute('role', 'status');
+      memory.appendChild(el);
+    }
+    el.textContent = REMINDER_COPY;
+    el.setAttribute('aria-hidden', 'true');
+    return el;
+  }
+
+  const reminder = ensureReminder();
+  let reminderHideTimer = 0;
+  let lastReminderAt = 0;
+
+  function hideReminder() {
+    reminder.classList.remove('is-on');
+    reminder.setAttribute('aria-hidden', 'true');
+  }
+  function showReminder() {
+    if (!load().nodes.length) return;
+    if (memory.classList.contains('is-open')) return;
+    const now = Date.now();
+    if (now - lastReminderAt < 20000) return;
+    lastReminderAt = now;
+    reminder.textContent = REMINDER_COPY;
+    reminder.removeAttribute('hidden');
+    reminder.setAttribute('aria-hidden', 'false');
+    reminder.classList.add('is-on');
+    clearTimeout(reminderHideTimer);
+    reminderHideTimer = setTimeout(hideReminder, 6000);
+  }
+  function reminderGap() {
+    return 45000 + Math.floor(Math.random() * 45000);
+  }
+  function armReminder() {
+    setTimeout(function () {
+      showReminder();
+      armReminder();
+    }, reminderGap());
+  }
+  armReminder();
 
   let idle = 0;
   function bump() { idle = 0; }
@@ -237,28 +320,11 @@
   });
   setInterval(function () {
     idle += 1;
-    if (idle === 120) showWarn();
+    if (idle === 25) showReminder();
   }, 1000);
 
-  setInterval(function () {
-    if (!load().nodes.length) return;
-    let toast = document.querySelector('.memory-toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.className = 'memory-toast';
-      document.body.appendChild(toast);
-    }
-    toast.textContent = 'Don’t forget to copy me before you go!';
-    toast.hidden = false;
-    setTimeout(function () { toast.hidden = true; }, 5000);
-  }, 90000);
-
-  addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') showWarn();
-  });
   addEventListener('beforeunload', function (e) {
-    if (hasWarned() || !load().nodes.length) return;
-    showWarn();
+    if (internalNav || !load().nodes.length) return;
     e.preventDefault();
     e.returnValue = '';
   });
