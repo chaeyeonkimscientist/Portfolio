@@ -1,6 +1,6 @@
 /* 3D vinyl dock for The Body Conducts — replaces the CSS LP disc. */
 import * as THREE from 'three';
-import { loadVinylModel } from '../vinyl-glb.js';
+import { loadVinylModel, makeVinylLabel, PROJECT_LABEL_KEYS } from '../vinyl-glb.js';
 
 (function () {
   'use strict';
@@ -54,6 +54,8 @@ import { loadVinylModel } from '../vinyl-glb.js';
   loadVinylModel().then((model) => {
     vinyl = model;
     vinyl.rotation.x = -0.72;
+    const labelKey = PROJECT_LABEL_KEYS[document.body.getAttribute('data-project-id')];
+    if (labelKey) vinyl.add(makeVinylLabel(labelKey));
     pivot.add(vinyl);
     renderer.render(scene, camera);
   }).catch((err) => {
