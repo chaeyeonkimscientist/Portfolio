@@ -66,7 +66,151 @@ export function prepareTurntable(root) {
       o.material.needsUpdate = true;
     }
   });
+  splitTurntableArm(root);
   return root;
+}
+
+/**
+ * Tripo baked the tonearm into the same mesh as the plinth. Cut it free and
+ * hang it on a vertical pivot so the needle can swing onto the record.
+ *
+ * Rest pose (model space): arm along +Z at x≈0.35, pivot near (0.35, 0.13, -0.15),
+ * headshell at z≈0.42. The clip at x>0.41 stays on the deck.
+ */
+function splitTurntableArm(root) {
+  let mesh = null;
+  root.traverse((o) => { if (!mesh && o.isMesh && o.geometry) mesh = o; });
+  if (!mesh || !mesh.geometry.index) return;
+
+  const geom = mesh.geometry;
+  const pos = geom.getAttribute('position');
+  const index = geom.index;
+  const n = pos.count;
+  const arm = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    if (x > 0.30 && x < 0.40 && y > 0.13) arm[i] = 1;
+  }
+  let added = true;
+  while (added) {
+    added = false;
+    for (let t = 0; t < index.count; t += 3) {
+      const a = index.getX(t);
+      const b = index.getX(t + 1);
+      const c = index.getX(t + 2);
+      if (!(arm[a] || arm[b] || arm[c])) continue;
+      for (const v of [a, b, c]) {
+        if (arm[v]) continue;
+        const x = pos.getX(v);
+        const y = pos.getY(v);
+        if (y < 0.058 || x < 0.215 || x > 0.408) continue;
+        arm[v] = 1;
+        added = true;
+      }
+    }
+  }
+
+  let armCount = 0;
+  for (let i = 0; i < n; i++) if (arm[i]) armCount++;
+  if (armCount < 2000) return;
+
+  const armTris = [];
+  const baseTris = [];
+  for (let t = 0; t < index.count; t += 3) {
+    const a = index.getX(t);
+    const b = index.getX(t + 1);
+    const c = index.getX(t + 2);
+    const votes = (arm[a] ? 1 : 0) + (arm[b] ? 1 : 0) + (arm[c] ? 1 : 0);
+    if (votes >= 2) armTris.push(a, b, c);
+    else baseTris.push(a, b, c);
+  }
+  if (armTris.length < 600) return;
+
+  const hinge = new THREE.Vector3();
+  const needle = new THREE.Vector3();
+  let hingeN = 0;
+  let needleZ = -Infinity;
+  for (let i = 0; i < n; i++) {
+    if (!arm[i]) continue;
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    const z = pos.getZ(i);
+    if (x > 0.32 && x < 0.39 && z > -0.20 && z < -0.10) {
+      hinge.x += x; hinge.y += y; hinge.z += z;
+      hingeN++;
+    }
+    if (z > needleZ) {
+      needleZ = z;
+      needle.set(x, y, z);
+    }
+  }
+  if (hingeN) hinge.multiplyScalar(1 / hingeN);
+  else hinge.set(0.353, 0.133, -0.152);
+
+  const armGeom = compactGeometry(geom, armTris);
+  const baseGeom = compactGeometry(geom, baseTris);
+  const mat = mesh.material;
+
+  const baseMesh = new THREE.Mesh(baseGeom, mat);
+  baseMesh.name = 'tt-plinth';
+  baseMesh.castShadow = true;
+  baseMesh.receiveShadow = true;
+
+  const armMesh = new THREE.Mesh(armGeom, mat);
+  armMesh.name = 'tt-arm';
+  armMesh.castShadow = true;
+  armMesh.receiveShadow = true;
+
+  const armHold = new THREE.Group();
+  armHold.name = 'tt-arm-hold';
+  armHold.position.copy(hinge).negate();
+  armHold.add(armMesh);
+
+  const armPivot = new THREE.Group();
+  armPivot.name = 'tt-arm-pivot';
+  armPivot.position.copy(hinge);
+  armPivot.userData.hinge = hinge.clone();
+  armPivot.userData.needle = needle.clone();
+  armPivot.add(armHold);
+
+  const parent = mesh.parent || root;
+  parent.remove(mesh);
+  parent.add(baseMesh);
+  parent.add(armPivot);
+  geom.dispose();
+  console.log('[tt] arm split', armCount, 'hinge', hinge.toArray().map((n) => n.toFixed(3)).join(','));
+}
+
+function compactGeometry(src, triVerts) {
+  const map = new Map();
+  const remap = [];
+  for (let i = 0; i < triVerts.length; i++) {
+    const v = triVerts[i];
+    let ni = map.get(v);
+    if (ni === undefined) {
+      ni = map.size;
+      map.set(v, ni);
+    }
+    remap.push(ni);
+  }
+  const g = new THREE.BufferGeometry();
+  const attrs = src.attributes;
+  for (const name in attrs) {
+    const attr = attrs[name];
+    const item = attr.itemSize;
+    const out = new Float32Array(map.size * item);
+    map.forEach((ni, vi) => {
+      for (let k = 0; k < item; k++) out[ni * item + k] = attr.array[vi * item + k];
+    });
+    g.setAttribute(name, new THREE.BufferAttribute(out, item, attr.normalized));
+  }
+  g.setIndex(remap.length > 65535
+    ? new THREE.Uint32BufferAttribute(remap, 1)
+    : new THREE.Uint16BufferAttribute(remap, 1));
+  g.computeBoundingBox();
+  g.computeBoundingSphere();
+  return g;
 }
 
 export function prepareCover(root) {

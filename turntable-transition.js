@@ -114,10 +114,31 @@ import {
   const SPINDLE_LOCAL = new THREE.Vector3(-0.11, 0.141, 0.005);
   const PLATTER_RADIUS_LOCAL = 0.30;
   const VINYL_ON_PLATTER = 0.286;
+  const GROOVE_RADIUS_LOCAL = 0.18;
 
   function spindleWorld(root) {
     root.updateMatrixWorld(true);
     return SPINDLE_LOCAL.clone().applyMatrix4(root.matrixWorld);
+  }
+
+  /* Rotate the parked arm around Y until the headshell sits on a groove. */
+  function armSwingY(hinge, needle, spindle, grooveR) {
+    const rx = needle.x - hinge.x;
+    const rz = needle.z - hinge.z;
+    let best = -0.9;
+    let bestErr = 1e9;
+    for (let t = -1.25; t <= -0.35; t += 0.01) {
+      const c = Math.cos(t);
+      const s = Math.sin(t);
+      const x = hinge.x + rx * c + rz * s;
+      const z = hinge.z - rx * s + rz * c;
+      const err = Math.abs(Math.hypot(x - spindle.x, z - spindle.z) - grooveR);
+      if (err < bestErr) {
+        bestErr = err;
+        best = t;
+      }
+    }
+    return best;
   }
 
   function mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale) {
@@ -307,6 +328,12 @@ import {
     ttRoot.position.copy(ttRest);
     scene.add(ttRoot);
 
+    const armPivot = ttRoot.getObjectByName('tt-arm-pivot');
+    const swingY = armPivot
+      ? armSwingY(armPivot.userData.hinge, armPivot.userData.needle, SPINDLE_LOCAL, GROOVE_RADIUS_LOCAL)
+      : 0;
+    if (armPivot) log('arm swingY=' + swingY.toFixed(3));
+
     ttRoot.updateMatrixWorld(true);
     const platterWorld = spindleWorld(ttRoot);
     ttRoot.position.x = ttRest.x + Math.max(0.55, ttScale * 0.7);
@@ -345,7 +372,6 @@ import {
       ttRoot.updateMatrixWorld(true);
       mountVinylOnPlatter(scene, ttRoot, vinylPivot, vinylTilt, vinyl, playScale);
       spinning = true;
-      cueNeedle();
       log('seated');
     }
 
@@ -490,6 +516,26 @@ import {
     }, 1.30);
 
     tl.add(seatNow, 2.85);
+
+    /* Lift the arm off its rest, swing it over the spinning LP, then drop the needle. */
+    if (armPivot) {
+      tl.to(armPivot.rotation, {
+        x: -0.14,
+        duration: 0.32,
+        ease: 'power2.out'
+      }, 2.88);
+      tl.to(armPivot.rotation, {
+        y: swingY,
+        duration: 0.85,
+        ease: 'power2.inOut'
+      }, 3.12);
+      tl.to(armPivot.rotation, {
+        x: 0.028,
+        duration: 0.42,
+        ease: 'power2.in',
+        onStart: cueNeedle
+      }, 3.92);
+    }
 
     tl.to(camera.position, {
       y: endCam.y - 0.05,
