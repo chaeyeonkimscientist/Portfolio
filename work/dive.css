@@ -201,6 +201,7 @@ section:last-of-type{padding-bottom:var(--space-3xl)}
 .dive > section > .problem-split,
 .dive > section > .pipeline.has-media,
 .dive > section > .cta-row:has(.embed-yt),
+.dive > section > .track-notes,
 .dive > section > .film-still,
 .dive > section > .img-ph,
 .dive > section > .id-cards,
@@ -514,12 +515,22 @@ a.tname.pending-ext::before{content:none}
 .toggle[aria-expanded="true"] .caret{transform:rotate(90deg)}
 .track-notes{margin-top:1.6rem}
 .track-notes[hidden]{display:none}
-.act{margin:0 0 2rem}
+.act{
+  display:grid;grid-template-columns:1fr;gap:var(--space-md);
+  margin:0 0 var(--space-xl);align-items:start;
+}
 .act h3{margin-top:0}
 .act .callout{margin:0 0 0.9rem;font-size:1.2rem}
 .act .closing{
   font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-style:italic;color:var(--lav);
   margin-top:0.8rem;font-size:1.2rem;font-weight:700;
+}
+.act .embed-yt{border:0.5px solid var(--hair)}
+@media(min-width:760px){
+  .act{
+    grid-template-columns:minmax(0,1.15fr) minmax(16rem,0.9fr);
+    column-gap:var(--space-lg);
+  }
 }
 
 .bullets{list-style:none;margin:var(--space-xs) 0 0;padding:0}
