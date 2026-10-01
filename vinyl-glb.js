@@ -201,7 +201,10 @@ function compactGeometry(src, triVerts) {
     const item = attr.itemSize;
     const out = new Float32Array(map.size * item);
     map.forEach((ni, vi) => {
-      for (let k = 0; k < item; k++) out[ni * item + k] = attr.array[vi * item + k];
+      out[ni * item] = attr.getX(vi);
+      if (item > 1) out[ni * item + 1] = attr.getY(vi);
+      if (item > 2) out[ni * item + 2] = attr.getZ(vi);
+      if (item > 3) out[ni * item + 3] = attr.getW(vi);
     });
     g.setAttribute(name, new THREE.BufferAttribute(out, item, attr.normalized));
   }
