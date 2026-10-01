@@ -292,7 +292,6 @@
   function showReminder() {
     if (!load().nodes.length) return;
     if (memory.classList.contains('is-open')) return;
-    if (memory.matches && memory.matches(':hover')) return;
     const now = Date.now();
     if (now - lastReminderAt < 20000) return;
     lastReminderAt = now;

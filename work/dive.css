@@ -1099,10 +1099,6 @@ a.tname.pending-ext::before{content:none}
   transition:opacity .45s var(--ease),transform .45s var(--ease);
 }
 .memory-reminder.is-on{opacity:1;transform:none;pointer-events:auto}
-.memory.is-open .memory-reminder,
-.memory:hover .memory-reminder{
-  opacity:0;transform:translateX(8px);pointer-events:none;
-}
 
 .sel-pop{
   position:absolute;z-index:40;transform:translate(-50%,-120%);
