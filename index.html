@@ -844,9 +844,7 @@ if (typeof Tone === 'undefined') {
   }
   function halfW(delta, faceW, spineW, dir){
     const k=Math.abs(spinOf(delta))/SPINE_MAX;
-    let w=faceW*(1-k)+spineW*k;
-    if(delta>-1e-6 && dir>0) w+=faceW*0.26*(1-k);
-    return w*0.5;
+    return (faceW*(1-k)+spineW*k)*0.5;
   }
   function xOf(delta, faceW, spineW, gap){
     if(Math.abs(delta)<1e-5) return 0;
@@ -891,6 +889,8 @@ if (typeof Tone === 'undefined') {
       const x=xOf(d, faceW, spineW, gap);
       const boxW=faceW*(1-k)+spineW*k;
       el.style.width=boxW.toFixed(2)+'px';
+      const rig=el.querySelector('.rig');
+      if(rig) rig.style.height=faceW.toFixed(2)+'px';
       el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
       el.style.zIndex=String(Math.round(50-ad*10));
       el.setAttribute('data-spin', spin.toFixed(2));
