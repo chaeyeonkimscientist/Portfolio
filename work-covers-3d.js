@@ -52,7 +52,7 @@ import {
   }
 
   function layout(card) {
-    const { camera, cover, vinyl, vinylRest, stage, rig } = card;
+    const { camera, cover, vinyl, vinylRest, hold, rig } = card;
     const canvas = card.renderer.domElement;
     const w = canvas.clientWidth || 1;
     const h = canvas.clientHeight || 1;
@@ -77,6 +77,8 @@ import {
     const sleeveW = rigWorldW * 0.58;
     const coverScale = Math.min(sleeveW, rigWorldH * 0.92) / COVER_SIZE;
     cover.scale.setScalar(coverScale);
+    cover.position.set(0, 0, 0);
+    cover.rotation.set(0, 0, 0);
 
     const idleX = rigCenterX - rigWorldW * 0.5 + coverScale * 0.52;
     const spineX = rigCenterX - rigWorldW * 0.5 + rigWorldW * 0.32;
@@ -84,21 +86,20 @@ import {
     const k = Math.min(1, Math.abs(spin) / 90);
     card.spin = spin;
 
-    cover.position.set(
+    hold.position.set(
       idleX + (spineX - idleX) * k,
       rigCenterY,
-      0.02
+      0
     );
-    cover.rotation.y = THREE.MathUtils.degToRad(spin);
+    hold.rotation.y = THREE.MathUtils.degToRad(spin);
 
     if (vinyl) {
-      const vinylScale = coverScale * 0.46;
-      vinyl.scale.setScalar(vinylScale);
-      vinylRest.set(idleX + coverScale * 0.34, cover.position.y, -0.01);
-      vinyl.visible = k < 0.35;
+      vinyl.scale.setScalar(coverScale * 0.46);
+      const behind = coverScale * ((card.coverDepth || 0.16) * 0.5 + 0.03);
+      vinylRest.set(coverScale * 0.34, 0, -behind);
+      vinyl.visible = k < 0.55;
       if (!vinyl.visible) card.hoverT = 0;
     }
-    if (stage) stage.position.set(0, 0, 0);
   }
 
   async function mount(rig) {
@@ -133,8 +134,12 @@ import {
       key === 'other' ? Promise.resolve(null) : loadVinylModel()
     ]);
     const cover = cloneAsset(coverRoot);
+    cover.updateMatrixWorld(true);
+    const coverDepth = new THREE.Box3().setFromObject(cover).getSize(new THREE.Vector3()).z || 0.16;
 
+    const hold = new THREE.Group();
     const stage = new THREE.Group();
+    hold.add(stage);
     stage.add(cover);
 
     let vinyl = null;
@@ -143,10 +148,11 @@ import {
       vinyl.add(makeVinylLabel(key));
       stage.add(vinyl);
     }
-    scene.add(stage);
+    scene.add(hold);
 
     const card = {
-      rig, host, renderer, scene, camera, cover, vinyl, stage,
+      rig, host, renderer, scene, camera, cover, vinyl, hold, stage,
+      coverDepth,
       vinylRest: new THREE.Vector3(),
       hover: 0, hoverT: 0,
       tiltX: 0, tiltY: 0, tiltZ: 0,
