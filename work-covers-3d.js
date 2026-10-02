@@ -1,5 +1,5 @@
-/* Selected Work cover-flow: center jacket faces the camera with its LP;
-   neighbors rotate as a rigid jacket+LP so the GLB spine shows, packed close. */
+/* Selected Work Cover Flow: linear row, 45° neighbors, original thin jackets.
+   Scroll moves the focused cover; jacket and LP rotate as one unit. */
 import * as THREE from 'three';
 import {
   loadVinylModel, loadCoverModel, cloneAsset, makeVinylLabel,
@@ -109,13 +109,13 @@ import {
     const ny = -(((cy - vRect.top) / vRect.height) * 2 - 1);
 
     const spin = spinOf(card);
-    const k = Math.min(1, Math.abs(spin) / 90);
+    const k = Math.min(1, Math.abs(spin) / 45);
     card.spin = spin;
     card.k = k;
 
     const coverPx = rRect.height;
     const coverWorld = worldH * (coverPx / Math.max(h, 1));
-    const coverScale = (coverWorld * 0.92) / COVER_SIZE;
+    const coverScale = (coverWorld * (0.90 + 0.08 * (1 - k))) / COVER_SIZE;
     card.cover.scale.setScalar(coverScale);
     card.cover.position.set(0, 0, 0);
     card.cover.rotation.set(0, 0, 0);
@@ -123,16 +123,16 @@ import {
     card.hold.position.set(
       nx * worldW * 0.5,
       ny * worldH * 0.5,
-      (1 - k) * 0.62
+      (1 - k) * 0.78
     );
     card.hold.rotation.y = THREE.MathUtils.degToRad(spin);
 
     if (card.vinyl) {
       const vinylScale = coverScale * 0.46;
       card.vinyl.scale.setScalar(vinylScale);
-      const behind = coverScale * ((card.coverDepth || 0.16) * 0.5 + 0.028);
+      const behind = coverScale * ((card.coverDepth || 0.05) * 0.5 + 0.028);
       card.vinylRest.set(coverScale * 0.34, 0, -behind);
-      card.vinyl.visible = k < 0.42;
+      card.vinyl.visible = k < 0.35;
       if (!card.vinyl.visible) card.hoverT = 0;
     }
   }

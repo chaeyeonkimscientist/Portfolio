@@ -779,10 +779,10 @@ if (typeof Tone === 'undefined') {
   const releases=[...track.querySelectorAll('a.release')];
 
   const HOLD=140, SLIDE=80;
-  const LERP=0.1;
+  const LERP=0.12;
   const SETTLE=0.0007;
-  const HOVER_PEEK=0.14;
-  const SPINE_MAX=90;
+  const HOVER_PEEK=0.12;
+  const ANGLE=45;
   let current=0;
   let primed=false;
   let raf=0;
@@ -794,22 +794,9 @@ if (typeof Tone === 'undefined') {
     t=Math.min(Math.max(t,0),1);
     return t*t*t*(t*(t*6-15)+10);
   }
-  function bezierK(t){
+  function smoothstep(t){
     t=Math.min(Math.max(t,0),1);
-    let s=t;
-    const x1=0.32, y1=1, x2=0.68, y2=1;
-    for(let i=0;i<8;i++){
-      const u=1-s;
-      const x=3*u*u*s*x1+3*u*s*s*x2+s*s*s;
-      const dx=3*u*u*x1+6*u*s*(x2-x1)+3*s*s*(1-x2);
-      if(Math.abs(dx)<1e-6) break;
-      s=Math.min(1, Math.max(0, s-(x-t)/dx));
-    }
-    const u=1-s;
-    return 3*u*u*s*y1+3*u*s*s*y2+s*s*s;
-  }
-  function flowK(absDelta){
-    return bezierK(Math.min(1, Math.abs(absDelta)/0.92));
+    return t*t*(3-2*t);
   }
   function scrolledVh(){
     const vh=innerHeight||1;
@@ -839,27 +826,8 @@ if (typeof Tone === 'undefined') {
     return 0;
   }
   function spinOf(delta){
-    const k=flowK(Math.abs(delta));
-    return (Math.sign(delta)||0)*SPINE_MAX*k;
-  }
-  function halfW(delta, faceW, spineW, dir){
-    const k=Math.abs(spinOf(delta))/SPINE_MAX;
-    return (faceW*(1-k)+spineW*k)*0.5;
-  }
-  function xOf(delta, faceW, spineW, gap){
-    if(Math.abs(delta)<1e-5) return 0;
-    const dir=Math.sign(delta);
-    const dist=Math.abs(delta);
-    const samples=Math.max(8, Math.ceil(dist*12));
-    let x=0;
-    for(let s=0;s<samples;s++){
-      const a=dist*s/samples;
-      const b=dist*(s+1)/samples;
-      const wa=halfW(dir*a, faceW, spineW, dir)*2;
-      const wb=halfW(dir*b, faceW, spineW, dir)*2;
-      x+=dir*((wa+wb)*0.5+gap)*(b-a);
-    }
-    return x;
+    const k=smoothstep(Math.min(1, Math.abs(delta)));
+    return (Math.sign(delta)||0)*ANGLE*k;
   }
   function wrapToStart(){
     if(wrapping) return;
@@ -878,27 +846,23 @@ if (typeof Tone === 'undefined') {
   }
   function apply(pos){
     const faceW=coverSize();
-    const spineW=Math.max(26, faceW*0.09);
-    const gap=Math.max(8, faceW*0.03);
+    const step=faceW*0.30;
     track.style.transform='';
     releases.forEach((el,idx)=>{
       const d=idx-pos;
       const ad=Math.abs(d);
       const spin=spinOf(d);
-      const k=Math.abs(spin)/SPINE_MAX;
-      const x=xOf(d, faceW, spineW, gap);
-      const boxW=faceW*(1-k)+spineW*k;
-      el.style.width=boxW.toFixed(2)+'px';
+      const x=d*step;
+      el.style.width=faceW.toFixed(2)+'px';
       const rig=el.querySelector('.rig');
       if(rig) rig.style.height=faceW.toFixed(2)+'px';
       el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
-      el.style.zIndex=String(Math.round(50-ad*10));
+      el.style.zIndex=String(Math.round(40-ad*10));
       el.setAttribute('data-spin', spin.toFixed(2));
-      el.setAttribute('data-k', k.toFixed(3));
       el.classList.toggle('is-current', ad<0.5);
       el.classList.toggle('is-prev', d<-0.5 && d>-1.5);
       el.classList.toggle('is-next', d>0.5 && d<1.5);
-      el.classList.toggle('is-spine', Math.abs(spin)>18);
+      el.classList.remove('is-spine');
       if(el.classList.contains('is-loop-clone')){
         const show=pos>n-1.25;
         el.style.visibility=show?'visible':'hidden';
@@ -1419,8 +1383,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=11"></script>
-<script type="module" src="work-covers-3d.js?v=11"></script>
+<script type="module" src="turntable-transition.js?v=12"></script>
+<script type="module" src="work-covers-3d.js?v=12"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.

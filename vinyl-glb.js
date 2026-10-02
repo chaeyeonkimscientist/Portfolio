@@ -10,7 +10,6 @@ export const COVER_GLBS = {
   'paramount_internship': new URL('./paramount_internship.glb', import.meta.url).href,
   'short_films': new URL('./short_films.glb', import.meta.url).href,
   'body_says_otherwise': new URL('./body_says_otherwise.glb', import.meta.url).href,
-  'cognitive_flexibility_research': new URL('./cognitive_flexibility_research.glb', import.meta.url).href,
   'synthetic_synesthesia': new URL('./synthetic_synesthesia.glb', import.meta.url).href
 };
 
@@ -267,7 +266,7 @@ export function loadCoverModel(key) {
   return cached(url, prepareCover);
 }
 
-export const OTHER_DEPTH = 0.16;
+export const OTHER_DEPTH = 0.05;
 
 export function makeOtherCover() {
   const depth = OTHER_DEPTH;
@@ -362,7 +361,7 @@ function loadImageJacket(url) {
           color: 0x1b1814, roughness: 0.86, metalness: 0.02
         });
         const mesh = new THREE.Mesh(
-          new THREE.BoxGeometry(1, 1, 0.16),
+          new THREE.BoxGeometry(1, 1, 0.05),
           [edge, edge, edge, edge, front, back]
         );
         mesh.castShadow = true;
