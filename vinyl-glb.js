@@ -315,12 +315,12 @@ function jacketCanvasTexture(draw, w = 1024, h = 1024) {
 
 function drawOtherFront(ctx, w, h) {
   const g = ctx.createLinearGradient(0, 0, w * 0.2, h);
-  g.addColorStop(0, '#2a1c24');
-  g.addColorStop(0.55, '#1a161c');
-  g.addColorStop(1, '#201018');
+  g.addColorStop(0, '#3a2832');
+  g.addColorStop(0.55, '#241c24');
+  g.addColorStop(1, '#2a1820');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = 'rgba(239,231,239,0.55)';
+  ctx.fillStyle = 'rgba(239,231,239,0.82)';
   ctx.font = '600 96px "Helvetica Neue", Helvetica, Arial, sans-serif';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'bottom';

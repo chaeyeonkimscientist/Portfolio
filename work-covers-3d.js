@@ -151,7 +151,7 @@ import {
       hover: 0, hoverT: 0,
       tiltX: 0, tiltY: 0, tiltZ: 0,
       tiltTX: 0, tiltTY: 0, tiltTZ: 0,
-      spin: 0, visible: false, paused: false
+      spin: 0, visible: true, paused: false
     };
     resize(card);
     renderer.render(scene, camera);
@@ -221,11 +221,6 @@ import {
           || (c.host && c.host.classList.contains('tt-away'))
           || c.rig.classList.contains('tt-away');
         if (hidden) return;
-        if (!c.visible) {
-          /* Keep layout current so a just-revealed clone isn't a frame late. */
-          if (Math.abs(spinOf(c) - c.spin) > 0.5) layout(c);
-          return;
-        }
         layout(c);
         if (Math.abs(c.spin) >= SPINE_CUT) {
           c.hoverT = 0;
