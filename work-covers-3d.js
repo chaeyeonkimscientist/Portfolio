@@ -123,16 +123,16 @@ import {
     card.hold.position.set(
       nx * worldW * 0.5,
       ny * worldH * 0.5,
-      (1 - k) * 0.78
+      (1 - k) * 0.22
     );
     card.hold.rotation.y = THREE.MathUtils.degToRad(spin);
 
     if (card.vinyl) {
-      const vinylScale = coverScale * 0.42;
+      const vinylScale = coverScale * 0.36;
       card.vinyl.scale.setScalar(vinylScale);
       const behind = coverScale * ((card.coverDepth || 0.05) * 0.5 + 0.028);
-      card.vinylRest.set(coverScale * 0.30, 0, -behind);
-      card.vinyl.visible = k < 0.35;
+      card.vinylRest.set(coverScale * 0.22, 0, -behind);
+      card.vinyl.visible = k < 0.28;
       if (!card.vinyl.visible) card.hoverT = 0;
     }
   }

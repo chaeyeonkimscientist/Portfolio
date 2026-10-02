@@ -344,7 +344,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .work-track{display:flex;flex-direction:column;width:100%;transform:none !important;will-change:auto}
   .release{position:relative;left:auto;flex:none;width:100%;min-height:100vh;height:auto;opacity:1;transform:none !important}
   #work-covers-canvas{display:none}
-  .release.is-prev .meta,.release.is-next .meta,.release.is-spine .meta{opacity:1;visibility:visible;pointer-events:auto}
+  .release:not(.is-current) .meta{opacity:1;visibility:visible;pointer-events:auto}
 }
 
 #turntable-overlay{
@@ -1381,8 +1381,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=13"></script>
-<script type="module" src="work-covers-3d.js?v=13"></script>
+<script type="module" src="turntable-transition.js?v=14"></script>
+<script type="module" src="work-covers-3d.js?v=14"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
