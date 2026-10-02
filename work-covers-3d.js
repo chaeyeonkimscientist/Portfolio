@@ -1,9 +1,9 @@
 /* Selected Work Cover Flow: linear row, 45° neighbors, original thin jackets.
-   Scroll moves the focused cover; jacket and LP rotate as one unit. */
+   Scroll moves the focused cover. Vinyl stays out of this view so angled
+   jackets can sit in a Coverflow.svg-style cascade without poke-through. */
 import * as THREE from 'three';
 import {
-  loadVinylModel, loadCoverModel, cloneAsset, makeVinylLabel,
-  COVER_SIZE
+  loadCoverModel, cloneAsset, COVER_SIZE
 } from './vinyl-glb.js';
 
 (function () {
@@ -60,6 +60,7 @@ import {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.92;
+  renderer.sortObjects = true;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(36, 1, 0.05, 40);
@@ -115,26 +116,23 @@ import {
 
     const coverPx = rRect.height;
     const coverWorld = worldH * (coverPx / Math.max(h, 1));
-    const coverScale = (coverWorld * (0.90 + 0.08 * (1 - k))) / COVER_SIZE;
+    const coverScale = (coverWorld * (0.92 + 0.08 * (1 - k))) / COVER_SIZE;
     card.cover.scale.setScalar(coverScale);
     card.cover.position.set(0, 0, 0);
     card.cover.rotation.set(0, 0, 0);
 
+    /* Current steps forward so 45° neighbor near-edges cannot clip through. */
     card.hold.position.set(
       nx * worldW * 0.5,
       ny * worldH * 0.5,
-      (1 - k) * 0.22
+      (1 - k) * 0.5
     );
     card.hold.rotation.y = THREE.MathUtils.degToRad(spin);
-
-    if (card.vinyl) {
-      const vinylScale = coverScale * 0.36;
-      card.vinyl.scale.setScalar(vinylScale);
-      const behind = coverScale * ((card.coverDepth || 0.05) * 0.5 + 0.028);
-      card.vinylRest.set(coverScale * 0.22, 0, -behind);
-      card.vinyl.visible = k < 0.28;
-      if (!card.vinyl.visible) card.hoverT = 0;
-    }
+    const order = Math.round((1 - k) * 8);
+    card.hold.renderOrder = order;
+    card.cover.traverse((o) => {
+      if (o.isMesh) o.renderOrder = order;
+    });
   }
 
   async function mountOne(el, index) {
@@ -142,35 +140,22 @@ import {
     const rig = el.querySelector('.rig') || el;
     if (!key) return null;
 
-    const [coverRoot, vinylRoot] = await Promise.all([
-      loadCoverModel(key),
-      key === 'other' ? Promise.resolve(null) : loadVinylModel()
-    ]);
+    const coverRoot = await loadCoverModel(key);
     const cover = cloneAsset(coverRoot);
     cover.updateMatrixWorld(true);
-    const coverDepth = new THREE.Box3().setFromObject(cover).getSize(new THREE.Vector3()).z || 0.16;
 
     const hold = new THREE.Group();
     const stage = new THREE.Group();
     hold.add(stage);
     stage.add(cover);
-
-    let vinyl = null;
-    if (vinylRoot) {
-      vinyl = cloneAsset(vinylRoot);
-      vinyl.add(makeVinylLabel(key));
-      stage.add(vinyl);
-    }
     scene.add(hold);
 
     const card = {
       el, rig, key, index,
-      cover, vinyl, hold, stage, coverDepth,
-      vinylRest: new THREE.Vector3(),
-      hover: 0, hoverT: 0,
+      cover, hold, stage,
       tiltX: 0, tiltY: 0, tiltZ: 0,
       tiltTX: 0, tiltTY: 0, tiltTZ: 0,
-      spin: 0, k: 0, visible: true, paused: false
+      spin: 0, k: 0, paused: false
     };
     layoutCard(card);
     el.classList.add('is-3d');
@@ -199,11 +184,7 @@ import {
 
     cards.forEach((c) => {
       const rel = c.el;
-      rel.addEventListener('pointerenter', () => {
-        if (Math.abs(spinOf(c)) < SPINE_CUT) c.hoverT = 1;
-      });
       rel.addEventListener('pointerleave', () => {
-        c.hoverT = 0;
         c.tiltTX = 0;
         c.tiltTY = 0;
         c.tiltTZ = 0;
@@ -217,7 +198,6 @@ import {
         c.tiltTY = nx * TILT_Y;
         c.tiltTX = ny * TILT_X;
         c.tiltTZ = -nx * TILT_Z;
-        c.hoverT = 1;
       });
     });
 
@@ -238,24 +218,16 @@ import {
         if (hidden) return;
         layoutCard(c);
         if (Math.abs(c.spin) >= SPINE_CUT) {
-          c.hoverT = 0;
           c.tiltTX = 0;
           c.tiltTY = 0;
           c.tiltTZ = 0;
         }
-        c.hover += (c.hoverT - c.hover) * k;
         c.tiltX += (c.tiltTX - c.tiltX) * k;
         c.tiltY += (c.tiltTY - c.tiltY) * k;
         c.tiltZ += (c.tiltTZ - c.tiltZ) * k;
         c.stage.rotation.x = c.tiltX * (1 - c.k);
         c.stage.rotation.y = c.tiltY * (1 - c.k);
         c.stage.rotation.z = c.tiltZ * (1 - c.k);
-        if (c.vinyl) {
-          const extra = c.cover.scale.x * 0.38 * c.hover * (1 - c.k);
-          c.vinyl.position.x = c.vinylRest.x + extra;
-          c.vinyl.position.y = c.vinylRest.y;
-          c.vinyl.position.z = c.vinylRest.z;
-        }
       });
       renderer.render(scene, camera);
     }

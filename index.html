@@ -780,14 +780,11 @@ if (typeof Tone === 'undefined') {
   const HOLD=140, SLIDE=80;
   const LERP=0.12;
   const SETTLE=0.0007;
-  const HOVER_PEEK=0.12;
   const ANGLE=45;
   let current=0;
   let primed=false;
   let raf=0;
   let wrapping=false;
-  let hoverIndex=-1;
-  let hoverShift=0;
 
   function magneticEase(t){
     t=Math.min(Math.max(t,0),1);
@@ -815,14 +812,16 @@ if (typeof Tone === 'undefined') {
   function coverSize(){
     const vh=innerHeight||800;
     const vw=innerWidth||1200;
-    return Math.min(vh*0.42, vw*0.36, 400);
+    return Math.min(vh*0.38, vw*0.30, 360);
   }
-  function hoverTarget(pos){
-    if(hoverIndex<0) return 0;
-    const i=Math.round(pos);
-    if(hoverIndex===i-1) return HOVER_PEEK;
-    if(hoverIndex===i+1) return -HOVER_PEEK;
-    return 0;
+  function slotX(delta, faceW){
+    const s=Math.sign(delta)||0;
+    const a=Math.abs(delta);
+    if(!s) return 0;
+    /* Coverflow.svg: room around the focused jacket, then a 45° cascade. */
+    const first=faceW*0.72;
+    const stack=faceW*0.48;
+    return s*(Math.min(a,1)*first+Math.max(a-1,0)*stack);
   }
   function spinOf(delta){
     const k=smoothstep(Math.min(1, Math.abs(delta)));
@@ -839,7 +838,6 @@ if (typeof Tone === 'undefined') {
     html.style.scrollBehavior=prev;
     current=0;
     primed=true;
-    hoverShift=0;
     apply(0);
     wrapping=false;
   }
@@ -850,7 +848,7 @@ if (typeof Tone === 'undefined') {
       const d=idx-pos;
       const ad=Math.abs(d);
       const spin=spinOf(d);
-      const x=d*faceW*0.52;
+      const x=slotX(d, faceW);
       el.style.width=faceW.toFixed(2)+'px';
       const rig=el.querySelector('.rig');
       if(rig) rig.style.height=faceW.toFixed(2)+'px';
@@ -879,33 +877,19 @@ if (typeof Tone === 'undefined') {
       return;
     }
     if(!primed){ current=target; primed=true; }
-    const want=hoverTarget(current);
-    hoverShift+=(want-hoverShift)*LERP;
     const d=target-current;
-    const hoverDone=Math.abs(want-hoverShift)<SETTLE;
-    if(Math.abs(d)<SETTLE && hoverDone){
+    if(Math.abs(d)<SETTLE){
       current=target;
-      hoverShift=want;
-      apply(current-hoverShift);
+      apply(current);
       return;
     }
     current+=d*LERP;
-    apply(current-hoverShift);
+    apply(current);
     raf=requestAnimationFrame(tick);
   }
   function requestPaint(){
     if(!raf) raf=requestAnimationFrame(tick);
   }
-  real.forEach((el,i)=>{
-    el.addEventListener('pointerenter',()=>{ hoverIndex=i; requestPaint(); });
-    el.addEventListener('pointerleave',()=>{
-      if(hoverIndex===i){ hoverIndex=-1; requestPaint(); }
-    });
-    el.addEventListener('focusin',()=>{ hoverIndex=i; requestPaint(); });
-    el.addEventListener('focusout',()=>{
-      if(hoverIndex===i){ hoverIndex=-1; requestPaint(); }
-    });
-  });
   addEventListener('scroll',requestPaint,{passive:true});
   addEventListener('resize',requestPaint);
   tick();
@@ -1381,8 +1365,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=14"></script>
-<script type="module" src="work-covers-3d.js?v=14"></script>
+<script type="module" src="turntable-transition.js?v=15"></script>
+<script type="module" src="work-covers-3d.js?v=15"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
