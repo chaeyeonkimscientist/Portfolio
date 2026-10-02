@@ -180,7 +180,7 @@ import {
     const jacketEl = link.querySelector('.jacket');
     const sleeve = link.querySelector('.sleeve');
     const coverKey = coverKeyFrom(link);
-    const sleeveRect = (jacketEl || sleeve || disc || rig).getBoundingClientRect();
+    const sleeveRect = (sleeve || jacketEl || disc || rig).getBoundingClientRect();
     const discRect = disc ? disc.getBoundingClientRect() : sleeveRect;
 
     overlay.classList.add('tt-on', 'tt-dim');

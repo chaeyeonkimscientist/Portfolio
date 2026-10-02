@@ -1,4 +1,6 @@
-/* Idle 3D album covers in Selected Work — thickened GLB jackets in one scene. */
+/* Idle 3D album covers in Selected Work — GLB jackets + vinyl peek.
+   While the track is scrolling, rotate each jacket so the GLB spine faces
+   the camera. Never swap in the CSS sleeve/spine placeholders. */
 import * as THREE from 'three';
 import {
   loadVinylModel, loadCoverModel, cloneAsset, makeVinylLabel,
@@ -11,27 +13,14 @@ import {
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (REDUCED) return;
 
-  const viewport = document.querySelector('.work-viewport');
-  const track = document.getElementById('work-track');
-  if (!viewport || !track) return;
-
-  const releases = [...track.querySelectorAll('a.release')];
-  if (!releases.length) return;
-
-  let canvas = document.getElementById('work-covers-canvas');
-  if (!canvas) {
-    canvas = document.createElement('canvas');
-    canvas.id = 'work-covers-canvas';
-    canvas.setAttribute('aria-hidden', 'true');
-    viewport.insertBefore(canvas, viewport.firstChild);
-  }
-
-  const TILT_X = 0.16;
-  const TILT_Y = 0.28;
-  const TILT_Z = 0.06;
-  const SPINE_CUT = 22;
+  const rigs = [...document.querySelectorAll('.rig[data-cover]')];
+  if (!rigs.length) return;
 
   const cards = [];
+  const TILT_X = 0.22;
+  const TILT_Y = 0.46;
+  const TILT_Z = 0.10;
+  const SPINE_CUT = 18;
 
   function lights(scene) {
     scene.add(new THREE.AmbientLight(0xb7a7d8, 0.55));
@@ -44,96 +33,107 @@ import {
     scene.add(rim);
   }
 
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({
-      canvas, antialias: true, alpha: true,
-      powerPreference: 'low-power',
-      failIfMajorPerformanceCaveat: false
-    });
-  } catch (e) {
-    console.error('[covers] webgl failed', e);
-    return;
+  function spinOf(card) {
+    const host = card.host || card.rig;
+    return parseFloat(host.getAttribute('data-spin') || '0') || 0;
   }
-  renderer.setClearColor(0x000000, 0);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.92;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(28, 1, 0.05, 40);
-  camera.position.set(0, 0.04, 3.55);
-  camera.lookAt(0, 0, 0);
-  lights(scene);
+  function resize(card) {
+    const canvas = card.renderer.domElement;
+    const hostEl = card.host || card.rig;
+    const w = canvas.clientWidth || hostEl.clientWidth || 1;
+    const h = canvas.clientHeight || hostEl.clientHeight || 1;
+    if (w < 4 || h < 4) return;
+    card.camera.aspect = w / h;
+    card.camera.updateProjectionMatrix();
+    card.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    card.renderer.setSize(w, h, false);
+    layout(card);
+  }
 
-  function viewSize() {
-    const w = canvas.clientWidth || viewport.clientWidth || 1;
-    const h = canvas.clientHeight || viewport.clientHeight || 1;
+  function layout(card) {
+    const { camera, cover, vinyl, vinylRest, stage, rig } = card;
+    const canvas = card.renderer.domElement;
+    const w = canvas.clientWidth || 1;
+    const h = canvas.clientHeight || 1;
+    if (w < 4 || h < 4) return;
+
     const dist = camera.position.z;
     const worldH = 2 * Math.tan((camera.fov * Math.PI) / 360) * dist;
-    const worldW = worldH * (w / Math.max(h, 1));
-    return { w, h, worldW, worldH };
-  }
+    const worldW = worldH * camera.aspect;
 
-  function resizeRenderer() {
-    const { w, h } = viewSize();
-    if (w < 4 || h < 4) return;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-    renderer.setSize(w, h, false);
-  }
+    const cRect = canvas.getBoundingClientRect();
+    const rRect = rig.getBoundingClientRect();
+    const cw = cRect.width || w;
+    const ch = cRect.height || h;
+    const rigWorldW = worldW * ((rRect.width || cw) / cw);
+    const rigWorldH = worldH * ((rRect.height || ch) / ch);
 
-  function coverKeyOf(el) {
-    if (el.classList.contains('is-loop-clone')) return 'the_body_conducts';
-    const rig = el.querySelector('.rig[data-cover]');
-    return (rig && rig.getAttribute('data-cover')) || el.getAttribute('data-cover');
-  }
+    const nx = (((rRect.left + rRect.width / 2) - cRect.left) / cw) * 2 - 1;
+    const ny = -((((rRect.top + rRect.height / 2) - cRect.top) / ch) * 2 - 1);
+    const rigCenterX = nx * worldW * 0.5;
+    const rigCenterY = ny * worldH * 0.5;
 
-  function layoutCard(card) {
-    const jacket = card.jacket;
-    if (!jacket) return;
-    const { w, h, worldW, worldH } = viewSize();
-    const vRect = viewport.getBoundingClientRect();
-    const jRect = jacket.getBoundingClientRect();
-    if (!jRect.width || !jRect.height || !vRect.width) return;
+    const sleeveW = rigWorldW * 0.58;
+    const coverScale = Math.min(sleeveW, rigWorldH * 0.92) / COVER_SIZE;
+    cover.scale.setScalar(coverScale);
 
-    const cx = jRect.left + jRect.width / 2;
-    const cy = jRect.top + jRect.height / 2;
-    const nx = ((cx - vRect.left) / vRect.width) * 2 - 1;
-    const ny = -(((cy - vRect.top) / vRect.height) * 2 - 1);
-    card.pivot.position.set(nx * worldW * 0.5, ny * worldH * 0.5, 0);
-
-    const spin = parseFloat(jacket.getAttribute('data-spin') || '0') || 0;
-    card.pivot.rotation.y = THREE.MathUtils.degToRad(spin);
+    const idleX = rigCenterX - rigWorldW * 0.5 + coverScale * 0.52;
+    const spineX = rigCenterX - rigWorldW * 0.5 + rigWorldW * 0.32;
+    const spin = spinOf(card);
+    const k = Math.min(1, Math.abs(spin) / 90);
     card.spin = spin;
 
-    const coverPx = Math.min(jRect.width, jRect.height);
-    const coverWorld = worldH * (coverPx / Math.max(h, 1));
-    const coverScale = (coverWorld * 0.92) / COVER_SIZE;
-    card.cover.scale.setScalar(coverScale);
+    cover.position.set(
+      idleX + (spineX - idleX) * k,
+      rigCenterY,
+      0.02
+    );
+    cover.rotation.y = THREE.MathUtils.degToRad(spin);
 
-    if (card.vinyl) {
+    if (vinyl) {
       const vinylScale = coverScale * 0.46;
-      card.vinyl.scale.setScalar(vinylScale);
-      card.vinylRest.set(coverScale * 0.34, 0, -0.02);
-      const showVinyl = Math.abs(spin) < SPINE_CUT && card.el.classList.contains('is-current');
-      card.vinyl.visible = showVinyl;
-      if (!showVinyl) card.hoverT = 0;
+      vinyl.scale.setScalar(vinylScale);
+      vinylRest.set(idleX + coverScale * 0.34, cover.position.y, -0.01);
+      vinyl.visible = k < 0.35;
+      if (!vinyl.visible) card.hoverT = 0;
     }
+    if (stage) stage.position.set(0, 0, 0);
   }
 
-  async function mountOne(el, index) {
-    const key = coverKeyOf(el);
-    const jacket = el.querySelector('.jacket') || el;
-    if (!key) return null;
+  async function mount(rig) {
+    const key = rig.getAttribute('data-cover');
+    const host = rig.closest('a.release') || rig;
+    const canvas = host.querySelector('.rig-canvas') || rig.querySelector('.rig-canvas');
+    if (!key || !canvas) return null;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas, antialias: true, alpha: true,
+        powerPreference: 'low-power',
+        failIfMajorPerformanceCaveat: false
+      });
+    } catch (e) {
+      return null;
+    }
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.92;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 20);
+    camera.position.set(0, 0.04, 2.35);
+    camera.lookAt(0, 0, 0);
+    lights(scene);
 
     const [coverRoot, vinylRoot] = await Promise.all([
       loadCoverModel(key),
       key === 'other' ? Promise.resolve(null) : loadVinylModel()
     ]);
     const cover = cloneAsset(coverRoot);
-    const pivot = new THREE.Group();
+
     const stage = new THREE.Group();
     stage.add(cover);
 
@@ -143,46 +143,52 @@ import {
       vinyl.add(makeVinylLabel(key));
       stage.add(vinyl);
     }
-    pivot.add(stage);
-    scene.add(pivot);
+    scene.add(stage);
 
     const card = {
-      el, jacket, key, index, renderer, scene, camera,
-      cover, vinyl, pivot, stage,
+      rig, host, renderer, scene, camera, cover, vinyl, stage,
       vinylRest: new THREE.Vector3(),
       hover: 0, hoverT: 0,
       tiltX: 0, tiltY: 0, tiltZ: 0,
       tiltTX: 0, tiltTY: 0, tiltTZ: 0,
-      spin: 0, visible: true, paused: false
+      spin: 0, visible: false, paused: false
     };
-    layoutCard(card);
-    el.classList.add('is-3d');
-    jacket.classList.add('is-3d');
+    resize(card);
+    renderer.render(scene, camera);
+    rig.classList.add('is-3d');
+    host.classList.add('is-3d');
     return card;
   }
 
-  Promise.all(releases.map((el, i) => mountOne(el, i).catch((err) => {
-    console.error('[covers] failed', coverKeyOf(el), err);
+  Promise.all(rigs.map((rig) => mount(rig).catch((err) => {
+    console.error('[covers] failed', rig.getAttribute('data-cover'), err);
     return null;
   }))).then((list) => {
     list.filter(Boolean).forEach((c) => cards.push(c));
     if (!cards.length) return;
     document.getElementById('work')?.classList.add('covers-ready');
-    resizeRenderer();
-    cards.forEach(layoutCard);
-    renderer.render(scene, camera);
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        const card = cards.find((c) => c.rig === en.target || c.host === en.target);
+        if (!card) return;
+        const vis = en.isIntersecting && en.intersectionRatio > 0.02;
+        if (vis && !card.visible) resize(card);
+        card.visible = vis;
+      });
+    }, { threshold: [0, 0.02, 0.08, 0.4] });
+    cards.forEach((c) => io.observe(c.host || c.rig));
 
     if (typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(() => {
-        resizeRenderer();
-        cards.forEach(layoutCard);
-      });
-      ro.observe(viewport);
+      const ro = new ResizeObserver(() => cards.forEach(resize));
+      cards.forEach((c) => ro.observe(c.host || c.rig));
     }
 
     cards.forEach((c) => {
-      const rel = c.el;
-      rel.addEventListener('pointerenter', () => { if (Math.abs(c.spin) < SPINE_CUT) c.hoverT = 1; });
+      const rel = c.host || c.rig.closest('a.release') || c.rig;
+      rel.addEventListener('pointerenter', () => {
+        if (Math.abs(spinOf(c)) < SPINE_CUT) c.hoverT = 1;
+      });
       rel.addEventListener('pointerleave', () => {
         c.hoverT = 0;
         c.tiltTX = 0;
@@ -190,7 +196,7 @@ import {
         c.tiltTZ = 0;
       });
       rel.addEventListener('pointermove', (e) => {
-        if (Math.abs(c.spin) >= SPINE_CUT) return;
+        if (Math.abs(spinOf(c)) >= SPINE_CUT) return;
         const r = rel.getBoundingClientRect();
         if (!r.width || !r.height) return;
         const nx = THREE.MathUtils.clamp(((e.clientX - r.left) / r.width) * 2 - 1, -1, 1);
@@ -202,10 +208,7 @@ import {
       });
     });
 
-    addEventListener('resize', () => {
-      resizeRenderer();
-      cards.forEach(layoutCard);
-    });
+    addEventListener('resize', () => cards.forEach(resize));
 
     const clock = new THREE.Clock();
     function frame() {
@@ -214,10 +217,16 @@ import {
       const k = Math.min(1, dt * 8);
       cards.forEach((c) => {
         if (c.paused) return;
-        layoutCard(c);
-        const hidden = c.el.style.visibility === 'hidden' || c.el.classList.contains('tt-away');
-        c.pivot.visible = !hidden;
+        const hidden = (c.host && c.host.style.visibility === 'hidden')
+          || (c.host && c.host.classList.contains('tt-away'))
+          || c.rig.classList.contains('tt-away');
         if (hidden) return;
+        if (!c.visible) {
+          /* Keep layout current so a just-revealed clone isn't a frame late. */
+          if (Math.abs(spinOf(c) - c.spin) > 0.5) layout(c);
+          return;
+        }
+        layout(c);
         if (Math.abs(c.spin) >= SPINE_CUT) {
           c.hoverT = 0;
           c.tiltTX = 0;
@@ -232,12 +241,13 @@ import {
         c.stage.rotation.y = c.tiltY;
         c.stage.rotation.z = c.tiltZ;
         if (c.vinyl) {
-          c.vinyl.position.x = c.vinylRest.x + c.cover.scale.x * 0.38 * c.hover;
+          const extra = c.cover.scale.x * 0.38 * c.hover;
+          c.vinyl.position.x = c.vinylRest.x + extra;
           c.vinyl.position.y = c.vinylRest.y;
           c.vinyl.position.z = c.vinylRest.z;
         }
+        c.renderer.render(c.scene, c.camera);
       });
-      renderer.render(scene, camera);
     }
     frame();
   });
@@ -248,14 +258,19 @@ import {
   window.__disposeWorkCovers = function () {
     cards.forEach((c) => {
       c.paused = true;
-      c.pivot.visible = false;
+      c.visible = false;
+      try {
+        const el = c.renderer && c.renderer.domElement;
+        if (el) {
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+          el.style.visibility = 'hidden';
+          el.style.background = 'transparent';
+        }
+        /* Do not forceContextLoss — Chrome paints a broken-image icon
+           on the lost canvas, which flashes as a white band. */
+        if (c.renderer) c.renderer.dispose();
+      } catch (err) { /* already gone */ }
     });
-    try {
-      canvas.style.transition = 'none';
-      canvas.style.opacity = '0';
-      canvas.style.visibility = 'hidden';
-      canvas.style.background = 'transparent';
-      if (renderer) renderer.dispose();
-    } catch (err) { /* already gone */ }
   };
 })();
