@@ -207,18 +207,20 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 
 .work{
-  --work-n:5;
+  --work-n:6;
   --work-hold:140vh;
   --work-slide:80vh;
   --album-w:52%;
+  --spine-w:34px;
   position:relative;z-index:5;background:var(--iris);
   width:100%;margin:0;padding:0;overflow-x:clip;
-  height:calc(100vh + (var(--work-n) * var(--work-hold)) + ((var(--work-n) - 1) * var(--work-slide)));
+  height:calc(100vh + (var(--work-n) * var(--work-hold)) + (var(--work-n) * var(--work-slide)) + 28vh);
 }
 .work-stage{
   position:sticky;top:0;height:100vh;width:100%;
   overflow:hidden;display:flex;flex-direction:column;
   background:var(--iris);
+  perspective:1500px;perspective-origin:50% 46%;
 }
 .sec-head{
   flex:0 0 auto;display:flex;justify-content:flex-start;align-items:baseline;
@@ -226,27 +228,84 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 .sec-head h2{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
 
-.work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative}
+.work-viewport{
+  flex:1;min-height:0;width:100%;overflow:visible;position:relative;
+  transform-style:preserve-3d;
+}
 .work-track{
-  display:flex;height:100%;width:100%;
-  will-change:transform;
+  display:block;height:100%;width:100%;position:relative;
+  transform-style:preserve-3d;
 }
 .release{
-  position:relative;z-index:1;
-  flex:0 0 var(--album-w);width:var(--album-w);
+  position:absolute;z-index:1;
+  left:50%;top:0;
+  width:auto;max-width:92vw;
   height:100%;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;text-decoration:none;color:inherit;
   padding:1.5rem 1.6vw 3rem;overflow:visible;
   opacity:0.38;transition:opacity .45s ease;
+  transform-style:preserve-3d;
+  will-change:transform;
 }
 .release.is-prev,.release.is-next{z-index:2;opacity:0.82}
 .release.is-current{z-index:3;opacity:1}
+.release.is-loop-clone{pointer-events:none}
 @media(hover:hover){
   .release.is-prev:hover,.release.is-next:hover{opacity:1}
 }
 
-.rig{position:relative;width:min(62vmin,580px,88%);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible;z-index:1}
+.jacket{
+  --spine-w:36px;
+  position:relative;
+  width:min(48vmin, 460px);
+  aspect-ratio:1.22 / 1;
+  margin-bottom:1.8rem;
+  transform-style:preserve-3d;
+  transform-origin:center center;
+  cursor:pointer;
+  z-index:1;
+  will-change:transform;
+}
+.jacket-front{
+  position:absolute;inset:0;
+  transform:translateZ(calc(var(--spine-w) / 2));
+  transform-style:preserve-3d;
+}
+.spine{
+  position:absolute;top:0;left:0;
+  width:var(--spine-w);height:100%;
+  box-sizing:border-box;
+  transform-origin:left center;
+  transform:translateZ(calc(var(--spine-w) / 2)) rotateY(-90deg);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  background:#1c161c;
+  border:0.5px solid var(--hair);
+  box-shadow:inset -1px 0 0 rgba(239,231,239,0.14);
+  color:var(--bone);
+  z-index:3;
+  pointer-events:none;
+}
+.spine-title{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  transform-origin:center center;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
+  font-size:0.62rem;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;
+  white-space:nowrap;line-height:1;
+  color:var(--bone);
+  padding-block:8%;
+}
+.spine.sl-body{background:#2a1016}
+.spine.sl-para{background:#191c24}
+.spine.sl-films{background:#1c1820}
+.spine.sl-utdt{background:#162028}
+.spine.sl-syn{background:#1f1820}
+.spine.sl-other{background:#241820}
+
+.rig{position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;overflow:visible;z-index:1}
 .rig-canvas{
   position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;z-index:4;display:block;
@@ -256,6 +315,16 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .release.is-3d .rig-canvas,.rig.is-3d .rig-canvas{opacity:1}
 .release.is-3d .sleeve,.release.is-3d .disc,
 .rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
+.release.is-3d.is-spine .rig-canvas{
+  opacity:0;transition:opacity .18s ease;
+}
+.release.is-3d.is-spine .sleeve{
+  opacity:1;pointer-events:none;
+}
+.release.is-3d.is-spine .disc,
+.release.is-spine .disc{
+  opacity:0 !important;visibility:hidden;pointer-events:none;
+}
 .release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{
   opacity:0;visibility:hidden;transition:none;background:transparent;
 }
@@ -281,6 +350,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
 .sl-films{background:linear-gradient(155deg,#33242c 0%,#1c1820 52%,#1a2430 100%)}
 .sl-utdt{background:url("covers/body_says_otherwise.webp?v=2") center/100% 100% no-repeat,#162028}
+.sl-other{background:linear-gradient(160deg,#2a1c24 0%,#1a161c 55%,#201018 100%)}
 .sl-para .inote,.sl-syn .inote,.sl-utdt .inote{opacity:0}
 .sl-para .stitle,.sl-syn .stitle,.sl-utdt .stitle{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.75)}
 .lbl-body{background-image:url("vinyl-labels/the_body_conducts.webp")}
@@ -299,7 +369,8 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.4rem;color:var(--amaranth-lit)}
 
 .meta{max-width:34ch;transition:opacity .4s ease,visibility .4s}
-.release.is-prev .meta,.release.is-next .meta{opacity:0;visibility:hidden;pointer-events:none}
+.release.is-prev .meta,.release.is-next .meta,
+.release.is-spine .meta{opacity:0;visibility:hidden;pointer-events:none}
 .idx{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
 .ptitle{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
 .hook{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
@@ -320,21 +391,24 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .sec-head{padding:5.2rem 6vw 0.2rem}
   .work{--album-w:76%}
   .release{padding:1rem 3vw 2.4rem}
-  .rig{width:min(78vmin,88%,88vw);margin-bottom:1.2rem}
+  .jacket{width:min(70vmin,88vw);aspect-ratio:1.18 / 1;margin-bottom:1.2rem}
+  .spine-title{font-size:0.58rem;letter-spacing:0.12em}
 }
 @media(max-height:720px){
-  .rig{width:min(48vmin,420px);margin-bottom:1rem}
+  .jacket{width:min(42vmin,380px);margin-bottom:1rem}
   .ptitle{font-size:1.4rem}
   .hook{font-size:0.82rem;margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){
   .cue,.scrolldown{display:none}
   .work{height:auto;--album-w:100%}
-  .work-stage{position:static;height:auto;overflow:visible}
-  .work-viewport{overflow:visible}
-  .work-track{width:100%;flex-direction:column;transform:none !important;will-change:auto}
-  .release{flex:none;width:100%;min-height:100vh;height:auto;opacity:1}
-  .release.is-prev .meta,.release.is-next .meta{opacity:1;visibility:visible;pointer-events:auto}
+  .work-stage{position:static;height:auto;overflow:visible;perspective:none}
+  .work-viewport{overflow:visible;perspective:none}
+  .work-track{display:flex;flex-direction:column;width:100%;transform:none !important;will-change:auto;transform-style:flat}
+  .release{position:relative;left:auto;flex:none;width:100%;max-width:none;min-height:100vh;height:auto;opacity:1;transform:none !important}
+  .jacket{transform:none !important;margin-inline:auto}
+  .spine{display:none}
+  .release.is-prev .meta,.release.is-next .meta,.release.is-spine .meta{opacity:1;visibility:visible;pointer-events:auto}
 }
 
 #turntable-overlay{
@@ -635,14 +709,19 @@ if (typeof Tone === 'undefined') {
   <div class="work-track" id="work-track">
 
     <a class="release is-current" href="work/body-conducts.html">
-      <canvas class="rig-canvas" aria-hidden="true"></canvas>
-      <div class="rig" data-cover="the_body_conducts">
-        <div class="disc"><div class="label lbl-body"><div class="hole"></div></div></div>
-        <div class="sleeve sl-body">
-          <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
-          <div class="inote">[ film still ]</div>
-          <div class="stitle">The Body<br>Conducts</div>
+      <div class="jacket">
+        <div class="jacket-front">
+          <canvas class="rig-canvas" aria-hidden="true"></canvas>
+          <div class="rig" data-cover="the_body_conducts">
+            <div class="disc"><div class="label lbl-body"><div class="hole"></div></div></div>
+            <div class="sleeve sl-body">
+              <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
+              <div class="inote">[ film still ]</div>
+              <div class="stitle">The Body<br>Conducts</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-body" aria-hidden="true"><span class="spine-title">The Body Conducts</span></div>
       </div>
       <div class="meta">
         <div class="idx">01</div>
@@ -653,14 +732,19 @@ if (typeof Tone === 'undefined') {
     </a>
 
     <a class="release is-next" href="work/paramount.html">
-      <canvas class="rig-canvas" aria-hidden="true"></canvas>
-      <div class="rig" data-cover="paramount_internship">
-        <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
-        <div class="sleeve sl-para">
-          <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
-          <div class="inote">[ slate still ]</div>
-          <div class="stitle">Paramount</div>
+      <div class="jacket">
+        <div class="jacket-front">
+          <canvas class="rig-canvas" aria-hidden="true"></canvas>
+          <div class="rig" data-cover="paramount_internship">
+            <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
+            <div class="sleeve sl-para">
+              <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
+              <div class="inote">[ slate still ]</div>
+              <div class="stitle">Paramount</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-para" aria-hidden="true"><span class="spine-title">Paramount</span></div>
       </div>
       <div class="meta">
         <div class="idx">02</div>
@@ -671,14 +755,19 @@ if (typeof Tone === 'undefined') {
     </a>
     
     <a class="release" href="work/short-films.html">
-      <canvas class="rig-canvas" aria-hidden="true"></canvas>
-      <div class="rig" data-cover="short_films">
-        <div class="disc"><div class="label lbl-films"><div class="hole"></div></div></div>
-        <div class="sleeve sl-films">
-          <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
-          <div class="inote">[ film still ]</div>
-          <div class="stitle">Short<br>Films</div>
+      <div class="jacket">
+        <div class="jacket-front">
+          <canvas class="rig-canvas" aria-hidden="true"></canvas>
+          <div class="rig" data-cover="short_films">
+            <div class="disc"><div class="label lbl-films"><div class="hole"></div></div></div>
+            <div class="sleeve sl-films">
+              <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
+              <div class="inote">[ film still ]</div>
+              <div class="stitle">Short<br>Films</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-films" aria-hidden="true"><span class="spine-title">Short Films</span></div>
       </div>
       <div class="meta">
         <div class="idx">03</div>
@@ -690,14 +779,19 @@ if (typeof Tone === 'undefined') {
     </a>
 
     <a class="release" href="work/body-says-otherwise.html">
-      <canvas class="rig-canvas" aria-hidden="true"></canvas>
-      <div class="rig" data-cover="body_says_otherwise">
-        <div class="disc"><div class="label lbl-utdt"><div class="hole"></div></div></div>
-        <div class="sleeve sl-utdt">
-          <div class="scode"><span>BO&middot;006</span><span>200+</span></div>
-          <div class="inote">[ lab still ]</div>
-          <div class="stitle">The Body<br>Says Otherwise</div>
+      <div class="jacket">
+        <div class="jacket-front">
+          <canvas class="rig-canvas" aria-hidden="true"></canvas>
+          <div class="rig" data-cover="body_says_otherwise">
+            <div class="disc"><div class="label lbl-utdt"><div class="hole"></div></div></div>
+            <div class="sleeve sl-utdt">
+              <div class="scode"><span>BO&middot;006</span><span>200+</span></div>
+              <div class="inote">[ lab still ]</div>
+              <div class="stitle">The Body<br>Says Otherwise</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-utdt" aria-hidden="true"><span class="spine-title">The Body Says Otherwise</span></div>
       </div>
       <div class="meta">
         <div class="idx">04</div>
@@ -708,14 +802,19 @@ if (typeof Tone === 'undefined') {
     </a>
 
     <a class="release" href="work/synthetic-synesthesia.html">
-      <canvas class="rig-canvas" aria-hidden="true"></canvas>
-      <div class="rig" data-cover="synthetic_synesthesia">
-        <div class="disc"><div class="label lbl-syn"><div class="hole"></div></div></div>
-        <div class="sleeve sl-syn">
-          <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
-          <div class="inote">[ app capture ]</div>
-          <div class="stitle">Synthetic<br>Synesthesia</div>
+      <div class="jacket">
+        <div class="jacket-front">
+          <canvas class="rig-canvas" aria-hidden="true"></canvas>
+          <div class="rig" data-cover="synthetic_synesthesia">
+            <div class="disc"><div class="label lbl-syn"><div class="hole"></div></div></div>
+            <div class="sleeve sl-syn">
+              <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
+              <div class="inote">[ app capture ]</div>
+              <div class="stitle">Synthetic<br>Synesthesia</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-syn" aria-hidden="true"><span class="spine-title">Synthetic Synesthesia</span></div>
       </div>
       <div class="meta">
         <div class="idx">05</div>
@@ -726,22 +825,26 @@ if (typeof Tone === 'undefined') {
       </div>
     </a>
 
-    <!--<a class="release" href="#">
-      <div class="rig">
-        <div class="disc fig"><div class="figbig">+7pp</div></div>
-        <div class="sleeve sl-eng">
-          <div class="scode"><span>PE&middot;004</span><span>FIG.5/AUC</span></div>
-          <div class="inote">[ network figure ]</div>
-          <div class="stitle">Predicting<br>Engagement</div>
+    <a class="release release-other" href="work/other.html">
+      <div class="jacket">
+        <div class="jacket-front">
+          <div class="rig">
+            <div class="sleeve sl-other">
+              <div class="scode"><span>OT&middot;000</span><span>ETC</span></div>
+              <div class="inote">[ more work ]</div>
+              <div class="stitle">Other</div>
+            </div>
+          </div>
         </div>
+        <div class="spine sl-other" aria-hidden="true"><span class="spine-title">Other</span></div>
       </div>
       <div class="meta">
-        <div class="idx">05</div>
-        <div class="ptitle">Predicting Engagement</div>
-        <div class="hook">What <span class="hl">&ldquo;engagement&rdquo; actually is,</span> grounded in brain networks. Replicated and extended a study mapping behavioral predictors to attention, reward, and default-mode systems.</div>
-        <div class="tags"><span class="tag t-dat">Data</span><span class="tag t-cog">Cognitive Science</span></div>
+        <div class="idx">06</div>
+        <div class="ptitle">Other</div>
+        <div class="hook">Pieces that did not fit on the A-side.</div>
+        <div class="tags"><span class="tag t-ind">Archive</span></div>
       </div>
-    </a>-->
+    </a>
     
   </div>
   </div>
@@ -753,79 +856,161 @@ if (typeof Tone === 'undefined') {
   const work=document.getElementById('work');
   const track=document.getElementById('work-track');
   if(!work||!track) return;
-  const releases=[...track.querySelectorAll('a.release')];
-  const n=releases.length;
+  const real=[...track.querySelectorAll('a.release')];
+  const n=real.length;
   if(!n) return;
   work.style.setProperty('--work-n', String(n));
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    releases.forEach((el)=>el.classList.add('is-current'));
+    real.forEach((el)=>el.classList.add('is-current'));
     return;
   }
+
+  const first=real[0];
+  const clone=first.cloneNode(true);
+  clone.classList.add('is-loop-clone');
+  clone.classList.remove('is-current','is-next','is-prev','is-3d','is-spine','tt-away');
+  clone.setAttribute('aria-hidden','true');
+  clone.tabIndex=-1;
+  const cloneRig=clone.querySelector('.rig');
+  if(cloneRig) cloneRig.removeAttribute('data-cover');
+  const cloneCanvas=clone.querySelector('.rig-canvas');
+  if(cloneCanvas) cloneCanvas.remove();
+  track.appendChild(clone);
+
+  const releases=[...track.querySelectorAll('a.release')];
+  const jackets=releases.map((el)=>el.querySelector('.jacket'));
 
   const HOLD=140, SLIDE=80;
   const LERP=0.08;
   const SETTLE=0.0007;
-  const HOVER_PEEK=0.22;
+  const SPINE_MAX=88;
+  const SPINE_REST=74;
   let current=0;
   let primed=false;
   let raf=0;
-  let hoverIndex=-1;
-  let hoverShift=0;
+  let wrapping=false;
+  const viewport=work.querySelector('.work-viewport')||work;
 
-  /* Flatter at the ends than cubic: linger on a sleeve, then ease away. */
   function magneticEase(t){
     t=Math.min(Math.max(t,0),1);
     return t*t*t*(t*(t*6-15)+10);
   }
-  function albumAt(p){
-    const nTrans=n-1;
-    let u=p*(n*HOLD+nTrans*SLIDE);
+  function scrolledVh(){
+    const vh=innerHeight||1;
+    return Math.max(-work.getBoundingClientRect().top,0)/vh*100;
+  }
+  function albumAt(u){
+    const limit=n*HOLD+n*SLIDE;
+    u=Math.min(Math.max(u,0),limit);
     for(let i=0;i<n;i++){
-      if(u<=HOLD || i===nTrans) return i;
+      if(u<=HOLD) return i;
       u-=HOLD;
       if(u<=SLIDE) return i+magneticEase(u/SLIDE);
       u-=SLIDE;
     }
-    return nTrans;
+    return n;
   }
-  function progress(){
-    const total=Math.max(work.offsetHeight-innerHeight,1);
-    return Math.min(Math.max(-work.getBoundingClientRect().top/total,0),1);
+  function flippingAmt(pos){
+    const d=Math.abs(pos-Math.round(pos));
+    return Math.min(1, d/0.16);
   }
-  function albumW(){
-    const v=parseFloat(getComputedStyle(work).getPropertyValue('--album-w'));
-    return isNaN(v)?52:v;
+  function spinOf(delta, flip){
+    const ad=Math.abs(delta);
+    const neighbor=Math.min(1, ad*1.35);
+    const rest=neighbor*SPINE_REST;
+    return rest+(SPINE_MAX-rest)*flip;
   }
-  function hoverTarget(pos){
-    if(hoverIndex<0) return 0;
-    const i=Math.round(pos);
-    if(hoverIndex===i-1) return HOVER_PEEK;
-    if(hoverIndex===i+1) return -HOVER_PEEK;
-    return 0;
+  function halfWidth(delta, flip, jacketW, pitch){
+    const spin=spinOf(delta, flip);
+    const k=spin/SPINE_MAX;
+    return (jacketW/2)*(1-k)+(pitch/2)*k;
+  }
+  function xOf(d, flip, jacketW, pitch){
+    if(Math.abs(d)<1e-5) return 0;
+    const dir=Math.sign(d);
+    const dist=Math.abs(d);
+    const samples=Math.max(4, Math.ceil(dist*6));
+    let x=0;
+    for(let s=0;s<samples;s++){
+      const a=dist*s/samples;
+      const b=dist*(s+1)/samples;
+      const wa=halfWidth(dir*a, flip, jacketW, pitch)*2;
+      const wb=halfWidth(dir*b, flip, jacketW, pitch)*2;
+      x+=dir*(wa+wb)*0.5*(b-a);
+    }
+    return x;
+  }
+  function fitSpine(el){
+    const t=el.querySelector('.spine-title');
+    const sp=el.querySelector('.spine');
+    if(!t||!sp) return;
+    t.style.transform='rotate(180deg) scale(1)';
+    const room=sp.clientHeight*0.88;
+    const need=t.getBoundingClientRect().height;
+    if(need>room && need>1){
+      t.style.transform='rotate(180deg) scale('+(room/need).toFixed(4)+')';
+    }
+  }
+  function wrapToStart(){
+    if(wrapping) return;
+    wrapping=true;
+    const y=work.getBoundingClientRect().top+window.scrollY;
+    const html=document.documentElement;
+    const prev=html.style.scrollBehavior;
+    html.style.scrollBehavior='auto';
+    window.scrollTo(0, Math.max(0, y));
+    html.style.scrollBehavior=prev;
+    current=0;
+    primed=true;
+    apply(0);
+    wrapping=false;
   }
   function apply(pos){
-    const w=albumW();
-    const side=(100-w)/2;
-    const visual=pos-hoverShift;
-    track.style.transform='translate3d(calc('+side+'% - '+(visual*w).toFixed(4)+'%),0,0)';
-    const i=Math.round(pos);
+    const flip=flippingAmt(pos);
+    const i=Math.round(Math.min(pos, n-0.001));
+    const jacketEl=jackets[Math.min(i, jackets.length-1)]||jackets[0];
+    const jacketW=jacketEl?jacketEl.offsetWidth:320;
+    const stageW=viewport.clientWidth||innerWidth;
+    const pitch=Math.min(132, Math.max(68, stageW*0.088));
+
     releases.forEach((el,idx)=>{
-      el.classList.toggle('is-current',idx===i);
-      el.classList.toggle('is-prev',idx===i-1);
-      el.classList.toggle('is-next',idx===i+1);
+      const d=idx-pos;
+      const ad=Math.abs(d);
+      const spin=spinOf(d, flip);
+      const x=xOf(d, flip, jacketW, pitch);
+      el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
+      el.style.zIndex=String(Math.round(80-ad*12));
+      const jacket=jackets[idx];
+      if(jacket) jacket.style.transform='rotateY('+spin.toFixed(2)+'deg)';
+      const spineOn=spin>18;
+      el.classList.toggle('is-spine', spineOn);
+      el.classList.toggle('is-current', ad<0.5);
+      el.classList.toggle('is-prev', d<-0.5 && d>-1.5);
+      el.classList.toggle('is-next', d>0.5 && d<1.5);
+      const clone=el.classList.contains('is-loop-clone');
+      if(clone){
+        const show=pos>n-1.25;
+        el.style.visibility=show?'visible':'hidden';
+        el.style.opacity=show?String((0.45+0.55*(1-Math.min(ad/4.2,1))).toFixed(3)):'0';
+        el.style.pointerEvents='none';
+      } else {
+        el.style.visibility='visible';
+        el.style.opacity=String((0.45+0.55*(1-Math.min(ad/4.2,1))).toFixed(3));
+      }
     });
   }
   function tick(){
     raf=0;
-    const target=albumAt(progress());
+    if(wrapping) return;
+    const target=albumAt(scrolledVh());
+    if(target>=n-0.04){
+      wrapToStart();
+      return;
+    }
     if(!primed){ current=target; primed=true; }
-    const want=hoverTarget(current);
-    hoverShift+=(want-hoverShift)*LERP;
     const d=target-current;
-    const hoverDone=Math.abs(want-hoverShift)<SETTLE;
-    if(Math.abs(d)<SETTLE && hoverDone){
+    if(Math.abs(d)<SETTLE){
       current=target;
-      hoverShift=want;
       apply(current);
       return;
     }
@@ -836,18 +1021,14 @@ if (typeof Tone === 'undefined') {
   function requestPaint(){
     if(!raf) raf=requestAnimationFrame(tick);
   }
-  releases.forEach((el,i)=>{
-    el.addEventListener('pointerenter',()=>{ hoverIndex=i; requestPaint(); });
-    el.addEventListener('pointerleave',()=>{
-      if(hoverIndex===i){ hoverIndex=-1; requestPaint(); }
-    });
-    el.addEventListener('focusin',()=>{ hoverIndex=i; requestPaint(); });
-    el.addEventListener('focusout',()=>{
-      if(hoverIndex===i){ hoverIndex=-1; requestPaint(); }
-    });
-  });
   addEventListener('scroll',requestPaint,{passive:true});
-  addEventListener('resize',requestPaint);
+  addEventListener('resize',()=>{
+    releases.forEach(fitSpine);
+    requestPaint();
+  });
+  releases.forEach(fitSpine);
+  requestAnimationFrame(() => releases.forEach(fitSpine));
+  addEventListener('load', () => releases.forEach(fitSpine));
   tick();
 })();
 </script>
@@ -1321,8 +1502,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=5"></script>
-<script type="module" src="work-covers-3d.js?v=5"></script>
+<script type="module" src="turntable-transition.js?v=6"></script>
+<script type="module" src="work-covers-3d.js?v=6"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.

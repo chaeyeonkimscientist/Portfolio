@@ -32,8 +32,9 @@ import {
 
   function layout(card) {
     const { camera, cover, vinyl, vinylRest, stage, rig, host } = card;
-    const canvas = card.renderer.domElement;
     const hostEl = host || rig;
+    if (hostEl && hostEl.classList.contains('is-spine')) return;
+    const canvas = card.renderer.domElement;
     const w = canvas.clientWidth || hostEl.clientWidth || 1;
     const h = canvas.clientHeight || hostEl.clientHeight || 1;
     if (w < 4 || h < 4) return;
@@ -182,6 +183,13 @@ import {
       const k = Math.min(1, dt * 8);
       cards.forEach((c) => {
         if (c.paused || !c.visible) return;
+        const hostEl = c.host || c.rig;
+        if (hostEl && hostEl.classList.contains('is-spine')) {
+          c.hoverT = 0;
+          c.tiltTX = 0;
+          c.tiltTY = 0;
+          c.tiltTZ = 0;
+        }
         c.hover += (c.hoverT - c.hover) * k;
         c.tiltX += (c.tiltTX - c.tiltX) * k;
         c.tiltY += (c.tiltTY - c.tiltY) * k;

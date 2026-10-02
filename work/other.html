@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Other — Chaeyeon Kim</title>
+<link rel="stylesheet" href="./dive.css?v=35">
+</head>
+<body data-project="Other" data-project-id="other">
+<a class="skip" href="#content">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="mode-icons" aria-hidden="true">
+  <div class="mode-icon" data-icon="music">
+    <span class="ind"></span>
+    <span class="lbl">Music</span>
+  </div>
+  <div class="mode-icon" data-icon="cog">
+    <span class="ind"></span>
+    <span class="lbl">CogSci</span>
+  </div>
+  <div class="mode-icon" data-icon="data">
+    <span class="ind"></span>
+    <span class="lbl">Data</span>
+  </div>
+</div>
+
+<aside class="hud" id="hud">
+  <div class="hud-rail" role="navigation" aria-label="Reading progress and sections" aria-expanded="false">
+    <a class="hud-back" href="../index.html#work">← Work</a>
+    <nav class="hud-nav" id="hud-nav"></nav>
+  </div>
+</aside>
+
+<aside class="rail" id="rail">
+  <div class="lp-dock" id="lp-dock" hidden>
+    <div class="lp-disc" aria-hidden="true">
+      <div class="lp-label"></div>
+      <div class="lp-hole"></div>
+    </div>
+    <div class="lp-card">
+      <div class="lp-kicker">now playing</div>
+      <div class="lp-title">[ track ]</div>
+      <label class="lp-vol">
+        <span>vol</span>
+        <input type="range" min="0" max="100" value="70" disabled>
+      </label>
+    </div>
+  </div>
+
+  <div class="memory" id="memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+      <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
+      <span class="memory-count">00</span>
+    </button>
+    <div class="memory-panel" id="memory-panel">
+      <header class="memory-head">
+        <div class="kicker">working memory</div>
+        <div class="sub">session-bound · flushes on disconnect</div>
+        <button class="memory-copy" type="button">Copy nodes</button>
+      </header>
+      <div class="memory-map" id="memory-map"></div>
+    </div>
+    <div class="memory-bubble" id="memory-bubble" hidden>
+      Drag and add text to your <strong>working memory</strong>.
+    </div>
+    <div class="memory-reminder" id="memory-reminder" role="status" aria-hidden="true">Don't forget to copy me before you leave.</div>
+  </div>
+</aside>
+
+<div class="sel-pop" id="sel-pop" hidden>
+  <button type="button" id="sel-send">Send to working memory</button>
+</div>
+
+<div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
+  <div class="term-inner">
+    <pre id="term-warn-msg">WARNING: Working memory will be flushed. Copy your nodes before disconnecting.</pre>
+    <div class="term-actions">
+      <button type="button" data-term-copy>Copy nodes + Go back to homepage.</button>
+      <button type="button" data-term-dismiss>Stay in session.</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <canvas id="hero-wave" class="hero-wave" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1>OTHER</h1>
+    <p class="subtitle">An overflow sleeve for work that has not earned its own jacket yet.</p>
+    <p class="meta">Chaeyeon Kim · archive</p>
+    <p class="disciplines">Notes · sketches · in-progress pieces</p>
+  </div>
+</header>
+
+<main class="dive" id="content">
+  <section>
+    <h2 id="tldr">TL;DR</h2>
+    <p class="lede">This page is a placeholder. It is the sixth album on the Selected Work shelf — a button into everything that does not sit with the five A-side records.</p>
+    <p>Nothing here is finished catalog copy. Treat it as a holding sleeve until the next piece is pressed.</p>
+  </section>
+
+  <section>
+    <h2 id="coming" class="h-strong" data-nav="Coming">Coming next</h2>
+    <p>Additional projects, studies, and side cuts will land here. Until then, the shelf loops back to the first record.</p>
+  </section>
+</main>
+
+<script src="./dive-hud.js?v=22"></script>
+<script src="./dive-waves.js?v=17"></script>
+<script src="./dive-memory.js?v=19"></script>
+<script src="./dive-player.js?v=17"></script>
+</body>
+</html>
