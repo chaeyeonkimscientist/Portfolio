@@ -307,8 +307,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .spine{display:none !important}
 
 .meta{max-width:34ch;transition:opacity .4s ease,visibility .4s}
-.release.is-prev .meta,.release.is-next .meta,
-.release.is-spine .meta{opacity:0;visibility:hidden;pointer-events:none}
+.release:not(.is-current) .meta{opacity:0;visibility:hidden;pointer-events:none}
 .idx{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.64rem;letter-spacing:0.14em;color:var(--bone-dim);margin-bottom:8px}
 .ptitle{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.7rem;line-height:1;color:var(--bone);margin-bottom:14px}
 .hook{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:0.9rem;line-height:1.6;color:var(--bone-dim);margin-bottom:16px}
@@ -846,13 +845,12 @@ if (typeof Tone === 'undefined') {
   }
   function apply(pos){
     const faceW=coverSize();
-    const step=faceW*0.30;
     track.style.transform='';
     releases.forEach((el,idx)=>{
       const d=idx-pos;
       const ad=Math.abs(d);
       const spin=spinOf(d);
-      const x=d*step;
+      const x=d*faceW*0.52;
       el.style.width=faceW.toFixed(2)+'px';
       const rig=el.querySelector('.rig');
       if(rig) rig.style.height=faceW.toFixed(2)+'px';
@@ -1383,8 +1381,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=12"></script>
-<script type="module" src="work-covers-3d.js?v=12"></script>
+<script type="module" src="turntable-transition.js?v=13"></script>
+<script type="module" src="work-covers-3d.js?v=13"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
