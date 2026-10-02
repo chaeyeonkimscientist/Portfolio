@@ -234,7 +234,18 @@ export function prepareCover(root) {
     }
     o.material = mat;
   });
-  return root;
+  const wrap = new THREE.Group();
+  wrap.add(root);
+  root.updateWorldMatrix(true, true);
+  const box = new THREE.Box3().setFromObject(wrap);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  root.position.x -= center.x;
+  root.position.y -= center.y;
+  root.position.z -= center.z;
+  const face = Math.max(size.x, size.y, 1e-4);
+  wrap.scale.setScalar(1 / face);
+  return wrap;
 }
 
 export function loadVinylModel() {
@@ -246,14 +257,87 @@ export function loadTurntableModel() {
 }
 
 export function loadCoverModel(key) {
-  const imgUrl = COVER_IMAGES[key];
-  if (imgUrl) {
-    if (!cache.has(imgUrl)) cache.set(imgUrl, loadImageJacket(imgUrl));
-    return cache.get(imgUrl);
+  if (key === 'other') {
+    if (!cache.has('other')) cache.set('other', Promise.resolve(makeOtherCover()));
+    return cache.get('other');
   }
   const url = COVER_GLBS[key];
   if (!url) return Promise.reject(new Error('unknown cover ' + key));
   return cached(url, prepareCover);
+}
+
+export const OTHER_DEPTH = 0.05;
+
+export function makeOtherCover() {
+  const depth = OTHER_DEPTH;
+  const front = new THREE.MeshStandardMaterial({
+    map: jacketCanvasTexture(drawOtherFront),
+    color: 0xffffff,
+    roughness: 0.72,
+    metalness: 0.04
+  });
+  const back = new THREE.MeshStandardMaterial({
+    color: 0x1a161c, roughness: 0.86, metalness: 0.02
+  });
+  const edge = new THREE.MeshStandardMaterial({
+    color: 0x2a1c24, roughness: 0.7, metalness: 0.05
+  });
+  const spine = new THREE.MeshStandardMaterial({
+    map: jacketCanvasTexture(drawOtherSpine, 256, 1024),
+    color: 0xffffff,
+    roughness: 0.64,
+    metalness: 0.04
+  });
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, depth),
+    [edge, spine, edge, edge, front, back]
+  );
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  const group = new THREE.Group();
+  group.add(mesh);
+  return group;
+}
+
+function jacketCanvasTexture(draw, w = 1024, h = 1024) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d');
+  draw(ctx, w, h);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function drawOtherFront(ctx, w, h) {
+  const g = ctx.createLinearGradient(0, 0, w * 0.2, h);
+  g.addColorStop(0, '#3a2832');
+  g.addColorStop(0.55, '#241c24');
+  g.addColorStop(1, '#2a1820');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(239,231,239,0.82)';
+  ctx.font = '600 96px "Helvetica Neue", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Other', w * 0.08, h * 0.9);
+}
+
+function drawOtherSpine(ctx, w, h) {
+  ctx.fillStyle = '#241820';
+  ctx.fillRect(0, 0, w, h);
+  ctx.save();
+  ctx.translate(w * 0.5, h * 0.5);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#efe7ef';
+  ctx.font = '600 72px "Helvetica Neue", Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('OTHER', 0, 0);
+  ctx.restore();
 }
 
 function loadImageJacket(url) {
