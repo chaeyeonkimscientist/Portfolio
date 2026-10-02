@@ -226,28 +226,30 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 .sec-head h2{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
 
-.work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative}
+.work-viewport{flex:1;min-height:0;width:100%;overflow:hidden;position:relative;perspective:1400px}
+#work-covers-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:block;pointer-events:none;z-index:1;
+  background:transparent;
+}
 .work-track{
-  display:flex;height:100%;width:100%;
-  will-change:transform;
+  display:block;height:100%;width:100%;position:relative;z-index:2;
 }
 .release{
-  position:relative;z-index:1;
-  flex:0 0 var(--album-w);width:var(--album-w);
+  position:absolute;z-index:1;
+  left:50%;top:0;
+  width:min(42vmin,400px);
   height:100%;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;text-decoration:none;color:inherit;
-  padding:1.5rem 1.6vw 3rem;overflow:visible;
-  opacity:0.38;transition:opacity .45s ease;
+  padding:1.5rem 0 3rem;overflow:visible;
+  will-change:transform;
 }
-.release.is-prev,.release.is-next{z-index:2;opacity:0.82}
-.release.is-current{z-index:3;opacity:1}
+.release.is-prev,.release.is-next{z-index:2}
+.release.is-current{z-index:3}
 .release.is-loop-clone{pointer-events:none}
-@media(hover:hover){
-  .release.is-prev:hover,.release.is-next:hover{opacity:1}
-}
 
-.rig{position:relative;width:min(62vmin,580px,88%);aspect-ratio:1.55/1;margin-bottom:1.8rem;cursor:pointer;overflow:visible;z-index:1}
+.rig{position:relative;width:100%;height:min(42vmin,400px);margin-bottom:1.8rem;cursor:pointer;overflow:visible;z-index:1}
 .rig-canvas{
   position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;z-index:4;display:block;
@@ -257,7 +259,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .release.is-3d .rig-canvas,.rig.is-3d .rig-canvas{opacity:1}
 .release.is-3d .sleeve,.release.is-3d .disc,
 .rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
-.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{
+.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas,
+#work-covers-canvas.tt-away,
+.work.tt-away #work-covers-canvas{
   opacity:0;visibility:hidden;transition:none;background:transparent;
 }
 .release:hover .disc{transform:translateX(26%)}
@@ -324,11 +328,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .stuck-grid > .grid-item:not(.statement){font-size:0.95rem}.stuck-grid > .statement{max-inline-size:16ch}
   .sec-head{padding:5.2rem 6vw 0.2rem}
   .work{--album-w:76%}
-  .release{padding:1rem 3vw 2.4rem}
-  .rig{width:min(78vmin,88%,88vw);margin-bottom:1.2rem}
+  .release{padding:1rem 0 2.4rem;width:min(64vmin,78vw)}
+  .rig{height:min(64vmin,78vw);margin-bottom:1.2rem}
 }
 @media(max-height:720px){
-  .rig{width:min(48vmin,420px);margin-bottom:1rem}
+  .release{width:min(42vmin,380px)}
+  .rig{height:min(42vmin,380px);margin-bottom:1rem}
   .ptitle{font-size:1.4rem}
   .hook{font-size:0.82rem;margin-bottom:10px}
 }
@@ -337,8 +342,9 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .work{height:auto;--album-w:100%}
   .work-stage{position:static;height:auto;overflow:visible}
   .work-viewport{overflow:visible}
-  .work-track{width:100%;flex-direction:column;transform:none !important;will-change:auto}
-  .release{flex:none;width:100%;min-height:100vh;height:auto;opacity:1}
+  .work-track{display:flex;flex-direction:column;width:100%;transform:none !important;will-change:auto}
+  .release{position:relative;left:auto;flex:none;width:100%;min-height:100vh;height:auto;opacity:1;transform:none !important}
+  #work-covers-canvas{display:none}
   .release.is-prev .meta,.release.is-next .meta,.release.is-spine .meta{opacity:1;visibility:visible;pointer-events:auto}
 }
 
@@ -637,11 +643,11 @@ if (typeof Tone === 'undefined') {
   <div class="work-stage">
   <div class="sec-head"><h2>Selected Work</h2></div>
   <div class="work-viewport">
+  <canvas id="work-covers-canvas" aria-hidden="true"></canvas>
   <div class="work-track" id="work-track">
 
     <a class="release is-current" href="work/body-conducts.html">
       <div class="rig" data-cover="the_body_conducts">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-body"><div class="hole"></div></div></div>
         <div class="sleeve sl-body">
           <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
@@ -659,7 +665,6 @@ if (typeof Tone === 'undefined') {
 
     <a class="release is-next" href="work/paramount.html">
       <div class="rig" data-cover="paramount_internship">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
         <div class="sleeve sl-para">
           <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
@@ -677,7 +682,6 @@ if (typeof Tone === 'undefined') {
     
     <a class="release" href="work/short-films.html">
       <div class="rig" data-cover="short_films">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-films"><div class="hole"></div></div></div>
         <div class="sleeve sl-films">
           <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
@@ -696,7 +700,6 @@ if (typeof Tone === 'undefined') {
 
     <a class="release" href="work/body-says-otherwise.html">
       <div class="rig" data-cover="body_says_otherwise">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-utdt"><div class="hole"></div></div></div>
         <div class="sleeve sl-utdt">
           <div class="scode"><span>BO&middot;006</span><span>200+</span></div>
@@ -714,7 +717,6 @@ if (typeof Tone === 'undefined') {
 
     <a class="release" href="work/synthetic-synesthesia.html">
       <div class="rig" data-cover="synthetic_synesthesia">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc"><div class="label lbl-syn"><div class="hole"></div></div></div>
         <div class="sleeve sl-syn">
           <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
@@ -733,7 +735,6 @@ if (typeof Tone === 'undefined') {
 
     <a class="release release-other" href="work/other.html">
       <div class="rig" data-cover="other">
-        <canvas class="rig-canvas" aria-hidden="true"></canvas>
         <div class="disc slate"></div>
         <div class="sleeve sl-other">
           <div class="scode"><span>OT&middot;006</span><span>B-SIDE</span></div>
@@ -778,9 +779,9 @@ if (typeof Tone === 'undefined') {
   const releases=[...track.querySelectorAll('a.release')];
 
   const HOLD=140, SLIDE=80;
-  const LERP=0.08;
+  const LERP=0.1;
   const SETTLE=0.0007;
-  const HOVER_PEEK=0.22;
+  const HOVER_PEEK=0.14;
   const SPINE_MAX=90;
   let current=0;
   let primed=false;
@@ -792,6 +793,23 @@ if (typeof Tone === 'undefined') {
   function magneticEase(t){
     t=Math.min(Math.max(t,0),1);
     return t*t*t*(t*(t*6-15)+10);
+  }
+  function bezierK(t){
+    t=Math.min(Math.max(t,0),1);
+    let s=t;
+    const x1=0.32, y1=1, x2=0.68, y2=1;
+    for(let i=0;i<8;i++){
+      const u=1-s;
+      const x=3*u*u*s*x1+3*u*s*s*x2+s*s*s;
+      const dx=3*u*u*x1+6*u*s*(x2-x1)+3*s*s*(1-x2);
+      if(Math.abs(dx)<1e-6) break;
+      s=Math.min(1, Math.max(0, s-(x-t)/dx));
+    }
+    const u=1-s;
+    return 3*u*u*s*y1+3*u*s*s*y2+s*s*s;
+  }
+  function flowK(absDelta){
+    return bezierK(Math.min(1, Math.abs(absDelta)/0.92));
   }
   function scrolledVh(){
     const vh=innerHeight||1;
@@ -808,13 +826,10 @@ if (typeof Tone === 'undefined') {
     }
     return n;
   }
-  function flippingAmt(pos){
-    const d=Math.abs(pos-Math.round(pos));
-    return Math.min(1, d/0.16);
-  }
-  function albumW(){
-    const v=parseFloat(getComputedStyle(work).getPropertyValue('--album-w'));
-    return isNaN(v)?52:v;
+  function coverSize(){
+    const vh=innerHeight||800;
+    const vw=innerWidth||1200;
+    return Math.min(vh*0.42, vw*0.36, 400);
   }
   function hoverTarget(pos){
     if(hoverIndex<0) return 0;
@@ -822,6 +837,31 @@ if (typeof Tone === 'undefined') {
     if(hoverIndex===i-1) return HOVER_PEEK;
     if(hoverIndex===i+1) return -HOVER_PEEK;
     return 0;
+  }
+  function spinOf(delta){
+    const k=flowK(Math.abs(delta));
+    return (Math.sign(delta)||0)*SPINE_MAX*k;
+  }
+  function halfW(delta, faceW, spineW, dir){
+    const k=Math.abs(spinOf(delta))/SPINE_MAX;
+    let w=faceW*(1-k)+spineW*k;
+    if(delta>-1e-6 && dir>0) w+=faceW*0.26*(1-k);
+    return w*0.5;
+  }
+  function xOf(delta, faceW, spineW, gap){
+    if(Math.abs(delta)<1e-5) return 0;
+    const dir=Math.sign(delta);
+    const dist=Math.abs(delta);
+    const samples=Math.max(8, Math.ceil(dist*12));
+    let x=0;
+    for(let s=0;s<samples;s++){
+      const a=dist*s/samples;
+      const b=dist*(s+1)/samples;
+      const wa=halfW(dir*a, faceW, spineW, dir)*2;
+      const wb=halfW(dir*b, faceW, spineW, dir)*2;
+      x+=dir*((wa+wb)*0.5+gap)*(b-a);
+    }
+    return x;
   }
   function wrapToStart(){
     if(wrapping) return;
@@ -839,20 +879,26 @@ if (typeof Tone === 'undefined') {
     wrapping=false;
   }
   function apply(pos){
-    const w=albumW();
-    const side=(100-w)/2;
-    const visual=pos-hoverShift;
-    track.style.transform='translate3d(calc('+side+'% - '+(visual*w).toFixed(4)+'%),0,0)';
-    const i=Math.round(Math.min(Math.max(pos,0), n-0.001));
-    const flip=flippingAmt(pos);
-    const spin=flip*SPINE_MAX;
+    const faceW=coverSize();
+    const spineW=Math.max(26, faceW*0.09);
+    const gap=Math.max(8, faceW*0.03);
+    track.style.transform='';
     releases.forEach((el,idx)=>{
-      el.classList.toggle('is-current', idx===i);
-      el.classList.toggle('is-prev', idx===i-1);
-      el.classList.toggle('is-next', idx===i+1);
-      el.classList.toggle('is-spine', spin>18);
+      const d=idx-pos;
+      const ad=Math.abs(d);
+      const spin=spinOf(d);
+      const k=Math.abs(spin)/SPINE_MAX;
+      const x=xOf(d, faceW, spineW, gap);
+      const boxW=faceW*(1-k)+spineW*k;
+      el.style.width=boxW.toFixed(2)+'px';
+      el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
+      el.style.zIndex=String(Math.round(50-ad*10));
       el.setAttribute('data-spin', spin.toFixed(2));
-      el.style.transform='';
+      el.setAttribute('data-k', k.toFixed(3));
+      el.classList.toggle('is-current', ad<0.5);
+      el.classList.toggle('is-prev', d<-0.5 && d>-1.5);
+      el.classList.toggle('is-next', d>0.5 && d<1.5);
+      el.classList.toggle('is-spine', Math.abs(spin)>18);
       if(el.classList.contains('is-loop-clone')){
         const show=pos>n-1.25;
         el.style.visibility=show?'visible':'hidden';
@@ -878,11 +924,11 @@ if (typeof Tone === 'undefined') {
     if(Math.abs(d)<SETTLE && hoverDone){
       current=target;
       hoverShift=want;
-      apply(current);
+      apply(current-hoverShift);
       return;
     }
     current+=d*LERP;
-    apply(current);
+    apply(current-hoverShift);
     raf=requestAnimationFrame(tick);
   }
   function requestPaint(){
@@ -1373,8 +1419,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=10"></script>
-<script type="module" src="work-covers-3d.js?v=10"></script>
+<script type="module" src="turntable-transition.js?v=11"></script>
+<script type="module" src="work-covers-3d.js?v=11"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
