@@ -177,18 +177,17 @@ import {
 
   async function runScene(link, disc, url) {
     const rig = link.querySelector('.rig');
+    const jacketEl = link.querySelector('.jacket');
     const sleeve = link.querySelector('.sleeve');
     const coverKey = coverKeyFrom(link);
-    const sleeveRect = (sleeve || disc || rig).getBoundingClientRect();
+    const sleeveRect = (jacketEl || sleeve || disc || rig).getBoundingClientRect();
     const discRect = disc ? disc.getBoundingClientRect() : sleeveRect;
 
-    /* Cover the page with an opaque veil first so lost/empty canvases
-       cannot flash a white band or Chrome's broken-image icon. */
     overlay.classList.add('tt-on', 'tt-dim');
     overlay.classList.remove('tt-ready', 'tt-exit');
     overlay.style.display = 'block';
     canvas.style.visibility = 'hidden';
-    disc.classList.add('tt-hidden');
+    if (disc) disc.classList.add('tt-hidden');
     if (sleeve) sleeve.style.visibility = 'hidden';
     if (rig) rig.classList.add('tt-away');
     if (link) link.classList.add('tt-away');
@@ -558,14 +557,14 @@ import {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     if (!url || url === '#' || url.startsWith('#') || link.target === '_blank') return;
 
-    const disc = link.querySelector('.disc');
+    const coverKey = coverKeyFrom(link);
     const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!coverKeyFrom(link) || !disc || busy || reducedNow) return;
+    if (!coverKey || !COVER_GLBS[coverKey] || busy || reducedNow) return;
     if (link.classList.contains('is-loop-clone') || link.getAttribute('aria-hidden') === 'true') return;
 
     e.preventDefault();
     e.stopPropagation();
     log('click ' + url);
-    run(link, disc, link.href);
+    run(link, link.querySelector('.disc'), link.href);
   }, true);
 })();

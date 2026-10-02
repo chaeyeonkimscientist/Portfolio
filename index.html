@@ -220,7 +220,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   position:sticky;top:0;height:100vh;width:100%;
   overflow:hidden;display:flex;flex-direction:column;
   background:var(--iris);
-  perspective:1500px;perspective-origin:50% 46%;
 }
 .sec-head{
   flex:0 0 auto;display:flex;justify-content:flex-start;align-items:baseline;
@@ -229,12 +228,15 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .sec-head h2{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.35rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:var(--lav)}
 
 .work-viewport{
-  flex:1;min-height:0;width:100%;overflow:visible;position:relative;
-  transform-style:preserve-3d;
+  flex:1;min-height:0;width:100%;overflow:hidden;position:relative;
+}
+#work-covers-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:block;pointer-events:none;z-index:1;
+  background:transparent;
 }
 .work-track{
-  display:block;height:100%;width:100%;position:relative;
-  transform-style:preserve-3d;
+  display:block;height:100%;width:100%;position:relative;z-index:2;
 }
 .release{
   position:absolute;z-index:1;
@@ -245,7 +247,6 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   text-align:center;text-decoration:none;color:inherit;
   padding:1.5rem 1.6vw 3rem;overflow:visible;
   opacity:0.38;transition:opacity .45s ease;
-  transform-style:preserve-3d;
   will-change:transform;
 }
 .release.is-prev,.release.is-next{z-index:2;opacity:0.82}
@@ -256,117 +257,27 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 
 .jacket{
-  --spine-w:36px;
   position:relative;
-  width:min(48vmin, 460px);
-  aspect-ratio:1.22 / 1;
+  width:min(42vmin, 400px);
+  aspect-ratio:1 / 1;
   margin-bottom:1.8rem;
-  transform-style:preserve-3d;
-  transform-origin:center center;
   cursor:pointer;
   z-index:1;
-  will-change:transform;
+  background:transparent;
 }
 .jacket-front{
   position:absolute;inset:0;
-  transform:translateZ(calc(var(--spine-w) / 2));
-  transform-style:preserve-3d;
 }
-.spine{
-  position:absolute;top:0;left:0;
-  width:var(--spine-w);height:100%;
-  box-sizing:border-box;
-  transform-origin:left center;
-  transform:translateZ(calc(var(--spine-w) / 2)) rotateY(-90deg);
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-  background:#1c161c;
-  border:0.5px solid var(--hair);
-  box-shadow:inset -1px 0 0 rgba(239,231,239,0.14);
-  color:var(--bone);
-  z-index:3;
-  pointer-events:none;
+.spine,.sleeve,.disc,.inote,.scode,.stitle{
+  display:none !important;
 }
-.spine-title{
-  writing-mode:vertical-rl;
-  transform:rotate(180deg);
-  transform-origin:center center;
-  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;
-  font-size:0.62rem;font-weight:500;
-  letter-spacing:0.1em;text-transform:uppercase;
-  white-space:nowrap;line-height:1;
-  color:var(--bone);
-  padding-block:8%;
-}
-.spine.sl-body{background:#2a1016}
-.spine.sl-para{background:#191c24}
-.spine.sl-films{background:#1c1820}
-.spine.sl-utdt{background:#162028}
-.spine.sl-syn{background:#1f1820}
-.spine.sl-other{background:#241820}
 
 .rig{position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;overflow:visible;z-index:1}
-.rig-canvas{
-  position:absolute;inset:0;width:100%;height:100%;
-  pointer-events:none;z-index:4;display:block;
-  opacity:0;transition:opacity .35s ease;
-  background:transparent;
+.release.tt-away #work-covers-canvas,
+#work-covers-canvas.tt-away{
+  opacity:0;visibility:hidden;
 }
-.release.is-3d .rig-canvas,.rig.is-3d .rig-canvas{opacity:1}
-.release.is-3d .sleeve,.release.is-3d .disc,
-.rig.is-3d .sleeve,.rig.is-3d .disc{opacity:0;pointer-events:none}
-.release.is-3d.is-spine .rig-canvas{
-  opacity:0;transition:opacity .18s ease;
-}
-.release.is-3d.is-spine .sleeve{
-  opacity:1;pointer-events:none;
-}
-.release.is-3d.is-spine .disc,
-.release.is-spine .disc{
-  opacity:0 !important;visibility:hidden;pointer-events:none;
-}
-.release.tt-away .rig-canvas,.rig.tt-away .rig-canvas{
-  opacity:0;visibility:hidden;transition:none;background:transparent;
-}
-.release:hover .disc{transform:translateX(26%)}
-.rig.is-3d:hover .disc{transform:none}
-.disc{position:absolute;top:8%;right:0;width:62%;height:84%;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,#2a2730 0 16%,#0c0b10 16.5% 100%);
-  box-shadow:0 0 0 0.5px rgba(183,167,216,0.15);
-  transition:transform .45s cubic-bezier(.2,.7,.3,1)}
-.disc::after{content:"";position:absolute;inset:0;border-radius:50%;
-  background:repeating-radial-gradient(circle at 50% 50%,transparent 0 2px,rgba(255,255,255,0.025) 2.5px 3px)}
-.disc .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat}
-.disc .hole{width:8%;height:8%;min-width:5px;min-height:5px;border-radius:50%;background:var(--iris)}
-.sleeve{position:absolute;top:0;left:0;width:64%;height:100%;border-radius:2px;overflow:hidden;z-index:2;
-  display:flex;flex-direction:column;justify-content:space-between;padding:14px 15px;border:0.5px solid var(--hair)}
-.sleeve .scode{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.56rem;letter-spacing:0.1em;color:var(--bone);opacity:0.8;display:flex;justify-content:space-between}
-.sleeve .stitle{font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.15rem;line-height:0.95;color:var(--bone);text-align:left}
-.sleeve .inote{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.55rem;color:rgba(236,232,242,0.45);pointer-events:none}
-
-.sl-body{background:linear-gradient(165deg,#3a2630 0%,#241620 60%,#2a1016 100%)}
-.sl-syn{background:url("covers/synthetic_synesthesia.webp?v=2") center/100% 100% no-repeat,#1f1820}
-.sl-para{background:url("covers/paramount_internship.webp?v=2") center/100% 100% no-repeat,#191c24}
-.sl-eng{background:linear-gradient(160deg,#251a22 0%,#1a1620 50%,#280f17 100%)}
-.sl-films{background:linear-gradient(155deg,#33242c 0%,#1c1820 52%,#1a2430 100%)}
-.sl-utdt{background:url("covers/body_says_otherwise.webp?v=2") center/100% 100% no-repeat,#162028}
-.sl-other{background:linear-gradient(160deg,#2a1c24 0%,#1a161c 55%,#201018 100%)}
-.sl-para .inote,.sl-syn .inote,.sl-utdt .inote{opacity:0}
-.sl-para .stitle,.sl-syn .stitle,.sl-utdt .stitle{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.75)}
-.lbl-body{background-image:url("vinyl-labels/the_body_conducts.webp")}
-.lbl-para{background-image:url("vinyl-labels/paramount_internship.webp")}
-.lbl-films{background-image:url("vinyl-labels/short_films.webp")}
-.lbl-utdt{background-image:url("vinyl-labels/body_says_otherwise.webp")}
-.lbl-syn{background-image:url("vinyl-labels/synthetic_synesthesia.webp")}
-
-.disc.slate{border-radius:3px;background:linear-gradient(135deg,#1c1f27,#0e1014);overflow:hidden}
-.disc.slate::after{background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(95,155,148,0.12) 7px 8px)}
-.disc.slate .label,.disc.slate .hole{display:none}
-.disc.slate .slatebig{position:absolute;bottom:8%;right:8%;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.5rem;color:var(--grape-lit)}
-.disc.fig{border-radius:3px;background:linear-gradient(135deg,#1f1820,#120b10);overflow:hidden}
-.disc.fig::after{background:radial-gradient(circle at 35% 40%,rgba(168,50,66,0.35) 0 3%,transparent 3.5%),radial-gradient(circle at 60% 30%,rgba(183,167,216,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 55% 65%,rgba(95,155,148,0.3) 0 2.5%,transparent 3%),radial-gradient(circle at 40% 70%,rgba(168,50,66,0.25) 0 2%,transparent 2.5%)}
-.disc.fig .label,.disc.fig .hole{display:none}
-.disc.fig .figbig{position:absolute;bottom:8%;right:8%;font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:1.4rem;color:var(--amaranth-lit)}
+.work.tt-away #work-covers-canvas{opacity:0;visibility:hidden}
 
 .meta{max-width:34ch;transition:opacity .4s ease,visibility .4s}
 .release.is-prev .meta,.release.is-next .meta,
@@ -391,8 +302,7 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .sec-head{padding:5.2rem 6vw 0.2rem}
   .work{--album-w:76%}
   .release{padding:1rem 3vw 2.4rem}
-  .jacket{width:min(70vmin,88vw);aspect-ratio:1.18 / 1;margin-bottom:1.2rem}
-  .spine-title{font-size:0.58rem;letter-spacing:0.12em}
+  .jacket{width:min(64vmin,78vw);aspect-ratio:1 / 1;margin-bottom:1.2rem}
 }
 @media(max-height:720px){
   .jacket{width:min(42vmin,380px);margin-bottom:1rem}
@@ -402,12 +312,12 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 @media(prefers-reduced-motion:reduce){
   .cue,.scrolldown{display:none}
   .work{height:auto;--album-w:100%}
-  .work-stage{position:static;height:auto;overflow:visible;perspective:none}
-  .work-viewport{overflow:visible;perspective:none}
-  .work-track{display:flex;flex-direction:column;width:100%;transform:none !important;will-change:auto;transform-style:flat}
+  .work-stage{position:static;height:auto;overflow:visible}
+  .work-viewport{overflow:visible}
+  .work-track{display:flex;flex-direction:column;width:100%;transform:none !important;will-change:auto}
   .release{position:relative;left:auto;flex:none;width:100%;max-width:none;min-height:100vh;height:auto;opacity:1;transform:none !important}
   .jacket{transform:none !important;margin-inline:auto}
-  .spine{display:none}
+  #work-covers-canvas{display:none}
   .release.is-prev .meta,.release.is-next .meta,.release.is-spine .meta{opacity:1;visibility:visible;pointer-events:auto}
 }
 
@@ -706,22 +616,12 @@ if (typeof Tone === 'undefined') {
   <div class="work-stage">
   <div class="sec-head"><h2>Selected Work</h2></div>
   <div class="work-viewport">
+  <canvas id="work-covers-canvas" aria-hidden="true"></canvas>
   <div class="work-track" id="work-track">
 
     <a class="release is-current" href="work/body-conducts.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <canvas class="rig-canvas" aria-hidden="true"></canvas>
-          <div class="rig" data-cover="the_body_conducts">
-            <div class="disc"><div class="label lbl-body"><div class="hole"></div></div></div>
-            <div class="sleeve sl-body">
-              <div class="scode"><span>BC&middot;001</span><span>5 ACTS</span></div>
-              <div class="inote">[ film still ]</div>
-              <div class="stitle">The Body<br>Conducts</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-body" aria-hidden="true"><span class="spine-title">The Body Conducts</span></div>
+        <div class="rig" data-cover="the_body_conducts"></div>
       </div>
       <div class="meta">
         <div class="idx">01</div>
@@ -733,18 +633,7 @@ if (typeof Tone === 'undefined') {
 
     <a class="release is-next" href="work/paramount.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <canvas class="rig-canvas" aria-hidden="true"></canvas>
-          <div class="rig" data-cover="paramount_internship">
-            <div class="disc slate"><div class="slatebig">&minus;65%</div></div>
-            <div class="sleeve sl-para">
-              <div class="scode"><span>PG&middot;003</span><span>25 TERR.</span></div>
-              <div class="inote">[ slate still ]</div>
-              <div class="stitle">Paramount</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-para" aria-hidden="true"><span class="spine-title">Paramount</span></div>
+        <div class="rig" data-cover="paramount_internship"></div>
       </div>
       <div class="meta">
         <div class="idx">02</div>
@@ -756,18 +645,7 @@ if (typeof Tone === 'undefined') {
     
     <a class="release" href="work/short-films.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <canvas class="rig-canvas" aria-hidden="true"></canvas>
-          <div class="rig" data-cover="short_films">
-            <div class="disc"><div class="label lbl-films"><div class="hole"></div></div></div>
-            <div class="sleeve sl-films">
-              <div class="scode"><span>SF&middot;005</span><span>4 FILMS</span></div>
-              <div class="inote">[ film still ]</div>
-              <div class="stitle">Short<br>Films</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-films" aria-hidden="true"><span class="spine-title">Short Films</span></div>
+        <div class="rig" data-cover="short_films"></div>
       </div>
       <div class="meta">
         <div class="idx">03</div>
@@ -780,18 +658,7 @@ if (typeof Tone === 'undefined') {
 
     <a class="release" href="work/body-says-otherwise.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <canvas class="rig-canvas" aria-hidden="true"></canvas>
-          <div class="rig" data-cover="body_says_otherwise">
-            <div class="disc"><div class="label lbl-utdt"><div class="hole"></div></div></div>
-            <div class="sleeve sl-utdt">
-              <div class="scode"><span>BO&middot;006</span><span>200+</span></div>
-              <div class="inote">[ lab still ]</div>
-              <div class="stitle">The Body<br>Says Otherwise</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-utdt" aria-hidden="true"><span class="spine-title">The Body Says Otherwise</span></div>
+        <div class="rig" data-cover="body_says_otherwise"></div>
       </div>
       <div class="meta">
         <div class="idx">04</div>
@@ -803,18 +670,7 @@ if (typeof Tone === 'undefined') {
 
     <a class="release" href="work/synthetic-synesthesia.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <canvas class="rig-canvas" aria-hidden="true"></canvas>
-          <div class="rig" data-cover="synthetic_synesthesia">
-            <div class="disc"><div class="label lbl-syn"><div class="hole"></div></div></div>
-            <div class="sleeve sl-syn">
-              <div class="scode"><span>SS&middot;002</span><span>C&asymp;RED&middot;B&asymp;VIO</span></div>
-              <div class="inote">[ app capture ]</div>
-              <div class="stitle">Synthetic<br>Synesthesia</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-syn" aria-hidden="true"><span class="spine-title">Synthetic Synesthesia</span></div>
+        <div class="rig" data-cover="synthetic_synesthesia"></div>
       </div>
       <div class="meta">
         <div class="idx">05</div>
@@ -827,16 +683,7 @@ if (typeof Tone === 'undefined') {
 
     <a class="release release-other" href="work/other.html">
       <div class="jacket">
-        <div class="jacket-front">
-          <div class="rig">
-            <div class="sleeve sl-other">
-              <div class="scode"><span>OT&middot;000</span><span>ETC</span></div>
-              <div class="inote">[ more work ]</div>
-              <div class="stitle">Other</div>
-            </div>
-          </div>
-        </div>
-        <div class="spine sl-other" aria-hidden="true"><span class="spine-title">Other</span></div>
+        <div class="rig" data-cover="other"></div>
       </div>
       <div class="meta">
         <div class="idx">06</div>
@@ -873,8 +720,6 @@ if (typeof Tone === 'undefined') {
   clone.tabIndex=-1;
   const cloneRig=clone.querySelector('.rig');
   if(cloneRig) cloneRig.removeAttribute('data-cover');
-  const cloneCanvas=clone.querySelector('.rig-canvas');
-  if(cloneCanvas) cloneCanvas.remove();
   track.appendChild(clone);
 
   const releases=[...track.querySelectorAll('a.release')];
@@ -883,8 +728,8 @@ if (typeof Tone === 'undefined') {
   const HOLD=140, SLIDE=80;
   const LERP=0.08;
   const SETTLE=0.0007;
-  const SPINE_MAX=88;
-  const SPINE_REST=74;
+  const SPINE_MAX=86;
+  const SPINE_REST=78;
   let current=0;
   let primed=false;
   let raf=0;
@@ -920,12 +765,12 @@ if (typeof Tone === 'undefined') {
     const rest=neighbor*SPINE_REST;
     return rest+(SPINE_MAX-rest)*flip;
   }
-  function halfWidth(delta, flip, jacketW, pitch){
+  function halfWidth(delta, flip, faceW, spinePitch){
     const spin=spinOf(delta, flip);
     const k=spin/SPINE_MAX;
-    return (jacketW/2)*(1-k)+(pitch/2)*k;
+    return (faceW/2)*(1-k)+(spinePitch/2)*k;
   }
-  function xOf(d, flip, jacketW, pitch){
+  function xOf(d, flip, faceW, spinePitch, air){
     if(Math.abs(d)<1e-5) return 0;
     const dir=Math.sign(d);
     const dist=Math.abs(d);
@@ -934,22 +779,11 @@ if (typeof Tone === 'undefined') {
     for(let s=0;s<samples;s++){
       const a=dist*s/samples;
       const b=dist*(s+1)/samples;
-      const wa=halfWidth(dir*a, flip, jacketW, pitch)*2;
-      const wb=halfWidth(dir*b, flip, jacketW, pitch)*2;
+      const wa=halfWidth(dir*a, flip, faceW, spinePitch)*2;
+      const wb=halfWidth(dir*b, flip, faceW, spinePitch)*2;
       x+=dir*(wa+wb)*0.5*(b-a);
     }
-    return x;
-  }
-  function fitSpine(el){
-    const t=el.querySelector('.spine-title');
-    const sp=el.querySelector('.spine');
-    if(!t||!sp) return;
-    t.style.transform='rotate(180deg) scale(1)';
-    const room=sp.clientHeight*0.88;
-    const need=t.getBoundingClientRect().height;
-    if(need>room && need>1){
-      t.style.transform='rotate(180deg) scale('+(room/need).toFixed(4)+')';
-    }
+    return x+dir*air*dist;
   }
   function wrapToStart(){
     if(wrapping) return;
@@ -969,26 +803,30 @@ if (typeof Tone === 'undefined') {
     const flip=flippingAmt(pos);
     const i=Math.round(Math.min(pos, n-0.001));
     const jacketEl=jackets[Math.min(i, jackets.length-1)]||jackets[0];
-    const jacketW=jacketEl?jacketEl.offsetWidth:320;
+    const faceW=jacketEl?jacketEl.offsetWidth:320;
     const stageW=viewport.clientWidth||innerWidth;
-    const pitch=Math.min(132, Math.max(68, stageW*0.088));
+    const spinePitch=Math.max(faceW*0.42, stageW*0.13);
+    const air=Math.max(36, stageW*0.045);
 
     releases.forEach((el,idx)=>{
       const d=idx-pos;
       const ad=Math.abs(d);
       const spin=spinOf(d, flip);
-      const x=xOf(d, flip, jacketW, pitch);
+      const x=xOf(d, flip, faceW, spinePitch, air);
       el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
       el.style.zIndex=String(Math.round(80-ad*12));
       const jacket=jackets[idx];
-      if(jacket) jacket.style.transform='rotateY('+spin.toFixed(2)+'deg)';
+      if(jacket){
+        jacket.style.transform='none';
+        jacket.setAttribute('data-spin', spin.toFixed(2));
+      }
       const spineOn=spin>18;
       el.classList.toggle('is-spine', spineOn);
       el.classList.toggle('is-current', ad<0.5);
       el.classList.toggle('is-prev', d<-0.5 && d>-1.5);
       el.classList.toggle('is-next', d>0.5 && d<1.5);
-      const clone=el.classList.contains('is-loop-clone');
-      if(clone){
+      const cloneEl=el.classList.contains('is-loop-clone');
+      if(cloneEl){
         const show=pos>n-1.25;
         el.style.visibility=show?'visible':'hidden';
         el.style.opacity=show?String((0.45+0.55*(1-Math.min(ad/4.2,1))).toFixed(3)):'0';
@@ -1022,13 +860,7 @@ if (typeof Tone === 'undefined') {
     if(!raf) raf=requestAnimationFrame(tick);
   }
   addEventListener('scroll',requestPaint,{passive:true});
-  addEventListener('resize',()=>{
-    releases.forEach(fitSpine);
-    requestPaint();
-  });
-  releases.forEach(fitSpine);
-  requestAnimationFrame(() => releases.forEach(fitSpine));
-  addEventListener('load', () => releases.forEach(fitSpine));
+  addEventListener('resize',requestPaint);
   tick();
 })();
 </script>
@@ -1502,8 +1334,8 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=6"></script>
-<script type="module" src="work-covers-3d.js?v=6"></script>
+<script type="module" src="turntable-transition.js?v=7"></script>
+<script type="module" src="work-covers-3d.js?v=7"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.
