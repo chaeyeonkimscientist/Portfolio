@@ -33,6 +33,16 @@ body::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3
 button,a{font:inherit;color:inherit}
 button{cursor:pointer}
 a{text-decoration:none}
+.more-nav{
+  position:relative;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  width:min(1540px,calc(100% - 44px));
+  margin:0 auto;
+  padding:22px 2px 8px;
+  min-height:58px;
+}
 .back-work{
   position:static;
   display:inline-flex;
@@ -41,14 +51,7 @@ a{text-decoration:none}
   color:var(--bone-dim);opacity:.8;transition:opacity .2s,color .2s
 }
 .back-work:hover{opacity:1;color:var(--bone)}
-.shell{width:min(1540px,calc(100% - 44px));margin:28px auto 44px}
-.page-chrome{
-  display:flex;
-  align-items:center;
-  min-height:36px;
-  margin:0 0 22px;
-  padding:0 2px;
-}
+.shell{width:min(1540px,calc(100% - 44px));margin:18px auto 44px}
 .top-grid{
   display:grid;
   grid-template-columns:minmax(0,1.34fr) minmax(460px,.96fr);
@@ -70,9 +73,17 @@ a{text-decoration:none}
   gap:20px;min-height:74px;
   padding:20px 22px 16px;border-bottom:1px solid var(--hair)
 }
-.now-playing-header h2,
 .section-header h2{
   font-size:1.35rem;line-height:1.1;letter-spacing:.12em;text-transform:uppercase
+}
+.now-playing-header h2{
+  margin:0;
+  font-size:1.85rem;
+  line-height:1;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--bone);
 }
 .eyebrow{font-size:.72rem;letter-spacing:.32em;color:var(--bone-dim);text-transform:uppercase}
 .viewer-title{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;color:var(--bone)}
@@ -193,7 +204,9 @@ h2{font-size:1.35rem;line-height:1.1;letter-spacing:.12em;text-transform:upperca
   .artifact-panel{min-height:520px}
 }
 @media (max-width:700px){
-  .shell{width:calc(100% - 20px);margin:10px auto 28px}
+  .more-nav,.shell{width:calc(100% - 20px)}
+  .more-nav{padding-top:16px}
+  .shell{margin:8px auto 28px}
   .top-grid{gap:14px}
   .panel-header,.section-header{padding:15px 15px 14px}
   .star-block{padding:22px 15px}
@@ -211,9 +224,6 @@ h2{font-size:1.35rem;line-height:1.1;letter-spacing:.12em;text-transform:upperca
 /* NOW PLAYING waveform */
 .now-playing-header{
   align-items:center;
-}
-.now-playing-header h2{
-  color:var(--bone);
 }
 .waveform{
   height:38px;
