@@ -244,7 +244,8 @@ export function prepareCover(root) {
   root.position.y -= center.y;
   root.position.z -= center.z;
   const face = Math.max(size.x, size.y, 1e-4);
-  wrap.scale.setScalar(1 / face);
+  root.scale.setScalar(1 / face);
+  wrap.scale.setScalar(1);
   return wrap;
 }
 

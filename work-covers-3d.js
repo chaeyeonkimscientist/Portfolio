@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import {
   loadCoverModel, cloneAsset, COVER_SIZE
-} from './vinyl-glb.js';
+} from './vinyl-glb.js?v=17';
 
 (function () {
   'use strict';
