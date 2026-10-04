@@ -87,7 +87,6 @@ import {
   }
 
   function coverKeyOf(el) {
-    if (el.classList.contains('is-loop-clone')) return 'the_body_conducts';
     const rig = el.querySelector('.rig[data-cover]');
     return (rig && rig.getAttribute('data-cover')) || el.getAttribute('data-cover');
   }
@@ -213,7 +212,9 @@ import {
       const k = Math.min(1, dt * 9);
       cards.forEach((c) => {
         if (c.paused) return;
-        const hidden = c.el.style.visibility === 'hidden' || c.el.classList.contains('tt-away');
+        const hidden = c.el.style.visibility === 'hidden' ||
+          c.el.classList.contains('tt-away') ||
+          document.getElementById('work')?.classList.contains('is-aux');
         c.hold.visible = !hidden;
         if (hidden) return;
         layoutCard(c);
