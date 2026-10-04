@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {
   loadVinylModel, loadTurntableModel, loadCoverModel, cloneAsset, makeVinylLabel,
   COVER_GLBS, VINYL_RADIUS
-} from './vinyl-glb.js';
+} from './vinyl-glb.js?v=17';
 
 (function () {
   'use strict';

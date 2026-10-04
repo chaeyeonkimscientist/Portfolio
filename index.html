@@ -207,13 +207,14 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 }
 
 .work{
-  --work-n:6;
+  --work-n:5;
   --work-hold:140vh;
   --work-slide:80vh;
+  --work-aux:180vh;
   --album-w:52%;
   position:relative;z-index:5;background:var(--iris);
   width:100%;margin:0;padding:0;overflow-x:clip;
-  height:calc(100vh + (var(--work-n) * var(--work-hold)) + (var(--work-n) * var(--work-slide)) + 28vh);
+  height:calc(100vh + (var(--work-n) * var(--work-hold)) + ((var(--work-n) - 1) * var(--work-slide)) + var(--work-aux) + 28vh);
 }
 .work-stage{
   position:sticky;top:0;height:100vh;width:100%;
@@ -248,6 +249,110 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
 .release.is-prev,.release.is-next{z-index:2}
 .release.is-current{z-index:3}
 .release.is-loop-clone{pointer-events:none}
+
+#aux-in{
+  position:absolute;inset:0;z-index:6;
+  opacity:0;visibility:hidden;pointer-events:none;
+  overflow:hidden;
+  background:#0a0a0c;
+  display:flex;justify-content:flex-end;align-items:center;
+  padding-right:15vw;
+  --jack-ring:#2a2a30;
+  --jack-hole:#030304;
+  --neon-pulse:#00e5ff;
+  --plug-metal:linear-gradient(to bottom,#999 0%,#fff 25%,#666 50%,#222 100%);
+  --plug-dark:linear-gradient(to bottom,#111 0%,#444 25%,#1a1a1a 50%,#050505 100%);
+  --aux-text:#8a8a93;
+}
+.work.is-aux .sec-head{opacity:0;pointer-events:none}
+.work.is-aux .work-track,
+.work.is-aux #work-covers-canvas{
+  opacity:0;visibility:hidden;pointer-events:none;
+}
+.work.is-aux #aux-in{
+  opacity:1;visibility:visible;pointer-events:auto;
+}
+#aux-in .jack-container{
+  position:relative;z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+#aux-in .jack-label{
+  color:var(--aux-text);font-size:.85rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;user-select:none;
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
+  transition:color .3s ease,text-shadow .3s ease;
+}
+#aux-in .jack-label.active{
+  color:var(--neon-pulse);text-shadow:0 0 10px var(--neon-pulse);
+}
+#aux-in .jack-bezel{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#3a3a42,#111115);
+  box-shadow:4px 4px 10px rgba(0,0,0,.8),-2px -2px 5px rgba(255,255,255,.05),inset 1px 1px 2px rgba(255,255,255,.1);
+  display:flex;justify-content:center;align-items:center;position:relative;
+}
+#aux-in .jack-hole{
+  width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,#0a0a0c,var(--jack-hole) 70%);
+  box-shadow:inset 10px 10px 20px #000,inset -5px -5px 15px rgba(255,255,255,.05),inset 0 0 30px #000;
+  position:relative;transition:box-shadow .1s ease-out;
+}
+#aux-in .jack-hole.pulse{
+  box-shadow:inset 5px 5px 10px rgba(0,0,0,.9),0 0 40px 10px var(--neon-pulse),0 0 80px 20px rgba(0,229,255,.4);
+  background:radial-gradient(circle at 50% 50%,#fff,var(--neon-pulse) 20%,var(--jack-hole) 80%);
+  transition:box-shadow .05s ease-out,background .05s ease-out;
+}
+#aux-in #wire-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:1;
+}
+#aux-in .plug-wrapper{
+  position:absolute;top:0;left:0;width:180px;height:30px;
+  transform-origin:160px 15px;pointer-events:none;z-index:20;
+  display:flex;align-items:center;justify-content:flex-end;
+  will-change:transform;perspective:800px;
+}
+#aux-in .plug-body{
+  display:flex;align-items:center;width:100%;height:100%;position:relative;
+  transition:transform .4s cubic-bezier(.4,0,.2,1),filter .4s;
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 15px 15px rgba(0,0,0,.7));
+}
+#aux-in .plug-body.inserted{
+  transform-origin:160px 15px;
+  transform:rotateY(85deg) translateX(40px);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.9)) brightness(.4);
+}
+#aux-in .plug-grip{
+  width:80px;height:26px;background:var(--plug-dark);border-radius:4px 0 0 4px;
+  box-shadow:inset 0 4px 4px rgba(255,255,255,.05),inset 0 -4px 4px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;justify-content:space-evenly;padding:0 4px;
+  border-left:4px solid #111;
+}
+#aux-in .grip-ridge{width:100%;height:2px;background:rgba(0,0,0,.6);box-shadow:0 1px 1px rgba(255,255,255,.05)}
+#aux-in .plug-collar{
+  width:15px;height:20px;background:var(--plug-metal);
+  box-shadow:inset 0 3px 3px rgba(255,255,255,.4),inset 0 -3px 3px rgba(0,0,0,.4);
+  border-right:2px solid rgba(0,0,0,.5);
+}
+#aux-in .plug-shaft{
+  width:40px;height:14px;background:var(--plug-metal);
+  box-shadow:inset 0 3px 3px rgba(255,255,255,.4),inset 0 -3px 3px rgba(0,0,0,.4);
+}
+#aux-in .plug-ring{width:4px;height:14px;background:#111;box-shadow:inset 0 2px 2px rgba(0,0,0,.8)}
+#aux-in .plug-tip{
+  width:15px;height:14px;background:var(--plug-metal);border-radius:0 10px 10px 0;
+  box-shadow:inset 0 3px 3px rgba(255,255,255,.4),inset 0 -3px 3px rgba(0,0,0,.4);
+}
+#aux-in .instruction{
+  position:absolute;bottom:40px;left:0;width:100%;text-align:center;
+  color:#888;font-size:.85rem;pointer-events:none;letter-spacing:.1em;
+  text-transform:uppercase;animation:auxHint 2s infinite alternate;
+}
+@keyframes auxHint{from{opacity:.3}to{opacity:.8}}
+@media(prefers-reduced-motion:reduce){
+  #aux-in .instruction{animation:none;opacity:.7}
+}
 
 .rig{position:relative;width:100%;height:min(42vmin,400px);margin-bottom:1.8rem;cursor:pointer;overflow:visible;z-index:1}
 .rig-canvas{
@@ -345,6 +450,11 @@ nav a:hover{opacity:1}nav a:focus-visible{outline:2px solid var(--lav);outline-o
   .release{position:relative;left:auto;flex:none;width:100%;min-height:100vh;height:auto;opacity:1;transform:none !important}
   #work-covers-canvas{display:none}
   .release:not(.is-current) .meta{opacity:1;visibility:visible;pointer-events:auto}
+  #aux-in{
+    position:relative;inset:auto;opacity:1;visibility:visible;pointer-events:auto;
+    min-height:70vh;padding:3rem 8vw 4rem;
+  }
+  .work.is-aux .sec-head{opacity:1}
 }
 
 #turntable-overlay{
@@ -732,23 +842,44 @@ if (typeof Tone === 'undefined') {
       </div>
     </a>
 
-    <a class="release release-other" href="work/other.html">
-      <div class="rig" data-cover="other">
-        <div class="disc slate"></div>
-        <div class="sleeve sl-other">
-          <div class="scode"><span>OT&middot;006</span><span>B-SIDE</span></div>
-          <div class="stitle">Other</div>
-        </div>
-      </div>
-      <div class="meta">
-        <div class="idx">06</div>
-        <div class="ptitle">Other</div>
-        <div class="hook">Pieces that did not fit on the A-side.</div>
-        <div class="tags"><span class="tag t-ind">Archive</span></div>
-      </div>
-    </a>
-    
   </div>
+  </div>
+  <div id="aux-in" aria-hidden="true">
+    <svg id="wire-canvas" aria-hidden="true">
+      <defs>
+        <filter id="wire-shadow">
+          <feDropShadow dx="0" dy="12" stdDeviation="6" flood-color="#000" flood-opacity="0.8"/>
+        </filter>
+      </defs>
+      <path id="wire-path-bg" fill="none" stroke="#080808" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" filter="url(#wire-shadow)"/>
+      <path id="wire-path-fg" fill="none" stroke="#222222" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="wire-path-hl" fill="none" stroke="#3a3a3a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="translate(0, -3)"/>
+    </svg>
+    <div class="jack-container" id="jack-target">
+      <div class="jack-label" id="jack-label">More Projects</div>
+      <div class="jack-bezel">
+        <div class="jack-hole" id="jack-hole"></div>
+      </div>
+    </div>
+    <div class="plug-wrapper" id="plug-wrapper">
+      <div class="plug-body" id="plug-body">
+        <div class="plug-grip">
+          <div class="grip-ridge"></div>
+          <div class="grip-ridge"></div>
+          <div class="grip-ridge"></div>
+          <div class="grip-ridge"></div>
+          <div class="grip-ridge"></div>
+          <div class="grip-ridge"></div>
+        </div>
+        <div class="plug-collar"></div>
+        <div class="plug-shaft"></div>
+        <div class="plug-ring"></div>
+        <div class="plug-shaft" style="width:10px"></div>
+        <div class="plug-ring"></div>
+        <div class="plug-tip"></div>
+      </div>
+    </div>
+    <div class="instruction" id="instruction-text">Drag cable near the jack to snap, then click to plug in</div>
   </div>
   </div>
 </section>
@@ -757,34 +888,28 @@ if (typeof Tone === 'undefined') {
 (function(){
   const work=document.getElementById('work');
   const track=document.getElementById('work-track');
+  const auxEl=document.getElementById('aux-in');
+  const canvas=document.getElementById('work-covers-canvas');
+  const head=work&&work.querySelector('.sec-head');
   if(!work||!track) return;
-  const real=[...track.querySelectorAll('a.release')];
-  const n=real.length;
+  const releases=[...track.querySelectorAll('a.release')];
+  const n=releases.length;
   if(!n) return;
   work.style.setProperty('--work-n', String(n));
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    real.forEach((el)=>el.classList.add('is-current'));
+    releases.forEach((el)=>el.classList.add('is-current'));
+    if(auxEl){ auxEl.setAttribute('aria-hidden','false'); }
     return;
   }
 
-  const first=real[0];
-  const clone=first.cloneNode(true);
-  clone.classList.add('is-loop-clone');
-  clone.classList.remove('is-current','is-next','is-prev','is-3d','is-spine','tt-away');
-  clone.setAttribute('aria-hidden','true');
-  clone.tabIndex=-1;
-  track.appendChild(clone);
-
-  const releases=[...track.querySelectorAll('a.release')];
-
-  const HOLD=140, SLIDE=80;
+  const HOLD=140, SLIDE=80, AUX_FADE=70;
   const LERP=0.12;
   const SETTLE=0.0007;
   const ANGLE=45;
   let current=0;
+  let auxT=0;
   let primed=false;
   let raf=0;
-  let wrapping=false;
 
   function magneticEase(t){
     t=Math.min(Math.max(t,0),1);
@@ -798,16 +923,18 @@ if (typeof Tone === 'undefined') {
     const vh=innerHeight||1;
     return Math.max(-work.getBoundingClientRect().top,0)/vh*100;
   }
-  function albumAt(u){
-    const limit=n*HOLD+n*SLIDE;
-    u=Math.min(Math.max(u,0),limit);
+  function progressOf(){
+    let u=Math.max(scrolledVh(),0);
     for(let i=0;i<n;i++){
-      if(u<=HOLD) return i;
+      if(u<=HOLD) return {pos:i, aux:0};
       u-=HOLD;
-      if(u<=SLIDE) return i+magneticEase(u/SLIDE);
-      u-=SLIDE;
+      if(i<n-1){
+        if(u<=SLIDE) return {pos:i+magneticEase(u/SLIDE), aux:0};
+        u-=SLIDE;
+      }
     }
-    return n;
+    const fade=magneticEase(Math.min(1, u/AUX_FADE));
+    return {pos:n-1, aux:fade};
   }
   function coverSize(){
     const vh=innerHeight||800;
@@ -818,7 +945,6 @@ if (typeof Tone === 'undefined') {
     const s=Math.sign(delta)||0;
     const a=Math.abs(delta);
     if(!s) return 0;
-    /* Coverflow.svg: room around the focused jacket, then a 45° cascade. */
     const first=faceW*0.72;
     const stack=faceW*0.48;
     return s*(Math.min(a,1)*first+Math.max(a-1,0)*stack);
@@ -827,23 +953,13 @@ if (typeof Tone === 'undefined') {
     const k=smoothstep(Math.min(1, Math.abs(delta)));
     return (Math.sign(delta)||0)*ANGLE*k;
   }
-  function wrapToStart(){
-    if(wrapping) return;
-    wrapping=true;
-    const y=work.getBoundingClientRect().top+window.scrollY;
-    const html=document.documentElement;
-    const prev=html.style.scrollBehavior;
-    html.style.scrollBehavior='auto';
-    window.scrollTo(0, Math.max(0, y));
-    html.style.scrollBehavior=prev;
-    current=0;
-    primed=true;
-    apply(0);
-    wrapping=false;
-  }
-  function apply(pos){
+  function apply(pos, aux){
     const faceW=coverSize();
+    const a=Math.min(1, Math.max(0, aux));
     track.style.transform='';
+    track.style.opacity=String(1-a);
+    if(canvas) canvas.style.opacity=String(1-a);
+    if(head) head.style.opacity=String(1-a);
     releases.forEach((el,idx)=>{
       const d=idx-pos;
       const ad=Math.abs(d);
@@ -855,36 +971,39 @@ if (typeof Tone === 'undefined') {
       el.style.transform='translate3d(calc(-50% + '+x.toFixed(2)+'px),0,0)';
       el.style.zIndex=String(Math.round(40-ad*10));
       el.setAttribute('data-spin', spin.toFixed(2));
-      el.classList.toggle('is-current', ad<0.5);
+      el.classList.toggle('is-current', ad<0.5 && a<0.5);
       el.classList.toggle('is-prev', d<-0.5 && d>-1.5);
       el.classList.toggle('is-next', d>0.5 && d<1.5);
       el.classList.remove('is-spine');
-      if(el.classList.contains('is-loop-clone')){
-        const show=pos>n-1.25;
-        el.style.visibility=show?'visible':'hidden';
-        el.style.pointerEvents='none';
-      } else {
-        el.style.visibility='visible';
-      }
+      el.style.visibility=a>0.92?'hidden':'visible';
+      el.style.pointerEvents=a>0.4?'none':'auto';
     });
+    const on=a>=0.5;
+    work.classList.toggle('is-aux', on);
+    if(auxEl){
+      auxEl.style.opacity=String(a);
+      auxEl.style.visibility=a>0.02?'visible':'hidden';
+      auxEl.style.pointerEvents=on?'auto':'none';
+      auxEl.setAttribute('aria-hidden', on?'false':'true');
+    }
+    if(typeof window.__setAuxIn==='function') window.__setAuxIn(on);
+    if(typeof window.__pauseWorkCovers==='function') window.__pauseWorkCovers(on);
   }
   function tick(){
     raf=0;
-    if(wrapping) return;
-    const target=albumAt(scrolledVh());
-    if(target>=n-0.04){
-      wrapToStart();
-      return;
-    }
-    if(!primed){ current=target; primed=true; }
-    const d=target-current;
-    if(Math.abs(d)<SETTLE){
-      current=target;
-      apply(current);
+    const st=progressOf();
+    if(!primed){ current=st.pos; auxT=st.aux; primed=true; }
+    const d=st.pos-current;
+    const da=st.aux-auxT;
+    if(Math.abs(d)<SETTLE && Math.abs(da)<SETTLE){
+      current=st.pos;
+      auxT=st.aux;
+      apply(current, auxT);
       return;
     }
     current+=d*LERP;
-    apply(current);
+    auxT+=da*LERP;
+    apply(current, auxT);
     raf=requestAnimationFrame(tick);
   }
   function requestPaint(){
@@ -1365,8 +1484,9 @@ onScroll();
   <canvas id="tt-canvas" width="1" height="1"></canvas>
   <div id="tt-sleeve-slot"></div>
 </div>
-<script type="module" src="turntable-transition.js?v=15"></script>
-<script type="module" src="work-covers-3d.js?v=15"></script>
+<script type="module" src="turntable-transition.js?v=17"></script>
+<script type="module" src="work-covers-3d.js?v=17"></script>
+<script src="aux-in.js?v=19"></script>
   
 <!-- ============================================================
      PASTE #4 — load the controller as a module.

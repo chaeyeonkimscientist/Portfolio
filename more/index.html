@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>More — Chaeyeon Kim</title>
+  <meta name="description" content="A living index of Chaeyeon Kim's projects, collections, research, sound, and experiments." />
+  <link rel="stylesheet" href="styles.css?v=more-nav-2" />
+</head>
+<body>
+  <nav class="more-nav" aria-label="Site">
+    <a class="back-work" href="../index.html#work">← Work</a>
+  </nav>
+  <main class="shell">
+    <div class="top-grid">
+      <!-- LEFT: PROJECT DEEP DIVE -->
+      <section class="deep-dive panel" aria-label="Selected project">
+        <header class="panel-header now-playing-header">
+          <h2>Now Playing</h2>
+          <div class="waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </header>
+
+        <div class="link-strip" id="projectLinks" aria-label="Project links"></div>
+
+        <div class="star-block">
+          <div class="project-heading-row">
+            <div>
+              <h1 id="projectTitle">THE BODY CONDUCTS</h1>
+              <div class="tag-row" id="projectTags"></div>
+            </div>
+            <div class="year-mark" id="projectIndex">01</div>
+          </div>
+
+          <div class="star-grid">
+            <article class="star-row">
+              <div class="star-label">SITUATION</div>
+              <p id="situation"></p>
+            </article>
+            <article class="star-row">
+              <div class="star-label">TASK</div>
+              <p id="task"></p>
+            </article>
+            <article class="star-row">
+              <div class="star-label">ACTION</div>
+              <p id="action"></p>
+            </article>
+            <article class="star-row">
+              <div class="star-label">RESULT</div>
+              <p id="result"></p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: PLAYLISTS -->
+      <aside class="collections panel">
+          <header class="section-header">
+            <h2>Playlists</h2>
+          </header>
+          <div class="collection-list" id="collectionList"></div>
+      </aside>
+    </div>
+
+    <!-- FULL-WIDTH PROJECT ARTIFACTS -->
+    <section class="artifact-panel panel" id="artifact-panel">
+          <header class="section-header artifact-header">
+            <h2>All songs</h2>
+          </header>
+
+          <div class="filter-controls" aria-label="Project filters">
+            <div class="filter-bar" id="filterBar">
+              <button class="filter active" data-filter="all">All</button>
+            </div>
+            <div class="keyword-cloud" id="keywordCloud" aria-label="Project keywords"></div>
+          </div>
+          <div class="active-filters" id="activeFilters"></div>
+
+          <div class="artifact-list" id="artifactList"></div>
+    </section>
+  </main>
+
+  <script>
+    const DATA = {
+  "projects": [
+    {
+      "name": "The Body Conducts",
+      "collections": [
+        "Sonification",
+        "Emotion & the Body",
+        "Scoring for Story"
+      ],
+      "keywords": [
+        "Python",
+        "EEG",
+        "Signal Processing",
+        "Logic Pro",
+        "Dolby Atmos"
+      ],
+      "links": "../work/body-conducts.html"
+    },
+    {
+      "name": "Paramount",
+      "collections": [
+        "Human Research",
+        "AI Experiences"
+      ],
+      "keywords": [
+        "LLM Integration",
+        "Statistics",
+        "User Research"
+      ],
+      "links": "../work/paramount.html"
+    },
+    {
+      "name": "Short Films",
+      "collections": [
+        "Scoring for Story",
+        "AI Experiences"
+      ],
+      "keywords": [
+        "Sound Design",
+        "Machine Learning"
+      ],
+      "links": "../work/short-films.html"
+    },
+    {
+      "name": "The Body Says Otherwise",
+      "collections": [
+        "Human Research",
+        "Emotion & the Body"
+      ],
+      "keywords": [
+        "Python",
+        "EEG",
+        "Machine Learning",
+        "Statistics",
+        "Experimental Design"
+      ],
+      "links": "../work/body-says-otherwise.html"
+    },
+    {
+      "name": "Synthetic Synesthesia",
+      "collections": [
+        "Sonification",
+        "Emotion & the Body"
+      ],
+      "keywords": [
+        "Tone.js",
+        "Signal Processing",
+        "Machine Learning"
+      ],
+      "links": "../work/synthetic-synesthesia.html"
+    },
+    {
+      "name": "Composure",
+      "collections": [
+        "Sonification",
+        "AI Experiences"
+      ],
+      "keywords": [
+        "Tone.js",
+        "LLM Integration"
+      ],
+      "links": "Link to Project: https://github.com/chaeyeonkimscientist/Composure"
+    },
+    {
+      "name": "Encore",
+      "collections": [
+        "Sonification",
+        "AI Experiences"
+      ],
+      "keywords": [
+        "LLM Integration",
+        "Logic Pro"
+      ],
+      "links": "Code & Website: https://encore-festival-archetype.chaeyeonkimwork.chatgpt.site/\nDetails: https://outsidellms.com/\nDemo: https://www.youtube.com/watch?v=9Sez8vWqiTI"
+    },
+    {
+      "name": "Predicting Engagement",
+      "collections": [
+        "Human Research"
+      ],
+      "keywords": [
+        "Python",
+        "Machine Learning",
+        "Statistics",
+        "Experimental Design"
+      ],
+      "links": "https://drive.google.com/file/d/15HHlFsjsmQ8STBc1EPorobj3d0VIAwSt/view?usp=sharing"
+    },
+    {
+      "name": "NTT",
+      "collections": [
+        "Human Research",
+        "Emotion & the Body"
+      ],
+      "keywords": [
+        "User Research",
+        "Experimental Design"
+      ],
+      "links": "Project: https://newsrelea.se/OklDrp\nPoster: https://drive.google.com/file/d/1N1vjMUGnh2wxkstxetGUx5TR8tPjYIT7/view?usp=sharing\nPress release: https://newsrelea.se/OklDrp"
+    },
+    {
+      "name": "Somnium",
+      "collections": [
+        "Scoring for Story",
+        "Emotion & the Body"
+      ],
+      "keywords": [
+        "Sound Design",
+        "Logic Pro",
+        "Sound Design"
+      ],
+      "links": "Project: https://www.youtube.com/watch?v=x__gfeBGS2E"
+    },
+    {
+      "name": "How to edit: change tags on this sheet only. Each tag cell has a dropdown pulled from the Collections and Keywords tabs.",
+      "collections": [],
+      "keywords": [],
+      "links": ""
+    },
+    {
+      "name": "Colors: pink = Music & multimedia, purple = Cognition, mint = Technology. A tag recolors itself when you pick a different one. Yellow row = needs your input.",
+      "collections": [],
+      "keywords": [],
+      "links": ""
+    },
+    {
+      "name": "Counts and the Matrix update automatically. Orange counts on the other tabs flag tags used by fewer than 2 projects.",
+      "collections": [],
+      "keywords": [],
+      "links": ""
+    }
+  ],
+  "star": {
+    "The Body Conducts": {
+      "situation": "Chronic social stress builds invisible inflammation for years before it is felt, and language fails to communicate it.",
+      "task": "Make the physiology of chronic stress audible through a data-driven music film.",
+      "action": "Recorded 40+ hours of my own EEG, built a Python pipeline (MNE, SciPy, NumPy, Mido) that turned alpha suppression into a stress index driving a spectral filter in Logic Pro, and mastered a five-track score in Dolby Atmos.",
+      "result": "Screened at 5 venues of 200–300 people and selected for the Gumloop Designed gallery (40 of 340 designers), earning the top grade in a 120-student cohort.",
+      "notes": ""
+    },
+    "Paramount": {
+      "situation": "Paramount's Global Content Distribution Research team spent 2–3 hours manually building each pre-release performance sheet.",
+      "task": "Automate repetitive research workflows and build a data-backed audience profile for Home Entertainment.",
+      "action": "Built a Microsoft CoPilot agent with internal-database-first fallback logic and a confidence flag for human review, and ran correlation and chi-square analyses on GWI audience data.",
+      "result": "Cut sheet production time by 65% (to 45 minutes), the agent was adopted into the team's weekly workflow, and the audience findings unlocked budget for follow-up research.",
+      "notes": ""
+    },
+    "Short Films": {
+      "situation": "Four short films were made under extreme constraints, some within a 24-hour window.",
+      "task": "Make music and sound design carry the narrative and psychology that dialogue can't.",
+      "action": "Composed instrument-as-identity leitmotif scores, encoded the title in Morse rhythm, and built a Gordon Ramsay TTS voice model to meet a casting constraint in under 24 hours.",
+      "result": "Won the Golden Owl Award (2026) and the Best Audio Award (2025) at the Minervopolis Film Festival.",
+      "notes": ""
+    },
+    "The Body Says Otherwise": {
+      "situation": "Children's cognitive flexibility was scored only on accuracy and response time, which ignore the physiological cost of thinking.",
+      "task": "Build a prediction model for 200+ children that combines behavioral and physiological signals.",
+      "action": "Designed seven trials, ran ANOVA in R, built a PyTorch model on heart rate, alpha-band EEG, and gaze data, and synthesized 55+ studies.",
+      "result": "Surfaced a systematic gap between children's self-report and their physiology, and the research briefs broke a deadlock between the research and product teams.",
+      "notes": ""
+    },
+    "Synthetic Synesthesia": {
+      "situation": "Audio visualizers map sound to color arbitrarily, misrepresenting chromesthesia, which only about 4% of people experience.",
+      "task": "Build a simulator where every sound–color mapping is grounded in peer-reviewed research.",
+      "action": "Distilled 15+ studies into one reversible mapping engine, using Web Audio FFT analysis for sound-to-color and k-means clustering with Tone.js synthesis for color-to-sound.",
+      "result": "Shipped a live, bidirectional web app on Vercel that also serves as an accessibility bridge for deaf and blind users.",
+      "notes": ""
+    },
+    "Composure": {
+      "situation": "Journaling records how you feel but gives you no way to hear it.",
+      "task": "Build a journaling app in one build day that quantifies the emotion in each entry and turns it into music.",
+      "action": "Used an LLM to score each entry on valence, arousal, tension, and warmth, then mapped those values deterministically to mode, tempo, and timbre in Tone.js.",
+      "result": "Won Claude Fable 5.1 Buildathon: Special Award",
+      "notes": "Result: add an outcome (demo reception, award, users)."
+    },
+    "Encore": {
+      "situation": "Festival-goers leave with a day they'll never fully remember and no personal keepsake of it.",
+      "task": "Turn each attendee's festival day into a shareable personality archetype and an original piece of music.",
+      "action": "Built a prototype that matches a location trail against JamBase set times, uses GPT to derive an archetype, and arranges my own Logic piano seeds into a piece in that palette.",
+      "result": "Top 20 project in OpenAI & OutsideLands Hackathon",
+      "notes": "Result: add an outcome (demo, award, feedback)."
+    },
+    "Predicting Engagement": {
+      "situation": "\"Engagement\" was used loosely across productions without a grounded definition.",
+      "task": "Replicate and extend a study predicting audience engagement from 65,000 interaction logs.",
+      "action": "Built ML models, ran threshold sensitivity analysis, and mapped behavioral predictors to attention, reward, and default-mode brain networks.",
+      "result": "Reached AUC 0.71 at the 70th-percentile threshold and delivered a product handbook adopted by 12 productions.",
+      "notes": "Numbers come from an earlier version of your site; double-check them."
+    },
+    "NTT": {
+      "situation": "NTT East's wellness centers went largely unused because employees feared mental-health stigma would harm their careers.",
+      "task": "Give the team evidence-grounded, privacy-first direction for an employee wellbeing app.",
+      "action": "Designed the interview instrument, secured IRB exemption, analyzed an 8-respondent HR-manager survey and 3 employee interviews, and led the South Korea case study.",
+      "result": "Shipped app NTT wide (1.25M employees).",
+      "notes": "Earlier drafts said it was deployed to ~1.25M users; use that only if it's confirmed."
+    },
+    "Somnium": {
+      "situation": "After eleven years of neglecting sleep, my insomnia had become an invisible struggle.",
+      "task": "Translate that struggle into a four-movement audiovisual work.",
+      "action": "Scored four movements (Denial, Trial, Acceptance, Addiction) with leitmotifs, underwater sound design, and 60+ original foley and processed layers.",
+      "result": "Selected for exhibition in Berlin.",
+      "notes": ""
+    }
+  },
+  "collections": [
+    {
+      "name": "Sonification",
+      "category": "Music & multimedia",
+      "description": "Turning data into sound: EEG, color, journal entries, festival itineraries",
+      "count": 4,
+      "projects": ["The Body Conducts", "Synthetic Synesthesia", "Composure", "Encore"]
+    },
+    {
+      "name": "Emotion & the Body",
+      "category": "Cognition",
+      "description": "Stress, affect, sleep, and what the body says that words don't",
+      "count": 5,
+      "projects": ["The Body Conducts", "The Body Says Otherwise", "Synthetic Synesthesia", "NTT", "Somnium"]
+    },
+    {
+      "name": "Scoring for Story",
+      "category": "Music & multimedia",
+      "description": "Music and sound design as narrative language in film and audiovisual work",
+      "count": 3,
+      "projects": ["The Body Conducts", "Short Films", "Somnium"]
+    },
+    {
+      "name": "Human Research",
+      "category": "Cognition",
+      "description": "Studying how people think, feel, and engage, from lab trials to user interviews",
+      "count": 4,
+      "projects": ["Paramount", "The Body Says Otherwise", "Predicting Engagement", "NTT"]
+    },
+    {
+      "name": "AI Experiences",
+      "category": "Technology",
+      "description": "Products where AI does creative or analytical work",
+      "count": 4,
+      "projects": ["Paramount", "Short Films", "Composure", "Encore"]
+    }
+  ],
+  "keywords": [
+    {
+      "name": "Python",
+      "category": "Technology",
+      "description": "Signal processing, data analysis, and modeling",
+      "count": 3,
+      "projects": [
+        "The Body Conducts",
+        "The Body Says Otherwise",
+        "Predicting Engagement"
+      ]
+    },
+    {
+      "name": "Tone.js",
+      "category": "Technology",
+      "description": "In-browser synthesis with Tone.js and the Web Audio API",
+      "count": 2,
+      "projects": [
+        "Synthetic Synesthesia",
+        "Composure"
+      ]
+    },
+    {
+      "name": "Logic Pro",
+      "category": "Music & multimedia",
+      "description": "Composition, production, and automation in Logic Pro",
+      "count": 3,
+      "projects": [
+        "The Body Conducts",
+        "Encore",
+        "Somnium"
+      ]
+    },
+    {
+      "name": "Dolby Atmos",
+      "category": "Music & multimedia",
+      "description": "Spatial audio mixing and mastering",
+      "count": 1,
+      "projects": [
+        "The Body Conducts"
+      ]
+    },
+    {
+      "name": "LLM Integration",
+      "category": "Technology",
+      "description": "LLM-powered agents and features (Claude, GPT, CoPilot)",
+      "count": 3,
+      "projects": [
+        "Paramount",
+        "Composure",
+        "Encore"
+      ]
+    },
+    {
+      "name": "Machine Learning",
+      "category": "Technology",
+      "description": "Prediction models, clustering, and ML voice models",
+      "count": 4,
+      "projects": [
+        "Short Films",
+        "The Body Says Otherwise",
+        "Synthetic Synesthesia",
+        "Predicting Engagement"
+      ]
+    },
+    {
+      "name": "Signal Processing",
+      "category": "Technology",
+      "description": "Filtering, FFT, and feature extraction from audio and biosignals",
+      "count": 2,
+      "projects": [
+        "The Body Conducts",
+        "Synthetic Synesthesia"
+      ]
+    },
+    {
+      "name": "EEG",
+      "category": "Cognition",
+      "description": "Recording and analyzing brainwave data (OpenBCI, MNE)",
+      "count": 2,
+      "projects": [
+        "The Body Conducts",
+        "The Body Says Otherwise"
+      ]
+    },
+    {
+      "name": "Statistics",
+      "category": "Technology",
+      "description": "ANOVA, correlation, hypothesis and significance testing",
+      "count": 3,
+      "projects": [
+        "Paramount",
+        "The Body Says Otherwise",
+        "Predicting Engagement"
+      ]
+    },
+    {
+      "name": "Experimental Design",
+      "category": "Cognition",
+      "description": "Designing trials, studies, and ethics (IRB) protocols",
+      "count": 3,
+      "projects": [
+        "The Body Says Otherwise",
+        "Predicting Engagement",
+        "NTT"
+      ]
+    },
+    {
+      "name": "User Research",
+      "category": "Cognition",
+      "description": "Interviews, surveys, and translating findings into product decisions",
+      "count": 2,
+      "projects": [
+        "Paramount",
+        "NTT"
+      ]
+    },
+    {
+      "name": "Sound Design",
+      "category": "Music & multimedia",
+      "description": "Foley, processed textures, and sound as storytelling",
+      "count": 3,
+      "projects": [
+        "Short Films",
+        "Somnium"
+      ]
+    }
+  ]
+};
+    let selected = DATA.projects[0]?.name || "";
+    DATA.projects = DATA.projects.filter(p => DATA.star[p.name]);
+    let activeFilter = "all";
+    let activeTag = null;
+    let activeKeywords = [];
+
+    const $ = (id) => document.getElementById(id);
+
+    function categoryClass(category) {
+      if (!category) return "";
+      if (category.toLowerCase().includes("music")) return "music";
+      if (category.toLowerCase().includes("cognition")) return "cognition";
+      if (category.toLowerCase().includes("technology")) return "technology";
+      return "";
+    }
+
+    function slugify(s) {
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+
+    function projectByName(name) {
+      return DATA.projects.find(p => p.name === name);
+    }
+
+    function starByName(name) {
+      return DATA.star[name] || {};
+    }
+
+    function parseLinks(raw) {
+      if (!raw) return [];
+      const lines = String(raw).split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      const links = [];
+      for (const line of lines) {
+        const urls = line.match(/https?:\/\/[^\s<]+|(?:\.\.\/|\.\/)[^\s<]+/g) || [];
+        if (!urls.length && /^[./].+\.html?(?:\?.*)?$/i.test(line)) urls.push(line);
+        urls.forEach((url, i) => {
+          const clean = url.replace(/[)\],.;]+$/, "");
+          let label = line.replace(url, "").trim();
+          label = label.replace(/[:\-–—]\s*$/, "").trim();
+          if (!label) label = urls.length > 1 ? `Link ${i + 1}` : "Open project";
+          links.push({label, url: clean});
+        });
+      }
+      return links;
+    }
+
+    function renderSelected() {
+      const p = projectByName(selected);
+      if (!p) return;
+      const s = starByName(selected);
+      const idx = DATA.projects.findIndex(x => x.name === selected) + 1;
+
+      $("projectTitle").textContent = p.name.toUpperCase();
+      $("projectIndex").textContent = String(idx).padStart(2, "0");
+      $("situation").textContent = s.situation || "—";
+      $("task").textContent = s.task || "—";
+      $("action").textContent = s.action || "—";
+      $("result").textContent = s.result || "—";
+
+      const tags = p.keywords.slice(0, 5);
+      $("projectTags").innerHTML = tags.map(t => `<span class="tag ${tagCategory(t)}">${escapeHtml(t)}</span>`).join("");
+
+      const links = parseLinks(p.links);
+      $("projectLinks").innerHTML = links.length
+        ? links.map((l, i) => `<a class="link-card" href="${escapeAttr(l.url)}" target="_blank" rel="noopener"><span>${escapeHtml(l.label)}</span><b>${i === 0 ? "↗" : "↗"}</b></a>`).join("")
+        : `<span class="link-empty">No external artifact linked yet.</span>`;
+
+      document.title = `${p.name} — Chaeyeon Kim`;
+      const wave = document.querySelector(".waveform");
+      if (wave) {
+        wave.classList.remove("playing");
+        void wave.offsetWidth;
+        wave.classList.add("playing");
+      }
+    }
+
+    function tagCategory(tag) {
+      const all = [...DATA.collections, ...DATA.keywords];
+      const item = all.find(x => x.name === tag);
+      return item ? categoryClass(item.category) : "";
+    }
+
+    function renderCollections() {
+      const shown = DATA.collections;
+      $("collectionList").innerHTML = shown.map((c, i) => `
+        <button class="collection-card ${categoryClass(c.category)}" data-collection="${escapeAttr(c.name)}">
+          <div class="collection-art art-${i}"><span>${i === 0 ? "∿" : "◌"}</span></div>
+          <div class="collection-copy">
+            <div class="collection-name">${escapeHtml(c.name)}</div>
+            <div class="collection-meta">${c.count} projects · ${escapeHtml(c.description)}</div>
+          </div>
+          <span class="round-arrow">→</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("[data-collection]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeFilter = "collection";
+          activeTag = btn.dataset.collection;
+          activeKeywords = [];
+          renderArtifacts();
+          requestAnimationFrame(() => {
+            $("artifact-panel")?.scrollIntoView({behavior:"smooth", block:"start"});
+          });
+        });
+      });
+    }
+
+    
+    function renderKeywordCloud() {
+      if (!$('keywordCloud')) return;
+      const ordered = [...DATA.keywords].sort((a, b) => {
+        const order = {technology: 0, cognition: 1, music: 2};
+        return (order[categoryClass(a.category)] ?? 9) - (order[categoryClass(b.category)] ?? 9) || a.name.localeCompare(b.name);
+      });
+      $('keywordCloud').innerHTML = ordered.map(k =>
+        `<button class="keyword-chip ${activeKeywords.includes(k.name) ? "active" : ""} ${categoryClass(k.category)}" data-keyword="${escapeAttr(k.name)}">${escapeHtml(k.name)}</button>`
+      ).join('');
+      document.querySelectorAll('[data-keyword]').forEach(btn => btn.addEventListener('click', () => {
+        const key = btn.dataset.keyword;
+        if (activeKeywords.includes(key)) {
+          activeKeywords = activeKeywords.filter(k => k !== key);
+        } else {
+          activeKeywords = [...activeKeywords, key];
+        }
+        activeFilter = activeKeywords.length ? 'keyword' : 'all';
+        activeTag = null;
+        document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+        document.querySelector('[data-filter="all"]').classList.add('active');
+        renderKeywordCloud();
+        renderArtifacts();
+      }));
+    }
+
+    function renderArtifacts() {
+      renderKeywordCloud();
+      let visible = DATA.projects.slice();
+
+      if (activeFilter === 'collection' && activeTag) {
+        const c = DATA.collections.find(x => x.name === activeTag);
+        visible = c ? visible.filter(p => p.collections.includes(c.name)) : [];
+      } else if (activeKeywords.length) {
+        visible = visible.filter(p => activeKeywords.every(k => p.keywords.includes(k)));
+      }
+
+      let filterLabel = '';
+      if (activeFilter === 'collection' && activeTag) filterLabel = `Playlist: ${activeTag}`;
+      else if (activeKeywords.length) filterLabel = `Keywords: ${activeKeywords.join(' + ')}`;
+      $('activeFilters').innerHTML = filterLabel
+        ? `<span class="filter-note">${escapeHtml(filterLabel)} <button id="clearFilter">×</button></span>`
+        : '';
+
+      $('artifactList').innerHTML = visible.map((p) => {
+        const isSelected = p.name === selected;
+        return `
+          <article class="artifact ${isSelected ? 'selected' : ''}" data-project="${escapeAttr(p.name)}">
+            <button class="artifact-main">
+              <span class="artifact-marker">${isSelected ? '−' : '+'}</span>
+              <span class="artifact-copy"><strong>${escapeHtml(p.name)}</strong></span>
+              <span class="artifact-tags">
+                ${p.keywords.map(k => `<span class="tag ${tagCategory(k)}">${escapeHtml(k)}</span>`).join('')}
+              </span>
+              <span class="artifact-chevron">${isSelected ? '⌃' : '⌄'}</span>
+            </button>
+          </article>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-project]').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('a')) return;
+          selectProject(card.dataset.project);
+        });
+      });
+      $('clearFilter')?.addEventListener('click', clearFilter);
+    }
+
+    function selectProject(name, rerender = true) {
+      selected = name;
+      renderSelected();
+      if (rerender) renderArtifacts();
+      document.querySelector(".deep-dive")?.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function clearFilter() {
+      activeFilter = "all";
+      activeTag = null;
+      activeKeywords = [];
+      renderKeywordCloud();
+      document.querySelectorAll(".filter").forEach(x => x.classList.remove("active"));
+      document.querySelector('[data-filter="all"]').classList.add("active");
+      renderArtifacts();
+    }
+
+    document.querySelectorAll(".filter").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeFilter = btn.dataset.filter;
+        activeTag = null;
+        activeKeywords = [];
+        renderKeywordCloud();
+        document.querySelectorAll(".filter").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        renderArtifacts();
+      });
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+    function escapeAttr(s) { return escapeHtml(s); }
+
+    renderCollections();
+    renderSelected();
+    renderKeywordCloud();
+    renderArtifacts();
+  </script>
+</body>
+</html>
