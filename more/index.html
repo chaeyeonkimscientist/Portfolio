@@ -8,13 +8,15 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <a class="back-work" href="../index.html#work">← Work</a>
   <main class="shell">
+    <div class="page-chrome">
+      <a class="back-work" href="../index.html#work">← Work</a>
+    </div>
     <div class="top-grid">
       <!-- LEFT: PROJECT DEEP DIVE -->
       <section class="deep-dive panel" aria-label="Selected project">
         <header class="panel-header now-playing-header">
-          <div class="eyebrow">NOW PLAYING</div>
+          <h2>Now Playing</h2>
           <div class="waveform" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -56,10 +58,10 @@
         </div>
       </section>
 
-      <!-- RIGHT: FAVORITE COLLECTIONS -->
+      <!-- RIGHT: PLAYLISTS -->
       <aside class="collections panel">
           <header class="section-header">
-            <h2>COLLECTIONS</h2>
+            <h2>Playlists</h2>
           </header>
           <div class="collection-list" id="collectionList"></div>
       </aside>
@@ -68,7 +70,7 @@
     <!-- FULL-WIDTH PROJECT ARTIFACTS -->
     <section class="artifact-panel panel" id="artifact-panel">
           <header class="section-header artifact-header">
-            <h2>ALL PROJECT ARTIFACTS</h2>
+            <h2>All songs</h2>
           </header>
 
           <div class="filter-controls" aria-label="Project filters">
@@ -620,7 +622,7 @@
       }
 
       let filterLabel = '';
-      if (activeFilter === 'collection' && activeTag) filterLabel = `Collection: ${activeTag}`;
+      if (activeFilter === 'collection' && activeTag) filterLabel = `Playlist: ${activeTag}`;
       else if (activeKeywords.length) filterLabel = `Keywords: ${activeKeywords.join(' + ')}`;
       $('activeFilters').innerHTML = filterLabel
         ? `<span class="filter-note">${escapeHtml(filterLabel)} <button id="clearFilter">×</button></span>`
