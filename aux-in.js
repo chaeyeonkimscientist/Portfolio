@@ -35,9 +35,10 @@
   let opening = false;
 
   function measureJack() {
-    const r = jackTarget.getBoundingClientRect();
+    const hole = jackHole || jackTarget;
+    const r = hole.getBoundingClientRect();
     jackCenterX = r.left + r.width / 2;
-    jackCenterY = r.top + r.height / 2 + 15;
+    jackCenterY = r.top + r.height / 2;
   }
 
   function setActive(on) {
