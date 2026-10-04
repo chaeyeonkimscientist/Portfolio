@@ -507,7 +507,8 @@
       const lines = String(raw).split(/\r?\n/).map(s => s.trim()).filter(Boolean);
       const links = [];
       for (const line of lines) {
-        const urls = line.match(/https?:\/\/[^\s<]+/g) || [];
+        const urls = line.match(/https?:\/\/[^\s<]+|(?:\.\.\/|\.\/)[^\s<]+/g) || [];
+        if (!urls.length && /^[./].+\.html?(?:\?.*)?$/i.test(line)) urls.push(line);
         urls.forEach((url, i) => {
           const clean = url.replace(/[)\],.;]+$/, "");
           let label = line.replace(url, "").trim();
