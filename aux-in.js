@@ -17,7 +17,7 @@
   if (!plugWrapper || !jackTarget) return;
 
   const MORE_URL = 'more/index.html';
-  const SNAP_DISTANCE = 120;
+    const SNAP_DISTANCE = 220;
   const LERP_FACTOR = 0.15;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -35,7 +35,7 @@
   let opening = false;
 
   function measureJack() {
-    const hole = jackHole || jackTarget;
+    const hole = document.getElementById('jack-hole') || jackTarget;
     const r = hole.getBoundingClientRect();
     jackCenterX = r.left + r.width / 2;
     jackCenterY = r.top + r.height / 2;
@@ -72,26 +72,37 @@
   addEventListener('resize', () => {
     if (active) measureJack();
   });
-  addEventListener('click', () => {
-    if (!active || opening) return;
-    if (isSnapped && !isPlugged) {
-      isPlugged = true;
-      plugBody.classList.add('inserted');
-      jackLabel.classList.add('active');
-      if (instructionText) instructionText.style.opacity = '0';
-      setTimeout(() => {
-        jackHole.classList.add('pulse');
-        setTimeout(() => {
-          jackHole.classList.remove('pulse');
-          setTimeout(() => {
-            opening = true;
-            jackLabel.innerText = 'SIGNAL ROUTED — OPENING...';
-            location.href = MORE_URL;
-          }, 600);
-        }, 150);
-      }, 100);
-    }
+  scene.addEventListener('click', tryPlug);
+  addEventListener('click', tryPlug);
+  document.querySelector('#aux-in .jack-bezel')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isSnapped = true;
+    tryPlug();
   });
+
+  function tryPlug() {
+    if (!active || opening || isPlugged) return;
+    measureJack();
+    const dx = jackCenterX - mouseX;
+    const dy = jackCenterY - mouseY;
+    const near = Math.sqrt(dx * dx + dy * dy) < SNAP_DISTANCE * 1.4;
+    if (!(isSnapped || near)) return;
+    isPlugged = true;
+    plugBody.classList.add('inserted');
+    jackLabel.classList.add('active');
+    if (instructionText) instructionText.style.opacity = '0';
+    setTimeout(() => {
+      jackHole.classList.add('pulse');
+      setTimeout(() => {
+        jackHole.classList.remove('pulse');
+        setTimeout(() => {
+          opening = true;
+          jackLabel.innerText = 'SIGNAL ROUTED — OPENING...';
+          location.href = MORE_URL;
+        }, 600);
+      }, 150);
+    }, 100);
+  }
 
   function animate() {
     requestAnimationFrame(animate);
@@ -118,6 +129,7 @@
       targetAngle = 0;
       jackLabel.style.color = '#d9d9d9';
       scene.style.cursor = 'pointer';
+      if (instructionText) instructionText.textContent = 'Click to plug in';
     } else {
       isSnapped = false;
       targetX = mouseX;
@@ -131,6 +143,7 @@
       }
       jackLabel.style.color = '';
       scene.style.cursor = 'default';
+      if (instructionText) instructionText.textContent = 'Drag cable near the jack to snap, then click to plug in';
     }
 
     currentX += (targetX - currentX) * LERP_FACTOR;
