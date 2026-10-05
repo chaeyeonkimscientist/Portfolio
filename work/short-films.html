@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Short Films — Chaeyeon Kim</title>
-<link rel="stylesheet" href="./dive.css?v=35">
+<link rel="stylesheet" href="./dive.css?v=36">
 </head>
 <body data-project="Short Films" data-project-id="short-films">
 <a class="skip" href="#content">Skip to content</a>
@@ -49,32 +49,32 @@
   </div>
 
   <div class="memory" id="memory">
-    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Working memory">
+    <button class="memory-tab" type="button" aria-expanded="false" aria-controls="memory-panel" title="Memory">
       <canvas class="memory-wave" width="72" height="36" aria-hidden="true"></canvas>
       <span class="memory-count">00</span>
     </button>
     <div class="memory-panel" id="memory-panel">
       <header class="memory-head">
-        <div class="kicker">working memory</div>
+        <div class="kicker">Memory</div>
         <div class="sub">session-bound · flushes on disconnect</div>
         <button class="memory-copy" type="button">Copy nodes</button>
       </header>
       <div class="memory-map" id="memory-map"></div>
     </div>
     <div class="memory-bubble" id="memory-bubble" hidden>
-      Drag and add text to your <strong>working memory</strong>.
+      Drag and add text to your <strong>memory</strong>.
     </div>
     <div class="memory-reminder" id="memory-reminder" role="status" aria-hidden="true">Don't forget to copy me before you leave.</div>
   </div>
 </aside>
 
 <div class="sel-pop" id="sel-pop" hidden>
-  <button type="button" id="sel-send">Send to working memory</button>
+  <button type="button" id="sel-send">Send to memory</button>
 </div>
 
 <div class="term-warn" id="term-warn" hidden role="alertdialog" aria-labelledby="term-warn-msg">
   <div class="term-inner">
-    <pre id="term-warn-msg">WARNING: Working memory will be flushed. Copy your nodes before disconnecting.</pre>
+    <pre id="term-warn-msg">WARNING: Memory will be flushed. Copy your nodes before disconnecting.</pre>
     <div class="term-actions">
       <button type="button" data-term-copy>Copy nodes + Go back to homepage.</button>
       <button type="button" data-term-dismiss>Stay in session.</button>
@@ -356,7 +356,7 @@
 
 <script src="./dive-hud.js?v=22"></script>
 <script src="./dive-waves.js?v=17"></script>
-<script src="./dive-memory.js?v=19"></script>
+<script src="./dive-memory.js?v=20"></script>
 <script src="./dive-player.js?v=17"></script>
 <script src="./dive-films.js?v=17"></script>
 </body>
