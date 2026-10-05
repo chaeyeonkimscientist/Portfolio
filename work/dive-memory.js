@@ -37,14 +37,14 @@
     return heading ? heading.textContent.trim() : 'Untitled';
   }
 
-  /* No model is wired. Add project/section provenance so a fragment still reads. */
-  function contextualize(text, meta) {
-    const clipped = String(text || '').replace(/\s+/g, ' ').trim();
-    if (!clipped) return '';
-    if (clipped.length < 12) return clipped;
-    const already = clipped.indexOf(meta.project) !== -1 || clipped.indexOf(meta.section) !== -1;
-    if (already) return clipped;
-    return clipped + ' — (' + meta.project + ' / ' + meta.section + ')';
+  function nodeBody(node) {
+    const raw = (node && node.original != null && String(node.original).trim())
+      ? String(node.original)
+      : String((node && node.text) || '');
+    return raw.replace(/\s+/g, ' ').replace(/\s+[—–-]\s+\([^)]+\)\s*$/, '').trim();
+  }
+  function nodeLabel(node) {
+    return '[' + (node.project || '') + ' / ' + (node.type || 'data') + ' / ' + (node.section || '') + ']';
   }
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
@@ -75,10 +75,21 @@
     state.nodes.forEach(function (node) {
       const art = document.createElement('article');
       art.className = 'mem-node is-' + (node.type || 'data');
-      art.innerHTML = '<div class="mem-meta">' +
-        (node.project || '') + ' · ' + (node.type || 'data') + ' · ' + (node.section || '') +
-        '</div><div class="mem-text"></div>';
-      art.querySelector('.mem-text').textContent = node.text;
+      const del = document.createElement('button');
+      del.className = 'mem-del';
+      del.type = 'button';
+      del.setAttribute('aria-label', 'Remove node');
+      del.dataset.id = node.id;
+      del.textContent = '×';
+      const meta = document.createElement('div');
+      meta.className = 'mem-meta';
+      meta.textContent = nodeLabel(node);
+      const text = document.createElement('div');
+      text.className = 'mem-text';
+      text.textContent = nodeBody(node);
+      art.appendChild(del);
+      art.appendChild(meta);
+      art.appendChild(text);
       map.appendChild(art);
     });
     countEl.textContent = pad(state.nodes.length);
@@ -88,17 +99,24 @@
 
   function addNode(original, type, section) {
     const state = load();
-    const text = contextualize(original, { project: project, section: section, type: type });
+    const clipped = String(original || '').replace(/\s+/g, ' ').trim();
     state.nodes.push({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       project: project,
       projectId: projectId,
       type: type,
       section: section,
-      original: original,
-      text: text,
+      original: clipped,
+      text: clipped,
       t: Date.now()
     });
+    save(state);
+    render();
+  }
+
+  function removeNode(id) {
+    const state = load();
+    state.nodes = state.nodes.filter(function (n) { return n.id !== id; });
     save(state);
     render();
   }
@@ -123,7 +141,7 @@
     const state = load();
     if (!state.nodes.length) return '';
     return state.nodes.map(function (n) {
-      return '[' + n.project + ' / ' + n.type + ' / ' + n.section + ']\n' + n.text;
+      return nodeLabel(n) + '\n' + nodeBody(n);
     }).join('\n\n');
   }
   function copyNodes() {
@@ -134,7 +152,7 @@
     return Promise.resolve(blob);
   }
 
-  /* Same-tab hops across this portfolio stay one working-memory session. */
+  /* Same-tab hops across this portfolio stay one memory session. */
   let internalNav = false;
   let internalNavReset = 0;
   function markInternalNav() {
@@ -217,6 +235,15 @@
     });
   }
   if (copyBtn) copyBtn.addEventListener('click', function () { copyNodes(); });
+  if (map) {
+    map.addEventListener('click', function (e) {
+      const btn = e.target.closest && e.target.closest('.mem-del');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      removeNode(btn.getAttribute('data-id'));
+    });
+  }
 
   if (bubble && !sessionStorage.getItem(ONBOARD) && load().nodes.length === 0) {
     bubble.hidden = false;

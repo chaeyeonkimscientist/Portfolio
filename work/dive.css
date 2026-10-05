@@ -1109,31 +1109,39 @@ body[data-project-id="synthetic-synesthesia"] .lp-label{
   background:none;border:0.5px solid var(--hair);color:var(--bone);padding:0.35rem 0.55rem;cursor:pointer;
 }
 .memory-copy:hover{border-color:var(--lav);color:var(--lav)}
-.memory-map{position:relative;margin-top:0.8rem;min-height:4rem}
+.memory-map{position:relative;margin-top:0.8rem;min-height:4rem;padding-left:1.15rem}
 .memory-map:empty::before{
   content:"no nodes in cortex";font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.58rem;
   letter-spacing:0.12em;text-transform:uppercase;color:var(--bone-dim);
 }
 .mem-node{
-  position:relative;margin:0 0 0.85rem 1.1rem;padding:0.7rem 0.75rem;
+  position:relative;margin:0;padding:0.7rem 1.75rem 0.7rem 0.75rem;
   border:0.5px solid var(--hair);background:rgba(26,34,38,.7);
 }
+.mem-node + .mem-node{margin-top:-0.5px}
 .mem-node::before{
-  content:"";position:absolute;left:-1.1rem;top:1.05rem;width:0.85rem;height:0.5px;
+  content:"";position:absolute;left:-1.15rem;top:1.15rem;width:1.15rem;height:0.5px;
   background:var(--node,#B7A7D8);box-shadow:0 0 6px var(--node,#B7A7D8);
 }
-.mem-node + .mem-node::after{
-  content:"";position:absolute;left:-1.1rem;top:-0.85rem;width:0.5px;height:calc(100% + 0.2rem);
+.mem-node:not(:last-child)::after{
+  content:"";position:absolute;left:-1.15rem;top:1.15rem;width:0.5px;height:100%;
   background:var(--node,#B7A7D8);opacity:.7;box-shadow:0 0 6px var(--node,#B7A7D8);
 }
 .mem-node.is-music{--node:var(--amaranth-lit);border-color:rgba(201,67,106,.55);box-shadow:0 0 12px rgba(201,67,106,.18)}
 .mem-node.is-cog{--node:var(--grape-lit);border-color:rgba(143,143,208,.55);box-shadow:0 0 12px rgba(143,143,208,.18)}
 .mem-node.is-data{--node:var(--data);border-color:rgba(159,224,216,.5);box-shadow:0 0 12px rgba(159,224,216,.16)}
 .mem-meta{
-  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.5rem;letter-spacing:0.12em;
-  text-transform:uppercase;color:var(--bone-dim);margin-bottom:0.35rem;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.5rem;letter-spacing:0.08em;
+  color:var(--bone-dim);margin-bottom:0.35rem;padding-right:0.2rem;
 }
 .mem-text{font-size:0.82rem;line-height:1.45;color:var(--bone)}
+.mem-del{
+  position:absolute;top:0.35rem;right:0.35rem;z-index:1;
+  width:1.15rem;height:1.15rem;padding:0;display:flex;align-items:center;justify-content:center;
+  font-family:"Helvetica Neue",Helvetica,Arial,-apple-system,sans-serif;font-size:0.85rem;line-height:1;
+  background:none;border:0.5px solid transparent;color:var(--bone-dim);cursor:pointer;
+}
+.mem-del:hover,.mem-del:focus-visible{color:var(--lav);border-color:var(--hair);outline:none}
 .memory-bubble{
   position:absolute;right:calc(100% + 0.6rem);top:0;width:16rem;
   background:rgba(16,23,25,.96);border:0.5px solid var(--lav);padding:0.8rem 0.9rem;
